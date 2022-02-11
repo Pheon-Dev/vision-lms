@@ -1,0 +1,426 @@
+export const products = [
+  {
+    name: 'daily',
+    image: 'https://res.cloudinary.com/drf1wghco/image/upload/v1644166500/daily_jijybe.png',
+  },
+  {
+    name: 'weekly',
+    image: 'https://res.cloudinary.com/drf1wghco/image/upload/v1644166606/weekly_w48qfv.png',
+  },
+  {
+    name: 'monthly',
+    image: 'https://res.cloudinary.com/drf1wghco/image/upload/v1644166605/monthly_x4blw3.png',
+  },
+];
+
+export const memberDetailQuery = (memberId) => {
+  const query = `*[_type == "member" && _id == "${memberId}"]{
+    image{
+      asset->{
+        url
+      }
+    },
+    _id,
+    memberNumber,
+    date,
+    branchName,
+    personalDetails{
+      surName,
+      otherNames,
+      dob,
+      idPass,
+      pinNumber,
+      mobileNumber,
+      gender,
+      age,
+      religion,
+      maritalStatus,
+      spouseNumber,
+      nameSpouse,
+      postalAddress,
+      postalCode,
+      cityTown,
+      residentialAddress,
+      emailAddress,
+      rented,
+      owned,
+      landCareAgent,
+      occupationEmployer,
+      employerNumber,
+      businessLocation,
+      businessAge,
+      refereeName,
+      group,
+      communityPosition,
+      mpesaTransNumber,
+    },
+    kinInformation{
+      nameKin,
+      relationship,
+      residentialAddressKin,
+      postalAddressKin,
+      postalCodeKin,
+      cityTownKin,
+      mobileNumberKin,
+    },
+    groupInformation{
+      groupName,
+      groupLeaderName,
+      leaderNumber,
+      leaderIdNumber,
+    },
+    postedBy->{
+      _id,
+      userName,
+      image
+    },
+    save[]{
+      postedBy->{
+        _id,
+        userName,
+        image,
+      },
+    },
+    product,
+    comments[]{
+      comment,
+      _key,
+      postedBy->{
+        _id,
+        userName,
+        image
+      },
+    },
+  }`;
+  return query;
+};
+
+export const memberDetailMoreMemberQuery = (member) => {
+  const query = `*[_type == "member" && product == '${member.product}' && _id != '${member._id}']{
+    image{
+      asset->{
+        url
+      }
+    },
+    _id,
+    memberNumber,
+    date,
+    branchName,
+    personalDetails{
+      surName,
+      otherNames,
+      dob,
+      idPass,
+      pinNumber,
+      mobileNumber,
+      gender,
+      age,
+      religion,
+      maritalStatus,
+      spouseNumber,
+      nameSpouse,
+      postalAddress,
+      postalCode,
+      cityTown,
+      residentialAddress,
+      emailAddress,
+      rented,
+      owned,
+      landCareAgent,
+      occupationEmployer,
+      employerNumber,
+      businessLocation,
+      businessAge,
+      refereeName,
+      group,
+      communityPosition,
+      mpesaTransNumber,
+    },
+    kinInformation{
+      nameKin,
+      relationship,
+      residentialAddressKin,
+      postalAddressKin,
+      postalCodeKin,
+      cityTownKin,
+      mobileNumberKin,
+    },
+    groupInformation{
+      groupName,
+      groupLeaderName,
+      leaderNumber,
+      leaderIdNumber,
+    },
+    postedBy->{
+      _id,
+      userName,
+      image
+    },
+    save[]{
+      postedBy->{
+        _id,
+        userName,
+        image,
+      },
+    },
+    product,
+  }`;
+  return query;
+};
+
+export const feedQuery = `*[_type == "member"] | order(_createdAt desc) {
+      image{
+        asset->{
+          url
+        }
+      },
+      _id,
+      memberNumber,
+      date,
+      branchName,
+      personalDetails{
+        surName,
+        otherNames,
+        mobileNumber,
+        emailAddress,
+        mpesaTransNumber,
+      },
+      product,
+      postedBy->{
+        _id,
+        userName,
+        image
+      },
+      save[]{
+        _key,
+        postedBy->{
+          _id,
+          userName,
+          image
+        },
+      },
+    } `;
+
+export const userQuery = (userId) => {
+  const query = `*[_type == "user" && _id == '${userId}']`;
+  return query;
+};
+
+export const searchQuery = (searchTerm) => {
+  const query = `*[_type == "member" && memberNumber match '${searchTerm}*' || personalDetails.mpesaTransNumber match '${searchTerm}*' || product match '${searchTerm}*' || date match '${searchTerm}*' || branchName match '${searchTerm}*' || personalDetails.surName match '${searchTerm}*' || personalDetails.otherNames match '${searchTerm}*' || personalDetails.mobileNumber match '${searchTerm}*' || personalDetails.emailAddress match '${searchTerm}*']{
+    image{
+      asset->{
+        url
+      }
+    },
+    _id,
+    memberNumber,
+    date,
+    branchName,
+    personalDetails{
+      surName,
+      otherNames,
+      dob,
+      idPass,
+      pinNumber,
+      mobileNumber,
+      gender,
+      age,
+      religion,
+      maritalStatus,
+      spouseNumber,
+      nameSpouse,
+      postalAddress,
+      postalCode,
+      cityTown,
+      residentialAddress,
+      emailAddress,
+      rented,
+      owned,
+      landCareAgent,
+      occupationEmployer,
+      employerNumber,
+      businessLocation,
+      businessAge,
+      refereeName,
+      group,
+      communityPosition,
+      mpesaTransNumber,
+    },
+    kinInformation{
+      nameKin,
+      relationship,
+      residentialAddressKin,
+      postalAddressKin,
+      postalCodeKin,
+      cityTownKin,
+      mobileNumberKin,
+    },
+    groupInformation{
+      groupName,
+      groupLeaderName,
+      leaderNumber,
+      leaderIdNumber,
+    },
+    postedBy->{
+      _id,
+      userName,
+      image
+    },
+    save[]{
+      postedBy->{
+        _id,
+        userName,
+        image,
+      },
+    },
+    product,
+  }`;
+  return query;
+};
+
+export const userCreatedMembersQuery = (userId) => {
+  const query = `*[_type == 'member' && userId == '${userId}'] | order(_createdAt desc){
+    image{
+      asset->{
+        url
+      }
+    },
+    _id,
+    memberNumber,
+    date,
+    branchName,
+    personalDetails{
+      surName,
+      otherNames,
+      dob,
+      idPass,
+      pinNumber,
+      mobileNumber,
+      gender,
+      age,
+      religion,
+      maritalStatus,
+      spouseNumber,
+      nameSpouse,
+      postalAddress,
+      postalCode,
+      cityTown,
+      residentialAddress,
+      emailAddress,
+      rented,
+      owned,
+      landCareAgent,
+      occupationEmployer,
+      employerNumber,
+      businessLocation,
+      businessAge,
+      refereeName,
+      group,
+      communityPosition,
+      mpesaTransNumber,
+    },
+    kinInformation{
+      nameKin,
+      relationship,
+      residentialAddressKin,
+      postalAddressKin,
+      postalCodeKin,
+      cityTownKin,
+      mobileNumberKin,
+    },
+    groupInformation{
+      groupName,
+      groupLeaderName,
+      leaderNumber,
+      leaderIdNumber,
+    },
+    postedBy->{
+      _id,
+      userName,
+      image
+    },
+    save[]{
+      postedBy->{
+        _id,
+        userName,
+        image,
+      },
+    },
+    product,
+  }`;
+  return query;
+};
+
+export const userSavedMembersQuery = (userId) => {
+  const query = `*[_type == 'member' && '${userId}' in save[].userId ] | order(_createdAt desc){
+    image{
+      asset->{
+        url
+      }
+    },
+    _id,
+    memberNumber,
+    date,
+    branchName,
+    personalDetails{
+      surName,
+      otherNames,
+      dob,
+      idPass,
+      pinNumber,
+      mobileNumber,
+      gender,
+      age,
+      religion,
+      maritalStatus,
+      spouseNumber,
+      nameSpouse,
+      postalAddress,
+      postalCode,
+      cityTown,
+      residentialAddress,
+      emailAddress,
+      rented,
+      owned,
+      landCareAgent,
+      occupationEmployer,
+      employerNumber,
+      businessLocation,
+      businessAge,
+      refereeName,
+      group,
+      communityPosition,
+      mpesaTransNumber,
+    },
+    kinInformation{
+      nameKin,
+      relationship,
+      residentialAddressKin,
+      postalAddressKin,
+      postalCodeKin,
+      cityTownKin,
+      mobileNumberKin,
+    },
+    groupInformation{
+      groupName,
+      groupLeaderName,
+      leaderNumber,
+      leaderIdNumber,
+    },
+    postedBy->{
+      _id,
+      userName,
+      image
+    },
+    save[]{
+      postedBy->{
+        _id,
+        userName,
+        image,
+      },
+    },
+    product,
+  }`;
+  return query;
+};
