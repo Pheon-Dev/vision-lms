@@ -15,48 +15,58 @@ export default function Sidebar({ closeToggle, user }) {
     if (closeToggle) closeToggle(false);
   };
 
-  return (
-    <div className="flex flex-col justify-between bg-white h-full overflow-y-scroll min-w-110 hide-scrollbar">
-      <div className="flex flex-col">
-        <Link to="/" className="flex px-5 gap-2 my-6 pt-1 w-190 items-center" onClick={handleCloseSidebar}>
-          <img src={logo} alt="logo" className="w-1/2" />
-        </Link>
-        <div className="flex flex-col gap-5">
-          <NavLink to="/" className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)} onClick={handleCloseSidebar}>
-            {/* <RiBarChartGroupedLine /> */}
-            <img src="https://res.cloudinary.com/drf1wghco/image/upload/v1644167053/table_p78s8e.png" className="w-8 h-8 shadow-sm" />
-            Dashboard
-          </NavLink>
-          <h3 className="mt-2 px-5 text-base 2xl:text-xl">Product Line</h3>
-          {
-            products.slice(0, products.length - 0).map((product) => (
-              <NavLink
-                to={`/product/${product.name}`}
-                className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)}
-                onClick={handleCloseSidebar}
-                key={product.name}
-              >
-                <img src={product.image} className="w-8 h-8 shadow-sm" />
-                {product.name}
-              </NavLink>
-            ))
-          }
-        </div>
-      </div>
-      {user && (
-        <div>
-          <Link to={`user-profile/${user._id}`} className="flex my-5 mb-3 gap-2 p-2 items-center bg-white rounded-lg shadow-lg mx-3" onClick={handleCloseSidebar}>
-            <img src={user.image} className="w-10 h-10 rounded-full" alt="user-profile" />
-            <p>{user.userName}</p>
-            <IoIosArrowForward />
+  function renderSideBarOne() {
+    return (
+      <div className="flex flex-col justify-between bg-white h-full overflow-y-scroll min-w-110 hide-scrollbar">
+        <div className="flex flex-col">
+          <Link to="/" className="flex px-5 gap-2 my-6 pt-1 w-190 items-center" onClick={handleCloseSidebar}>
+            <img src={logo} alt="logo" className="w-1/2" />
           </Link>
-          {/* <Link to={"/login"} className="flex ml-9 mb-3 gap-2 p-2 items-center bg-white rounded-lg shadow-lg mx-3" onClick={handleCloseSidebar}> */}
-          {/*   <p>Sign Out</p> */}
-          {/*   <IoIosLogOut className="ml-9" /> */}
-          {/* </Link> */}
+          <div className="flex flex-col gap-5">
+            <NavLink to="/" className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)} onClick={handleCloseSidebar}>
+              {/* <RiBarChartGroupedLine /> */}
+              <img src="https://res.cloudinary.com/drf1wghco/image/upload/v1644167053/table_p78s8e.png" className="w-8 h-8 shadow-sm" />
+              Dashboard
+            </NavLink>
+            <h3 className="mt-2 px-5 text-base 2xl:text-xl">Product Line</h3>
+            {
+              products.slice(0, products.length - 0).map((product) => (
+                <NavLink
+                  to={`/product/${product.name}`}
+                  className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)}
+                  onClick={handleCloseSidebar}
+                  key={product.name}
+                >
+                  <img src={product.image} className="w-8 h-8 shadow-sm" />
+                  {product.name}
+                </NavLink>
+              ))
+            }
+          </div>
         </div>
-      )}
-    </div>
+        {user && (
+          <div>
+            <Link to={`user-profile/${user._id}`} className="flex my-5 mb-3 gap-2 p-2 items-center bg-white rounded-lg shadow-lg mx-3" onClick={handleCloseSidebar}>
+              <img src={user.image} className="w-10 h-10 rounded-full" alt="user-profile" />
+              <p>{user.userName}</p>
+              <IoIosArrowForward />
+            </Link>
+            {/* <Link to={"/login"} className="flex ml-9 mb-3 gap-2 p-2 items-center bg-white rounded-lg shadow-lg mx-3" onClick={handleCloseSidebar}> */}
+            {/*   <p>Sign Out</p> */}
+            {/*   <IoIosLogOut className="ml-9" /> */}
+            {/* </Link> */}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {/* {renderSideBar()} */}
+      {renderSideBarOne()}
+    </>
   )
+
 }
 

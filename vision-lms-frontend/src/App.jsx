@@ -14,8 +14,8 @@ function App() {
         : localStorage.clear();
 
     // if (!User) navigate('/')
-    // if (!User) navigate('/login');
-    if (!User) navigate('/authentication');
+    if (!User) navigate('/login');
+    // if (!User) navigate('/authentication');
   }, []);
 
   return (

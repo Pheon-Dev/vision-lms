@@ -2,7 +2,7 @@ import React from "react";
 
 export default function CreateGroup() {
   return (
-    <div className="mt-5 w-full">
+    <div className="ml-5 mt-5 w-full">
       <div className="flex flex-col justify-center w-full flex-wrap -mx-3 mb-6">
         <div className="flex flex-col uppercase text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold p-2">Group Data From</div>
         <div className="flex flex-wrap -mx-3 mb-6">
@@ -45,7 +45,7 @@ export default function CreateGroup() {
       {/*     <p className="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p> */}
       {/*   </div> */}
       {/* </div> */}
-      <div className="flex flex-wrap -mx-3 mb-2">
+      <div className="flex flex-wrap -mx-5 mb-2">
         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
           <label className="block tracking-wide text-xs mb-2">
             <span className="uppercase text-gray-700 font-bold text-md">Role</span>
