@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { client } from "../client";
-import { feedQuery, searchQuery } from "../utils/data";
+import { client } from "../../client";
+import { feedQuery, searchQuery } from "../../utils/data";
 
 import Layout from './Layout';
 import Spinner from './Spinner';

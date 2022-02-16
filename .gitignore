@@ -1,3 +1,4 @@
 vision-lms-frontend/node_modules
 vision-lms-backend/node_modules
 vision-lms-frontend/.env
+vision-ams-frontend/src/firebase.js

@@ -1,6 +1,6 @@
 import React from "react";
 import Masonry from 'react-masonry-css';
-import Member from './Member';
+import { Member } from '../Member';
 
 const Layout = ({ members }) => {
   return (

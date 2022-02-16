@@ -3,10 +3,9 @@ import { MdDownloadForOffline } from 'react-icons/md';
 import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
-import { client, urlFor } from '../client';
-import Layout from './Layout';
-import { memberDetailMoreMemberQuery, memberDetailQuery } from '../utils/data';
-import Spinner from './Spinner';
+import { client, urlFor } from '../../client';
+import { memberDetailMoreMemberQuery, memberDetailQuery } from '../../utils/data';
+import { Spinner, Layout } from '../Components'
 
 export default function MemberDetail({ user }) {
   const { memberId } = useParams();

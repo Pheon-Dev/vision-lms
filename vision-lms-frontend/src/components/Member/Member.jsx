@@ -5,9 +5,9 @@ import { MdDownloadForOffline } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 
-import { products, feedQuery } from '../utils/data'
+import { products, feedQuery } from '../../utils/data'
 
-import { client, urlFor } from "../client";
+import { client, urlFor } from "../../client";
 
 export default function MemberTest({ member }) {
   const [postHovered, setPostHovered] = useState(false);
@@ -61,7 +61,7 @@ export default function MemberTest({ member }) {
       <tr
         onMouseEnter={() => setPostHovered(true)}
         onMouseLeave={() => setPostHovered(false)}
-        onClick={() => navigate(`/member-detail/${_id}`)}
+        onClick={() => navigate(`/member/member-detail/${_id}`)}
         key={member._id}
         className="hover:bg-gray-300 cursor-pointer"
       >

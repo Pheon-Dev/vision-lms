@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from './Layout';
-import { client } from '../client';
-import { feedQuery, searchQuery } from "../utils/data";
+import { client } from '../../client';
+import { feedQuery, searchQuery } from "../../utils/data";
 import Spinner from './Spinner';
 
 export default function Search({ searchTerm }) {

@@ -3,8 +3,8 @@ import { AiOutlineLogout } from 'react-icons/ai';
 import { useParams, useNavigate } from 'react-router-dom';
 import { GoogleLogout } from 'react-google-login';
 
-import { userCreatedMembersQuery, userQuery, userSavedMembersQuery } from '../utils/data';
-import { client } from '../client';
+import { userCreatedMembersQuery, userQuery, userSavedMembersQuery } from '../../utils/data';
+import { client } from '../../client';
 import Layout from './Layout';
 import Spinner from './Spinner';
 

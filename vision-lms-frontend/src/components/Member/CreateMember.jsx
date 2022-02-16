@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { v4 as uuidv4 } from 'uuid';
 
-import { products } from '../utils/data';
-import { client } from '../client';
-import Spinner from './Spinner';
+import { products } from '../../utils/data';
+import { client } from '../../client';
+import { Spinner } from '../Components';
 
 export default function CreateMember({ user }) {
   const [title, setTitle] = useState('');

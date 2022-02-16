@@ -1,29 +1,42 @@
 import { useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
+import { AuthProvider } from "./contexts/AuthContext";
+
 import { Dashboard, Members } from './container';
-import { Login, Auth } from './components';
+import { Login, SignIn, SignUp, UpdateProfile, ForgotPassword, PrivateRoute, PageNotFound } from './components/Auth';
 
 function App() {
   const navigate = useNavigate();
 
+  // if (!currentUser) navigate('/sign-in');
+  // console.log(currentUser.email)
   useEffect(() => {
     const User =
       localStorage.getItem('user') !== 'undefined'
         ? JSON.parse(localStorage.getItem('user'))
         : localStorage.clear();
 
-    // if (!User) navigate('/')
-    if (!User) navigate('/login');
+    // console.log(User);
+    // if (!User) navigate('/login')
+    if (!User) navigate('/sign-in')
     // if (!User) navigate('/authentication');
   }, []);
+  // if (!currentUser) navigate('/sign-in');
 
   return (
-    <Routes>
-      <Route path="login" element={<Login />} />
-      <Route path="authentication" element={<Auth />} />
-      <Route path="/*" element={<Dashboard />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        {/* <Route path="/" element={<Dashboard />} /> */}
+        <Route path="/*" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/update-profile" element={<UpdateProfile />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </AuthProvider>
   );
 }
 

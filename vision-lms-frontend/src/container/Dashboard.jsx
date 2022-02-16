@@ -2,19 +2,24 @@ import React, { useEffect, useRef, useState } from 'react';
 import { HiMenu } from 'react-icons/hi';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { Link, Route, Routes } from 'react-router-dom';
+import { Feed, Navbar, Search } from '../components/Components';
 
-import { Sidebar, UserProfile } from '../components';
+import { Sidebar, UserProfile, ChannelBar, ContentContainer } from '../components/Components';
 import { userQuery } from '../utils/data';
 import { client } from '../client';
 import Members from './Members';
+import Groups from './Groups';
+import Loans from './Loans';
 import logo from '../assets/logo.svg';
 // import logo from '../assets/vision-black.png';
 
 export default function Dashboard() {
   const [toggleSidebar, setToggleSidebar] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [user, setUser] = useState();
   const scrollRef = useRef(null);
 
+  // console.log(localStorage)
   const userInfo =
     localStorage.getItem('user') !== 'undefined'
       ? JSON.parse(localStorage.getItem('user'))
@@ -36,6 +41,8 @@ export default function Dashboard() {
     <div className="flex bg-gray-50 md:flex-row flex-col h-screen transition-height duration-75 ease-out">
       <div className="hidden md:flex h-screen flex-initial">
         <Sidebar user={user && user} />
+        <ChannelBar user={user && user} />
+        {/* <ContentContainer /> */}
       </div>
       <div className="flex md:hidden flex-row">
         <div className="p-2 w-full flex flex-row justify-between items-center shadow-md">
@@ -44,6 +51,7 @@ export default function Dashboard() {
             className="cursor-pointer"
             onClick={() => setToggleSidebar(true)}
           />
+          <div className='text-xl font-bold'>Vision LMS</div>
           {/* <Link to="/"> */}
           {/*   <img src={logo} alt="logo" className="w-1/5" /> */}
           {/* </Link> */}
@@ -64,14 +72,27 @@ export default function Dashboard() {
                 onClick={() => setToggleSidebar(false)}
               />
             </div>
-            <Sidebar closeToggle={setToggleSidebar} user={user && user} />
+            <span closeToggle={setToggleSidebar} user={user && user}>
+              <Sidebar />
+              <ChannelBar />
+            </span>
+            {/* <Sidebar closeToggle={setToggleSidebar} user={user && user} /> */}
+            {/* <ChannelBar closeToggle={setToggleSidebar} user={user && user} /> */}
           </div>
         )}
       </div>
       <div className="pb-2 flex-1 h-screen overflow-y-scroll" ref={scrollRef}>
+        <div className="bg-gray-50">
+          <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} user={user && user} />
+        </div>
         <Routes>
+          <Route path="/" element={<Feed />} />
+          <Route path="/product/:productId" element={<Feed />} />
           <Route path="/user-profile/:userId" element={<UserProfile />} />
-          <Route path="/*" element={<Members user={user && user} />} />
+          <Route path="/search" element={<Search searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
+          <Route path="/member/*" element={<Members user={user && user} />} />
+          <Route path="/group/*" element={<Groups user={user && user} />} />
+          <Route path="/loan/*" element={<Loans user={user && user} />} />
         </Routes>
       </div>
     </div>
