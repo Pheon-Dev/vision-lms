@@ -1,14 +1,14 @@
 export const products = [
   {
-    name: 'daily',
+    name: 'Daily',
     image: 'https://res.cloudinary.com/drf1wghco/image/upload/v1644166500/daily_jijybe.png',
   },
   {
-    name: 'weekly',
+    name: 'Weekly',
     image: 'https://res.cloudinary.com/drf1wghco/image/upload/v1644166606/weekly_w48qfv.png',
   },
   {
-    name: 'monthly',
+    name: 'Monthly',
     image: 'https://res.cloudinary.com/drf1wghco/image/upload/v1644166605/monthly_x4blw3.png',
   },
 ];

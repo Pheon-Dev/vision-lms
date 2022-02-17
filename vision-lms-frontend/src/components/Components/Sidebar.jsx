@@ -7,8 +7,10 @@ import { useAuth } from "../../contexts/AuthContext"
 import logo from "../../assets/vision-black.png";
 // import logo from '../assets/logo.svg';
 import { products } from "../../utils/data";
-import { BsFilePlus, BsGearFill, BsHouse, BsPerson, BsPersonPlus, BsPlus } from "react-icons/bs";
-import { AiFillHome } from "react-icons/ai";
+import { BsFileArrowUp, BsFileBarGraph, BsFileBreak, BsFileCheck, BsFilePlus, BsGear, BsGearFill, BsHouse, BsPerson, BsPersonPlus, BsPlus, BsSearch } from "react-icons/bs";
+import { AiFillHome, AiOutlineHome, AiOutlineUsergroupAdd } from "react-icons/ai";
+import { HiOutlineDocumentReport } from "react-icons/hi";
+import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 
 const isNotActiveStyle = 'flex hover:bg-gray-300 items-center px-5 gap-3 text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize';
 const isActiveStyle = 'flex items-center bg-gray-300 px-5 gap-3 font-extrabold border-r-2 border-black transition-all duration-200 ease-in-out capitalize';
@@ -105,25 +107,60 @@ export default function Sidebar({ closeToggle, user }) {
       <div className="fixed hide-scrollbar top-0 left-0 h-screen w-16 flex flex-col bg-white dark:bg-gray-900 shadow-lg justify-between">
         <div>
           <Link to="/">
-            <SideBarIcon icon={<AiFillHome size="28" />} text="Home" />
+            <SideBarIcon icon={<AiOutlineHome size="28" />} text="Home" />
           </Link>
           <Divider />
+          <Link to="/loan/create-loan">
+            <SideBarIcon icon={<BsPlus size="28" />} text="New Loan" />
+          </Link>
           <Link to="/member/create-member">
-            <SideBarIcon icon={<BsPlus size="28" />} text="Add Member" />
+            <SideBarIcon icon={<BsPersonPlus size="28" />} text="New Member" />
           </Link>
           <Link to="/group/create-group">
-            <SideBarIcon icon={<BsPersonPlus size="28" />} text="New Group" />
+            <SideBarIcon icon={<AiOutlineUsergroupAdd size="28" />} text="New Group" />
           </Link>
           <Link to="/loan/new-product">
             <SideBarIcon icon={<BsFilePlus size="28" />} text="New Product" />
           </Link>
         </div>
-
+        <Divider />
         <div>
-          <Divider />
-          <Link to="/">
-            <SideBarIcon icon={<BsGearFill size="28" />} text="Settings" />
+          {/* <Link to="/loan/maintenance"> */}
+          {/*   <SideBarIcon icon={<BsFileBreak size="28" />} text="Maintenance" /> */}
+          {/* </Link> */}
+          {/* <Link to="/"> */}
+          {/*   <SideBarIcon icon={<BsFileArrowUp size="28" />} text="Report" /> */}
+          {/* </Link> */}
+          <Link to="/loan/approvals">
+            <SideBarIcon icon={<BsFileCheck size="28" />} text="Approvals" />
           </Link>
+          <Link to="/report/general-report">
+            <SideBarIcon icon={<BsFileBarGraph size="28" />} text="Report" />
+          </Link>
+        </div>
+        <Divider />
+        <div>
+          <Link to="/loan/disbursements">
+            <SideBarIcon icon={<GiPayMoney size="28" />} text="Disbursements" />
+          </Link>
+          <Link to="/loan/payments">
+            <SideBarIcon icon={<GiReceiveMoney size="28" />} text="Payments" />
+          </Link>
+          {/* <Link to="/"> */}
+          {/*   <SideBarIcon icon={<BsFileArrowUp size="28" />} text="Report" /> */}
+          {/* </Link> */}
+          {/* <Link to="/"> */}
+          {/*   <SideBarIcon icon={<BsFileCheck size="28" />} text="Report" /> */}
+          {/* </Link> */}
+          {/* <Link to="/"> */}
+          {/*   <SideBarIcon icon={<BsFileBarGraph size="28" />} text="Report" /> */}
+          {/* </Link> */}
+        </div>
+        <Divider />
+        <div>
+          {/* <Link to="/"> */}
+          {/*   <SideBarIcon icon={<BsGear size="28" />} text="Settings" /> */}
+          {/* </Link> */}
           {user && (
 
             <Link to={`user-profile/${user._id}`} onClick={handleCloseSidebar}>

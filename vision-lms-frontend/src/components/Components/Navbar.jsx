@@ -3,6 +3,7 @@ import { IoMdAdd, IoMdSearch } from 'react-icons/io';
 import { FaHashtag, FaMoon, FaRegBell, FaSearch, FaSun, FaUserCircle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import useDarkMode from '../../hooks/useDarkMode';
+import logo from '../../assets/logo.svg'
 
 export default function Navbar({ searchTerm, setSearchTerm, user }) {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ export default function Navbar({ searchTerm, setSearchTerm, user }) {
   }
   function Search() {
     return (
-      <div className="search">
+      <div className="search w-1/2">
         {/* <IoMdSearch fontSize={21} className="ml-1" /> */}
         <input
           type="text"
@@ -88,7 +89,7 @@ export default function Navbar({ searchTerm, setSearchTerm, user }) {
     )
   };
   const HashtagIcon = () => <FaHashtag size='20' className='title-hashtag' />;
-  const Title = () => <h5 className='title-text'>Vision LMS</h5>;
+  const Title = () => <img src={logo} className='h-12 w-12 title-text' />;
 
   function renderNavBar() {
     return (

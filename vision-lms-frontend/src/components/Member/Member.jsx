@@ -9,7 +9,7 @@ import { products, feedQuery } from '../../utils/data'
 
 import { client, urlFor } from "../../client";
 
-export default function MemberTest({ member }) {
+export default function Member({ member }) {
   const [postHovered, setPostHovered] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
   const navigate = useNavigate();

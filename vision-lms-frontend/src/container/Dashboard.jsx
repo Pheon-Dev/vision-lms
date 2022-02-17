@@ -7,6 +7,7 @@ import { Feed, Navbar, Search } from '../components/Components';
 import { Sidebar, UserProfile, ChannelBar, ContentContainer } from '../components/Components';
 import { userQuery } from '../utils/data';
 import { client } from '../client';
+import Reports from './Reports';
 import Members from './Members';
 import Groups from './Groups';
 import Loans from './Loans';
@@ -93,6 +94,7 @@ export default function Dashboard() {
           <Route path="/member/*" element={<Members user={user && user} />} />
           <Route path="/group/*" element={<Groups user={user && user} />} />
           <Route path="/loan/*" element={<Loans user={user && user} />} />
+          <Route path="/report/*" element={<Reports user={user && user} />} />
         </Routes>
       </div>
     </div>
