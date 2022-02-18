@@ -16,6 +16,7 @@ export default function Loans({ user }) {
           <Route path="/products" element={<Products searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
           <Route path="/preview" element={<Preview searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
           <Route path="/maintenance" element={<Maintenance searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
+          <Route path="/loans" element={<Maintenance searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
           <Route path="/maintenance/:memberId" element={<MaintenanceDetail user={user && user} />} />
           <Route path="/submissions" element={<Submissions searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
           <Route path="/disbursements" element={<Disbursements searchTerm={searchTerm} setSearchTerm={searchTerm} />} />

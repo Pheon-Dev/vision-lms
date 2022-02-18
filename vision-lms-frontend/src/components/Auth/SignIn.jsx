@@ -86,19 +86,19 @@ export default function SignIn() {
                     <button disabled={loading} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
                       Sign In
                     </button>
-                    <div className="flex mt-3 ml-9 items-end justify-end">
-                      <p className="text-gray-500 mr-1 text-xs italic">No Account?</p>
-                      <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/sign-up">
-                        Sign Up
-                      </a>
-                    </div>
+                    {/* <div className="flex mt-3 ml-9 items-end justify-end"> */}
+                    {/*   <p className="text-gray-500 mr-1 text-xs italic">No Account?</p> */}
+                    {/*   <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/sign-up"> */}
+                    {/*     Sign Up */}
+                    {/*   </a> */}
+                    {/* </div> */}
                   </div>
-                  <div className="flex mt-3 justify-end mr-3 items-center w-full">
-                    <p className="text-gray-500 mr-2 text-xs italic">Forgot Password?</p>
-                    <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/forgot-password">
-                      Reset
-                    </a>
-                  </div>
+                  {/* <div className="flex mt-3 justify-end mr-3 items-center w-full"> */}
+                  {/*   <p className="text-gray-500 mr-2 text-xs italic">Forgot Password?</p> */}
+                  {/*   <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/forgot-password"> */}
+                  {/*     Reset */}
+                  {/*   </a> */}
+                  {/* </div> */}
                 </div>
               </form>
             </div>
