@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdDownloadForOffline } from 'react-icons/md';
+import { AiFillDelete } from "react-icons/ai"
 import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,6 +19,7 @@ export default function MaintenanceDetail({ user }) {
   const [interestRate, setInterestRate] = useState(0);
   const [period, setPeriod] = useState("");
 
+  const [collateralList, setCollateralList] = useState([{ collateral: "", value: "" }]);
   const fetchMemberDetails = () => {
     let query = memberDetailQuery(memberId);
 
@@ -60,6 +62,37 @@ export default function MaintenanceDetail({ user }) {
       <Spinner message="Loading Member Details ..." />
     );
   };
+  const handleCollateralChange = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...collateralList];
+    list[index][name] = value;
+    setCollateralList(list);
+  };
+
+  const handleCollateralAdd = () => {
+    setCollateralList([...collateralList, { collateral: "", value: "" }]);
+  };
+
+  const handleCollateralDelete = (index) => {
+    const list = [...collateralList];
+    list.splice(index, 1);
+    setCollateralList(list);
+  };
+
+  const handleCollateralSave = () => {
+    if (collateralList) {
+      const doc = {
+        collateralList,
+      };
+      // client.create(doc).then(() => {
+      //   navigate('/');
+      // });
+      console.log(doc)
+      // navigate('/loan/preview/:loanId')
+    }
+    // navigate("/create-group")
+  };
+
 
   function productOne(principal, rate, time) {
     return (principal * (1 + ((rate / 100) * (time / 365))));
@@ -82,11 +115,11 @@ export default function MaintenanceDetail({ user }) {
               <div className="image overflow-hidden">
                 <img className="h-auto w-1/4 mx-auto" src={(memberDetail?.image && urlFor(memberDetail?.image).url())} alt="member-profile-pic" />
               </div>
-              <div className="text-gray-900 font-bold text-xl leading-8 my-1">{memberDetail?.personalDetails.surName} {memberDetail?.personalDetails.otherNames}</div>
               {/* <div className="text-gray-700 font-lg text-semibold leading-6">{memberDetail?.memberNumber}</div> */}
               {/* <div className="text-sm text-gray-500 hover:text-gray-700 leading-6">{memberDetail?.branchName}</div> */}
               {/* <div className="text-gray-900 font-bold text-xl leading-8 my-1 mt-5">Personal Details</div> */}
-              <ul className="bg-gray-100 text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+              <div className="text-gray-900 flex justify-center font-bold text-xl leading-8 my-1">{memberDetail?.personalDetails.surName} {memberDetail?.personalDetails.otherNames}</div>
+              <ul className="bg-gray-100 border border-gray-300 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                 <li className="flex items-center py-3">
                   <span>
                     Member ID
@@ -121,7 +154,7 @@ export default function MaintenanceDetail({ user }) {
             </div>
             <div className="my-4"></div>
             <div className="bg-white p-3 hover:shadow">
-              <div className="flex items-center space-x-3 font-semibold text-gray-900 text-xl leading-8">
+              <div className="flex items-center flex justify-center space-x-3 font-semibold text-gray-900 text-xl leading-8">
                 <span className="text-cyan-500">
                   <svg className="h-5 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -147,7 +180,67 @@ export default function MaintenanceDetail({ user }) {
             {/* Loan */}
 
             <div className="flex flex-col uppercase text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold mt-5 p-2">Loan Maintenance</div>
-            <div className="flex flex-wrap mt-8 -mx-3 mb-6">
+            {/* <div className="flex flex-wrap -mx-3 mb-2"> */}
+            {/*   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> */}
+            {/*       Location */}
+            {/*     </label> */}
+            {/*     <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="text" placeholder="Group Location ..." /> */}
+            {/*   </div> */}
+            {/*   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> */}
+            {/*       Area */}
+            {/*     </label> */}
+            {/*     <div className="relative"> */}
+            {/*       <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state"> */}
+            {/*         <option>Annex</option> */}
+            {/*         <option>Langas</option> */}
+            {/*         <option>West Indies</option> */}
+            {/*       </select> */}
+            {/*       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"> */}
+            {/*         <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg> */}
+            {/*       </div> */}
+            {/*     </div> */}
+            {/*   </div> */}
+            {/*   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> */}
+            {/*       Zip */}
+            {/*     </label> */}
+            {/*     <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="90210" /> */}
+            {/*   </div> */}
+            {/* </div> */}
+            <div className="flex flex-wrap mr-auto ml-auto mt-8 -mx-3 mb-6">
+              <div className="w-full md:w-1/2 px-3">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  Select Product
+                </label>
+                <div className="relative">
+                  <select className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                    <option>Okoa Hustle</option>
+                    <option>Skuma Biz</option>
+                    <option>Other ...</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full md:w-1/2 px-3">
+                <label className="block tracking-wide text-xs mb-2">
+                  <span className="uppercase text-gray-700 font-bold text-md">Loan Tenure </span>
+                  {/* <span className="text-red-500 italic">*</span> */}
+                </label>
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="loanTenure"
+                  type="number"
+                  placeholder="Loan Tenure ..."
+                // value={loanTenure}
+                // onChange={(e) => setLoanTenure(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
               <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                 <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
                   Amount (KShs)
@@ -164,87 +257,250 @@ export default function MaintenanceDetail({ user }) {
               </div>
               <div className="w-full md:w-1/3 px-3">
                 <label className="block tracking-wide text-xs mb-2">
-                  <span className="uppercase text-gray-700 font-bold text-md">Interest Rate (%)</span>
-                  {/* <span className="text-red-500 italic">*</span> */}
-                </label>
-                <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  id="interestRate"
-                  type="number"
-                  placeholder="Interest Rate ..."
-                  value={interestRate}
-                  onChange={(e) => setInterestRate(e.target.value)}
-                />
-              </div>
-              <div className="w-full md:w-1/3 px-3">
-                <label className="block tracking-wide text-xs mb-2">
-                  <span className="uppercase text-gray-700 font-bold text-md">Loan Tenure </span>
+                  <span className="uppercase text-gray-700 font-bold text-md">Start Date</span>
                   {/* <span className="text-red-500 italic">*</span> */}
                 </label>
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                   id="loanTenure"
-                  type="number"
-                  placeholder="Loan Tenure ..."
-                  value={loanTenure}
-                  onChange={(e) => setLoanTenure(e.target.value)}
+                  type="date"
+                // placeholder="Loan Tenure ..."
+                // value={loanTenure}
+                // onChange={(e) => setLoanTenure(e.target.value)}
+                />
+              </div>
+              <div className="w-full md:w-1/3 px-3">
+                <label className="block tracking-wide text-xs mb-2">
+                  <span className="uppercase text-gray-700 font-bold text-md">End Date</span>
+                </label>
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="interestRate"
+                  type="date"
+                // placeholder="Interest Rate ..."
+                // value={interestRate}
+                // onChange={(e) => setInterestRate(e.target.value)}
                 />
               </div>
             </div>
-            <div className="flex">
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md">
-                  Product One
-                </label>
-              </div>
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-gray-700 text-l font-bold mb-2">
-                  in {loanTenure} {loanTenure == 1 ? "Day" : "Days"}
-                </label>
-              </div>
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md">
-                  KShs. {productOne((principalAmount), (interestRate), (loanTenure)).toFixed(2)}
-                </label>
-              </div>
+            <div className="bg-white flex flex-wrap p-3">
+              <ul className="bg-gray-100 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Interest Rate
+                  </span>
+                  <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    12 %
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Interest Amount
+                  </span>
+                  <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    KSHs. 600
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Installments
+                  </span>
+                  <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    KSHs. 800
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Processing Fee
+                  </span>
+                  <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    KSHs. 200
+                  </span>
+                </li>
+              </ul>
+              <ul className="bg-gray-100 border-l-2 border-gray-300 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Repayment Cycle
+                  </span>
+                  <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    Daily
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Grace Period
+                  </span>
+                  <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    1 Day
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Arrears
+                  </span>
+                  <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    KSHs. 00
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Penalty
+                  </span>
+                  <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    KSHs. 00
+                  </span>
+                </li>
+              </ul>
             </div>
-            <div className="flex">
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md">
-                  Product Two
-                </label>
+            {/* <div className="flex"> */}
+            {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block uppercase tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
+            {/*       Interest Rate */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block uppercase tracking-wide text-gray-700 text-l font-bold mb-2"> */}
+            {/*       Interest Amount */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block uppercase tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
+            {/*       Installments */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/* </div> */}
+            {/* <div className="flex"> */}
+            {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
+            {/*       12 % */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block tracking-wide text-gray-700 text-l font-bold mb-2"> */}
+            {/*       KSHs. 600 */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
+            {/*       KSHs. 800 */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/* </div> */}
+
+            {/* <div className="flex"> */}
+            {/*   <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
+            {/*       Product Three */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/*   <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block tracking-wide text-gray-700 text-l font-bold mb-2"> */}
+            {/*       in {loanTenure} {loanTenure == 1 ? "Month" : "Months"} */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/*   <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0"> */}
+            {/*     <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
+            {/*       KShs. {productThree((principalAmount), (interestRate), (loanTenure)).toFixed(2)} */}
+            {/*     </label> */}
+            {/*   </div> */}
+            {/* </div> */}
+            <div className="flex flex-col justify-center w-full flex-wrap -mx-3 mt-9">
+              <div className="flex flex-col uppercase text-xl text-gray-700 mb-5 items-center sm:text-xl font-semibold p-2">Collateral List</div>
+              <div className="flex w-full md:w-1/2 mb-6 mr-auto ml-auto flex-wrap -mx-3">
+                <div className="w-full md:w-1/2 px-3 md:mb-0">
+                  <label className="block tracking-wide text-xs">
+                    <span className="uppercase text-gray-700 font-bold text-md">Collateral Items</span>
+                    {/* <span className="text-red-500 italic">*</span> */}
+                  </label>
+                </div>
+                <div className="w-full md:w-1/2 px-3">
+                  <label className="block tracking-wide text-xs">
+                    <span className="uppercase text-gray-700 font-bold text-md">Value (KSHs)</span>
+                    {/* <span className="text-red-500 italic">*</span> */}
+                  </label>
+                </div>
               </div>
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-gray-700 text-l font-bold mb-2">
-                  in {loanTenure} {loanTenure == 1 ? "Week" : "Weeks"}
-                </label>
-              </div>
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md">
-                  KShs. {productTwo((principalAmount), (interestRate), (loanTenure)).toFixed(2)}
-                </label>
-              </div>
+              {collateralList.map((singleItem, index) => (
+                <div key={index} >
+                  <div className="flex flex-wrap w-full mb-2">
+                    {/* <div className="px-3 mb-6 md:mb-0 md:w-1/4"> */}
+                    {/*   <label className="appearance-none block text-gray-700 font-bold rounded py-3 leading-tight focus:outline-none bg-white"> */}
+                    {/*     {index + 1} */}
+                    {/*   </label> */}
+                    {/* </div> */}
+                    <span className="font-bold flex justify-end w-1/6 text-gray-700 p-2 mt-1">{index + 1}.</span>
+                    <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
+                      <input
+                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                        id="collateralName"
+                        type="text"
+                        name="collateral"
+                        placeholder="Item Name ..."
+                        value={singleItem.collateral}
+                        onChange={(e) => handleCollateralChange(e, index)}
+                        required
+                      />
+                    </div>
+                    <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
+                      <input
+                        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                        id="idNumber"
+                        type="number"
+                        name="value"
+                        placeholder="Value ..."
+                        value={singleItem.value}
+                        onChange={(e) => handleCollateralChange(e, index)}
+                        required
+                      />
+                    </div>
+                    {collateralList.length !== 1 && (
+                      <span className="w-full md:w-1/6">
+                        <button
+                          onClick={() => handleCollateralDelete(index)}
+                          type="button"
+                          // className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                          className="text-red-400 hover:text-red-600 p-2 mt-1 font-bold"
+                        >
+                          <AiFillDelete />
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                  {collateralList.length - 1 === index && collateralList.length < 10 && (
+                    <div className="flex justify-center items-center">
+                      {/* <button */}
+                      {/*   onClick={handleCollateralSave} */}
+                      {/*   type="button" */}
+                      {/*   className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+                      {/* > */}
+                      {/*   « Save » */}
+                      {/* </button> */}
+                      <button
+                        onClick={handleCollateralAdd}
+                        type="button"
+                        className="bg-blue-500 m-2 w-1/3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      >
+                        Add a Item +
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-            <div className="flex">
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md">
-                  Product Three
-                </label>
-              </div>
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-gray-700 text-l font-bold mb-2">
-                  in {loanTenure} {loanTenure == 1 ? "Month" : "Months"}
-                </label>
-              </div>
-              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md">
-                  KShs. {productThree((principalAmount), (interestRate), (loanTenure)).toFixed(2)}
-                </label>
-              </div>
-            </div>
+            <div className="mb-6" />
           </div>
         </>
       )}
+      <div className="flex mt-8 justify-end items-center ml-8">
+        <button
+          // onClick={handleMemberSave}
+          type="button"
+          className="bg-green-500 w-1/3 md:w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Preview →
+        </button>
+      </div>
       {/* <pre>{JSON.stringify(members, undefined, 2)}</pre> */}
     </div>
   )

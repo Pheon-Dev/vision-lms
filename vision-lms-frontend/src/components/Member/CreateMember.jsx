@@ -215,14 +215,16 @@ export default function CreateMember({ user }) {
           <div className="w-full md:w-1/3 px-3">
             <label className="block tracking-wide text-xs mb-2">
               <span className="uppercase text-gray-700 font-bold text-md">Member Number</span>
-              <span className="text-red-500 italic">*{memNum.split('-')[0]}</span>
+              {/* <span className="text-red-500 italic">*{memNum.split('-')[0]}</span> */}
+              <span className="text-red-500 italic">*</span>
             </label>
             <input
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="memberNumber"
               type="number"
-              placeholder="Member Number ..."
-              value={memberNumber == memNum.split('-')[0]}
+              // placeholder="Member Number ..."
+              placeholder={`DC-${memNum.split('-')[1]}`}
+              value={memberNumber}
               onChange={(e) => setMemberNumber(e.target.value)}
             />
           </div>

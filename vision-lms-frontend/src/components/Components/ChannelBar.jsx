@@ -5,20 +5,20 @@ import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
 import { products } from "../../utils/data";
 
 const members = [
-  // {
-  //   name: 'New Member',
-  //   url: '/member/create-member',
-  // },
+  {
+    name: 'New Member',
+    url: '/member/create-member',
+  },
   {
     name: 'All Members',
     url: '/',
   }
 ];
 const groups = [
-  // {
-  //   name: 'New Group',
-  //   url: '/group/create-group',
-  // },
+  {
+    name: 'New Group',
+    url: '/group/create-group',
+  },
   {
     name: 'All Groups',
     url: '/group/groups',
@@ -34,20 +34,20 @@ const loans = [
     name: 'All Loans',
     url: '/loan/loans',
   },
-  // {
-  //   name: 'Pending',
-  //   url: '/loan/pending',
-  // },
+  {
+    name: 'Pending',
+    url: '/loan/pending',
+  },
   {
     name: 'Maintenance',
     url: '/loan/maintenance',
   },
   {
-    name: 'Approved',
+    name: 'Approvals',
     url: '/loan/approvals',
   },
   {
-    name: 'Disbursed',
+    name: 'Disbursements',
     url: '/loan/disbursements',
   },
 ]
@@ -56,18 +56,18 @@ const reports = [
     name: 'General',
     url: '/report/general-report'
   },
-  {
-    name: 'Monthly',
-    url: '/report/monthly-report'
-  },
-  {
-    name: 'Quarterly',
-    url: '/report/qurterly-report'
-  },
-  {
-    name: 'Yearly',
-    url: '/report/yearly-report'
-  },
+  // {
+  //   name: 'Monthly',
+  //   url: '/report/monthly-report'
+  // },
+  // {
+  //   name: 'Quarterly',
+  //   url: '/report/qurterly-report'
+  // },
+  // {
+  //   name: 'Yearly',
+  //   url: '/report/yearly-report'
+  // },
 ];
 
 export default function ChannelBar({ user }) {
@@ -220,6 +220,15 @@ const ProductsDropdown = () => {
         </h5>
         {!expanded ? <BsBookmark size='12' className='text-gray-500 text-opacity-80 my-auto ml-auto' /> : <BsBookmarkFill size='12' className='text-gray-500 text-opacity-80 my-auto ml-auto' />}
         {/* <BsBookmarks size='12' className='text-cyan-500 text-opacity-80 my-auto ml-auto' /> */}
+      </div>
+      <div className="dropdown-selection">
+        <BsArrowRight size='8' className="text-gray-400 m-2" />
+        <NavLink
+          to="/loan/new-product"
+          className="dropdown-selection-text"
+        >
+          New Product
+        </NavLink>
       </div>
       {expanded && products.slice(0, products.length - 0).map((product) => (
         <div key={product.name} className="dropdown-selection">
