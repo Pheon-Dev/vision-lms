@@ -14,12 +14,39 @@ export default function MaintenanceDetail({ user }) {
   const [members, setMembers] = useState();
   const [memberDetail, setMemberDetail] = useState();
   const [comment, setComment] = useState('');
-  const [principalAmount, setPrincipalAmount] = useState(0);
-  const [loanTenure, setLoanTenure] = useState(0);
-  const [interestRate, setInterestRate] = useState(0);
-  const [period, setPeriod] = useState("");
 
-  const [collateralList, setCollateralList] = useState([{ collateral: "", value: "" }]);
+  const [productDetail, setProductDetail] = useState("");
+  const [principalAmount, setPrincipalAmount] = useState("");
+  const [loanTenure, setLoanTenure] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [interestRate, setInterestRate] = useState("");
+  const [interestAmount, setInterestAmount] = useState("");
+  const [installments, setInstallments] = useState("");
+  const [processingFee, setProcessingFee] = useState("");
+  const [repaymentCycle, setRepaymentCycle] = useState("");
+  const [gracePeriod, setGracePeriod] = useState("");
+  const [arrears, setArrears] = useState("");
+  const [penaltyAmount, setPenaltyAmount] = useState("");
+
+  const [collateralList, setCollateralList] = useState([{ collateral: "", value: "", image: "" }]);
+  const [guarantor, setGuarantor] = useState([{ fullName: "", idNumber: "", phoneNumber: "", relationship: "" }]);
+
+  useEffect(() => {
+    const query = '*[_type == "newProduct"]';
+    // const brandsQuery = '*[_type == "brands"]';
+
+    client.fetch(query).then((data) => {
+      setProductDetail(data);
+    });
+
+    // client.fetch(brandsQuery).then((data) => {
+    //   setBrands(data);
+    // });
+  }, []);
+
+  console.log(productDetail)
+
   const fetchMemberDetails = () => {
     let query = memberDetailQuery(memberId);
 
@@ -106,9 +133,8 @@ export default function MaintenanceDetail({ user }) {
 
   return (
     <div>
-      {memberDetail && (
+      {memberDetail && productDetail && (
         <>
-
           <div className="w-full md:w-full md:mx-2">
             <div className="bg-white p-3">
               {/* <div className="bg-white p-3 border-t-4 border-cyan-400"> */}
@@ -215,10 +241,15 @@ export default function MaintenanceDetail({ user }) {
                   Select Product
                 </label>
                 <div className="relative">
+                  {/* <select> */}
+                  {/*   {productDetail?.map((item) => ( */}
+                  {/*     <option key={item.productId}>{item.productName}</option> */}
+                  {/*   ))} */}
+                  {/* </select> */}
                   <select className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                    <option>Okoa Hustle</option>
-                    <option>Skuma Biz</option>
-                    <option>Other ...</option>
+                    {productDetail?.map((item) => (
+                      <option key={item._createdAt}>{item.productName}</option>
+                    ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>

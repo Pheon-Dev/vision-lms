@@ -1,6 +1,6 @@
 export default {
   name: 'member',
-  title: 'Member Registration',
+  title: 'Members',
   type: 'document',
   fields: [
     {

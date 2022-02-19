@@ -1,6 +1,6 @@
 export default {
   name: 'user',
-  title: 'User',
+  title: 'Users',
   type: 'document',
   fields: [
     {

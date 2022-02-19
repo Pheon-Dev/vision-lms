@@ -8,6 +8,10 @@ import member from './member'
 import comment from './comment'
 import postedBy from './postedBy'
 import save from './save'
+import newProduct from './newProduct'
+import maintenance from './maintenance'
+import collateral from './collateral'
+import guarantor from './guarantor'
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -18,6 +22,10 @@ export default createSchema({
   types: schemaTypes.concat([
     user,
     member,
+    newProduct,
+    maintenance,
+    collateral,
+    guarantor,
     comment,
     postedBy,
     save,
