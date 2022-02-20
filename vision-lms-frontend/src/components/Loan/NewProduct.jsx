@@ -178,7 +178,7 @@ export default function NewProduct() {
         , product
       };
       client.create(doc).then(() => {
-        console.alert('Success')
+        alert('Success')
         navigate('/loan/maintenance')
       });
     } else {

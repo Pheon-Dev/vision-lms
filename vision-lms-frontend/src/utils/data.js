@@ -13,6 +13,27 @@ export const products = [
   },
 ];
 
+export const productDetailQuery = (productType) => {
+  const query = `*[_type == "newProduct" && productName == "${productType}"]{
+        productName
+        , productId
+        , productCode
+        , minimumRange
+        , maximumRange
+        , interestRate
+        , interestFrequency
+        , penaltyPercentage
+        , penaltyPercentageChoice
+        , tenureMaximum
+        , tenureMaximumChoice
+        , repaymentCycle
+        , processingFee
+        , gracePeriod
+        , product
+  }`;
+  return query;
+};
+
 export const memberDetailQuery = (memberId) => {
   const query = `*[_type == "member" && _id == "${memberId}"]{
     image{
