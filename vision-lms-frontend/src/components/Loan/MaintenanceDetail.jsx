@@ -9,7 +9,7 @@ import { memberDetailMoreMemberQuery, productDetailQuery, memberDetailQuery } fr
 import { Spinner } from '../Components'
 
 
-export default function MaintenanceDetail({ user }) {
+export default function MaintenanceDetail() {
   const { memberId } = useParams();
   const navigate = useNavigate();
   const [members, setMembers] = useState();
@@ -32,6 +32,7 @@ export default function MaintenanceDetail({ user }) {
   const [arrears, setArrears] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
+  const [addingCollaterals, setAddingCollaterals] = useState(false);
   const [collateralList, setCollateralList] = useState([{ collateral: "", value: "", image: "" }]);
   const [guarantor, setGuarantor] = useState([{ fullName: "", idNumber: "", phoneNumber: "", relationship: "" }]);
 
@@ -62,11 +63,6 @@ export default function MaintenanceDetail({ user }) {
     fetchProductDetails();
   }, [productType]);
 
-  // const productsList = productDetail[0].productName;
-  console.log(productDetails)
-
-  // const productsList = productDetail[0].productName;
-  // console.log(productsList)
 
   const fetchMemberDetails = () => {
     let query = memberDetailQuery(memberId);
@@ -95,7 +91,7 @@ export default function MaintenanceDetail({ user }) {
       client
         .patch(memberId)
         .setIfMissing({ comments: [] })
-        .insert('after', 'comments[-1', [{ comment, _key: uuidv4(), postedBy: { _type: 'postedBy', _ref: user._id } }])
+        .insert('after', 'comments[-1]', [{ comment, _key: uuidv4(), postedBy: { _type: 'postedBy', _ref: user._id } }])
         .commit()
         .then(() => {
           fetchMemberDetails();
@@ -136,14 +132,15 @@ export default function MaintenanceDetail({ user }) {
       //   navigate('/');
       // });
       console.log(doc)
-      // navigate('/loan/preview/:loanId')
     }
     // navigate("/create-group")
   };
+  console.log(memberId)
   const handleLoanSave = () => {
     if (
       productType
       && principalAmount
+      && memberId
       && startDate
       && endDate
       && loanTenure
@@ -152,6 +149,7 @@ export default function MaintenanceDetail({ user }) {
         _type: 'maintenance',
         productType
         , principalAmount
+        , memberId
         , startDate
         , endDate
         , loanTenure
@@ -159,7 +157,7 @@ export default function MaintenanceDetail({ user }) {
       client.create(doc).then(() => {
         alert('Success')
         console.log(doc)
-        navigate(`/loan/preview/${endDate}`)
+        navigate('/loan/')
       });
       // } else {
       //   setFields(true);
@@ -170,17 +168,67 @@ export default function MaintenanceDetail({ user }) {
       //     2000,
       //   );
     }
+    // if (
+    //   collateralList
+    // ) {
+    //   setAddingCollaterals(true);
+
+    //   client
+    //     .patch(memberId)
+    //     .setIfMissing({ collateral: [], value: [], image: [] })
+    //     .insert('after', 'collateral[-1]', [{ collateral, value, image, _key: uuidv4() }])
+    //     .commit()
+    //     .then(() => {
+    //       setCollateralList('')
+    //       setAddingCollaterals(false);
+    //     })
+    //   // const doc = {
+    //   //   _type: 'maintenance',
+    //   //   collateral,
+    //   //   // value,
+    //   // };
+    //   // client.create(doc).then(() => {
+    //   //   console.log(doc)
+    //   //   alert('Success')
+    //   //   // navigate(`/loan/preview/${endDate}`)
+    //   // });
+    //   // } else {
+    //   //   setFields(true);
+    //   //   setTimeout(
+    //   //     () => {
+    //   //       setFields(false);
+    //   //     },
+    //   //     2000,
+    //   //   );
+    // }
   }
 
+  function renderInterestAmount(rate, principal) {
+    return ((rate * principal) / 100).toFixed(0);
+  }
 
-  function productOne(principal, rate, time) {
-    return (principal * (1 + ((rate / 100) * (time / 365))));
+  function renderInstallmentsAmount(rate, principal, tenure) {
+    let principalAmount = ((rate * principal) / 100);
+    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0);
   }
-  function productTwo(principal, rate, time) {
-    return (principal * (1 + ((rate / 100) * (time / 52))));
+
+  function renderProcessingFeeAmount(feePercentage, principal) {
+    return ((feePercentage / 100) * principal).toFixed(0);
   }
-  function productThree(principal, rate, time) {
-    return (principal * (1 + ((rate / 100) * (time / 12))));
+
+  function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
+    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0);
+  }
+
+  function renderArrearsAmount(feePercentage, rate, principal, tenure) {
+    // function renderArrearsAmount(penaltyPercentage, feePercentage, rate, principal, tenure) {
+    let arrearsAmount = 0;
+    let principalAmount = ((rate * principal) / 100);
+    let installmentsAmount = ((Number(principalAmount) + Number(principal)) / tenure);
+    let processingFeeAmount = ((feePercentage / 100) * Number(principal));
+    // let penalty = (((((rate * principal) / 100) + principal) / tenure) * (penaltyPercentage / 100));
+    arrearsAmount = (Number(installmentsAmount) * Number(tenure) + Number(processingFeeAmount)).toFixed(0);
+    return arrearsAmount;
   }
 
   return (
@@ -198,15 +246,15 @@ export default function MaintenanceDetail({ user }) {
               {/* <div className="text-gray-900 font-bold text-xl leading-8 my-1 mt-5">Personal Details</div> */}
               <div className="text-gray-900 flex justify-center font-bold text-xl leading-8 my-1">{memberDetail?.personalDetails.surName} {memberDetail?.personalDetails.otherNames}</div>
               <ul className="bg-gray-100 border border-gray-300 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+                {/* <li className="flex items-center py-3"> */}
+                {/*   <span> */}
+                {/*     Member ID */}
+                {/*   </span> */}
+                {/*   <span className="ml-auto">{memberDetail?._id}</span> */}
+                {/* </li> */}
                 <li className="flex items-center py-3">
                   <span>
-                    Member ID
-                  </span>
-                  <span className="ml-auto">{memberDetail?._id}</span>
-                </li>
-                <li className="flex items-center py-3">
-                  <span>
-                    Date
+                    Date Registered
                   </span>
                   <span className="ml-auto">{memberDetail?.date}</span>
                 </li>
@@ -343,8 +391,8 @@ export default function MaintenanceDetail({ user }) {
                 <option
                   className="text-gray-500"
                 >Select a Product ...</option>
-                {productList?.map((item) => (
-                  <option key={item._createdAt}>{item.productName}</option>
+                {productList?.map((item, index) => (
+                  <option key={index.toString()}>{item.productName}</option>
                 ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -368,82 +416,92 @@ export default function MaintenanceDetail({ user }) {
           </div>
         </div>
 
-        {productDetails?.map((item) => (
+        {productDetails?.map((item, index) => (
           <>
-        <div key={item._id} className="bg-white flex flex-wrap p-3">
-          <ul className="bg-gray-100 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
-            <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-              <span className="tracking-wide text-l text-gray-700 font-bold">
-                Interest Rate
-              </span>
-              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                {item?.interestRate}
-              </span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-              <span className="tracking-wide text-l text-gray-700 font-bold">
-                Interest Amount
-              </span>
-              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                KSHs. {(item?.interestRate * principalAmount) / 100}
-              </span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-              <span className="tracking-wide text-l text-gray-700 font-bold">
-                Installments
-              </span>
-              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                KSHs. {((((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)}
-              </span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-              <span className="tracking-wide text-l text-gray-700 font-bold">
-                Processing Fee
-              </span>
-              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                KSHs. {(item?.processingFee / 100) * principalAmount}
-              </span>
-            </li>
-          </ul>
-          <ul className="bg-gray-100 border-l-2 border-gray-300 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
-            <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-              <span className="tracking-wide text-l text-gray-700 font-bold">
-                Repayment Cycle
-              </span>
-              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                {item?.repaymentCycle}
-              </span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-              <span className="tracking-wide text-l text-gray-700 font-bold">
-                Grace Period
-              </span>
-              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                {item?.gracePeriod}
-              </span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-              <span className="tracking-wide text-l text-gray-700 font-bold">
-                Arrears
-              </span>
-              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                KSHs. 00
-              </span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-              <span className="tracking-wide text-l text-gray-700 font-bold">
-                Penalty
-              </span>
-              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                KSHs. {((item?.penaltyPercentage / 100) * (((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)}
-              </span>
-            </li>
-          </ul>
-          <div>
-
-            Total Loan to be repaid : KSHs. {(((((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30) * loanTenure).toFixed(0)}
-          </div>
-        </div>
+            <div key={index.toString()} className="bg-white flex flex-wrap p-3">
+              <ul className="bg-gray-100 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Interest Rate
+                  </span>
+                  <span value={interestRate} onChange={(e) => setInterestRate(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {item?.interestRate}
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Interest Amount
+                  </span>
+                  <span value={interestAmount} onChange={(e) => setInterestAmount(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {/* KSHs. {(item?.interestRate * principalAmount) / 100} */}
+                    KSHs. {renderInterestAmount(item?.interestRate, principalAmount)}
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Installments
+                  </span>
+                  <span value={installments} onChange={(e) => setInstallments(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {/* KSHs. {((((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)} */}
+                    KSHs. {renderInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Processing Fee
+                  </span>
+                  <span value={processingFee} onChange={(e) => setProcessingFee(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {/* KSHs. {(item?.processingFee / 100) * principalAmount} */}
+                    KSHs. {renderProcessingFeeAmount(item?.processingFee, principalAmount)}
+                  </span>
+                </li>
+              </ul>
+              <ul className="bg-gray-100 border-l-2 border-gray-300 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Repayment Cycle
+                  </span>
+                  <span value={repaymentCycle} onChange={(e) => setRepaymentCycle(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {item?.repaymentCycle}
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Grace Period
+                  </span>
+                  <span value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {item?.gracePeriod}
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Arrears
+                  </span>
+                  <span value={arrears} onChange={(e) => setArrears(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {/* KSHs. 00 */}
+                    {/* KSHs. {renderArrearsAmount(item?.penaltyPercentage, item?.processingFee, item?.interestRate, principalAmount, loanTenure)} */}
+                    KSHs. {renderArrearsAmount(item?.processingFee, item?.interestRate, principalAmount, loanTenure)}
+                  </span>
+                </li>
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Penalty
+                  </span>
+                  <span value={penaltyAmount} onChange={(e) => setPenaltyAmount(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {/* KSHs. {((item?.penaltyPercentage / 100) * (((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)} */}
+                    KSHs. {renderPenaltyAmount(item?.penaltyPercentage, item?.interestRate, principalAmount, loanTenure)}
+                  </span>
+                </li>
+              </ul>
+            </div>
+            {/* <div className="flex w-full md:w-4/6 ml-auto mr-auto justify-center items-center hover:bg-gray-300 p-2 rounded-lg py-3"> */}
+            {/*   <span className="tracking-wide text-xl text-gray-700 font-bold"> */}
+            {/*     Total */}
+            {/*   </span> */}
+            {/*   <span className="tracking-wide text-gray-500 font-semibold text-xl ml-auto"> */}
+            {/*     KSHs. {((item?.penaltyPercentage / 100) * (((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)} */}
+            {/*   </span> */}
+            {/* </div> */}
           </>
         ))}
         {/* <div className="flex"> */}
@@ -498,6 +556,7 @@ export default function MaintenanceDetail({ user }) {
         {/*     </label> */}
         {/*   </div> */}
         {/* </div> */}
+        <div className="flex flex-col uppercase text-xl text-gray-700 mb-5 items-center sm:text-xl font-semibold p-2">Guarantors add new or select</div>
         <div className="flex flex-col justify-center w-full flex-wrap -mx-3 mt-9">
           <div className="flex flex-col uppercase text-xl text-gray-700 mb-5 items-center sm:text-xl font-semibold p-2">Collateral List</div>
           <div className="flex w-full md:w-1/2 mb-6 mr-auto ml-auto flex-wrap -mx-3">
@@ -584,9 +643,9 @@ export default function MaintenanceDetail({ user }) {
             <button
               onClick={handleLoanSave}
               type="button"
-              className="bg-green-500 w-1/2 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Preview →
+              Save
             </button>
           </div>
         </div>

@@ -26,21 +26,21 @@ const groups = [
 ];
 
 const loans = [
-  // {
-  //   name: 'New Loan',
-  //   url: '/loan/create-loan',
-  // },
   {
-    name: 'All Loans',
-    url: '/loan/loans',
+    name: 'New Loan',
+    url: '/loan/create-loan',
   },
   {
-    name: 'Pending',
-    url: '/loan/pending',
+    name: 'All Loans',
+    url: '/loan',
   },
   {
     name: 'Maintenance',
     url: '/loan/maintenance',
+  },
+  {
+    name: 'Pending',
+    url: '/loan/pending',
   },
   {
     name: 'Approvals',

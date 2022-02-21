@@ -5,22 +5,23 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import { client, urlFor } from '../../client';
-import { products, memberDetailMoreMemberQuery, memberDetailQuery, feedQuery, searchQuery } from '../../utils/data';
+import { products, memberDetailMoreMemberQuery, memberDetailQuery, loanFeedQuery, searchQuery } from '../../utils/data';
 import { Spinner, Layout } from '../Components';
 
-export default function Maintenance() {
+
+export default function LoansFeed() {
   const [postHovered, setPostHovered] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
-  const { memberId } = useParams();
+  // const { memberId } = useParams();
   const navigate = useNavigate();
   const [members, setMembers] = useState();
   const [loading, setLoading] = useState(false);
-  const { productId } = useParams();
+  const { loanId } = useParams();
 
   useEffect(() => {
-    if (productId) {
+    if (loanId) {
       setLoading(true);
-      const query = searchQuery(productId);
+      const query = searchQuery(loanId);
       client.fetch(query).then((data) => {
         setMembers(data);
         setLoading(false);
@@ -28,14 +29,15 @@ export default function Maintenance() {
     } else {
       setLoading(true);
 
-      client.fetch(feedQuery).then((data) => {
+      client.fetch(loanFeedQuery).then((data) => {
         setMembers(data);
         setLoading(false);
       });
     }
-  }, [productId]);
+  }, [loanId]);
+  // console.log(members)
 
-  const ideaName = productId || 'all';
+  const ideaName = loanId || 'all';
   if (loading) {
     return (
       <Spinner message={`We are populating ${ideaName} loan data to your feed!`} />
@@ -66,8 +68,8 @@ export default function Maintenance() {
               <img className="h-10 w-10 rounded-full" src={(urlFor(image).width(250).url())} alt="member-profile" />
             </div>
             <div className="ml-4">
-              <div className="text-sm font-medium text-gray-900">{personalDetails?.surName} {personalDetails?.otherNames}</div>
-              <div className="text-sm text-gray-500">{personalDetails?.emailAddress}</div>
+              <div className="text-sm font-medium text-gray-900">{member.endDate}</div>
+              {/* <div className="text-sm text-gray-500">{personalDetails?.emailAddress}</div> */}
             </div>
             {/* <div className="ml-4"> */}
             {/*   <div className="text-sm font-medium text-gray-900">{postedBy?.userName}</div> */}
@@ -104,11 +106,11 @@ export default function Maintenance() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">product</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">principal</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">start</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">end</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">tenure</th>
                   <th scope="col" className="relative px-6 py-3">
                     <span className="sr-only">Edit</span>
                   </th>
@@ -119,7 +121,7 @@ export default function Maintenance() {
                   <tr
                     onMouseEnter={() => setPostHovered(true)}
                     onMouseLeave={() => setPostHovered(false)}
-                    onClick={() => navigate(`/loan/maintenance/${member._id}`)}
+                    onClick={() => navigate(`/loan/preview/${member._id}`)}
                     key={member._id}
                     className="hover:bg-gray-300 cursor-pointer"
                   >
@@ -129,24 +131,24 @@ export default function Maintenance() {
                           {/* <img className="h-10 w-10 rounded-full" src={(urlFor(image).width(250).url())} alt="member-profile" /> */}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{member.personalDetails?.surName} {member.personalDetails?.otherNames}</div>
-                          <div className="text-sm text-gray-500">{member.personalDetails?.emailAddress}</div>
+                          <div className="text-sm font-medium text-gray-900">{member.productType}</div>
+                          <div className="text-sm font-medium text-gray-900">{member.memberId}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{member.memberNumber}</div>
+                      <div className="text-sm text-gray-900">{member.principalAmount}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{member.product}</div>
+                      <div className="text-sm text-gray-900">{member.startDate}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-
-                      <span className={(member.personalDetails?.mpesaTransNumber ? isPaidStyle : isNotPaidStyle)} >
-                        {member.personalDetails?.mpesaTransNumber}
-                      </span>
+                      <div className="text-sm text-gray-900">{member.endDate}</div>
+                      {/* <span className={(member.personalDetails?.mpesaTransNumber ? isPaidStyle : isNotPaidStyle)} > */}
+                      {/*   {member.personalDetails?.mpesaTransNumber} */}
+                      {/* </span> */}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.personalDetails?.mobileNumber}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.loanTenure}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <a href="#" className="text-indigo-600 hover:text-indigo-900">
                         Edit
@@ -163,4 +165,6 @@ export default function Maintenance() {
     </div>
   )
 }
+
+
 

@@ -13,6 +13,60 @@ export const products = [
   },
 ];
 
+export const loanFeedQuery = `*[_type == "maintenance"] | order(_createdAt desc) {
+      _id,
+      loanId,
+      productType,
+      principalAmount,
+      memberId,
+      startDate,
+      endDate,
+      loanTenure,
+    } `;
+
+// , memberNames
+// , interestRate
+// , interestAmount
+// , installments
+// , processingFee
+// , repaymentCycle
+// , gracePeriod
+// , arrears
+// , penaltyAmount
+export const loanDetailQuery = (loanId) => {
+  const query = `*[_type == "maintenance" && _id == "${loanId}"]{
+      _id,
+      productType
+      , memberId
+      , principalAmount
+      , loanTenure
+      , startDate
+      , endDate
+  }`;
+  return query;
+};
+
+export const memberLoanDetailQuery = (memberId) => {
+  const query = `*[_type == "member" && _id == "${memberId}"]{
+      _id,
+      productType
+      , memberId
+      , principalAmount
+      , loanTenure
+      , startDate
+      , endDate
+      , interestRate
+      , interestAmount
+      , installments
+      , processingFee
+      , repaymentCycle
+      , gracePeriod
+      , arrears
+      , penaltyAmount
+  }`;
+  return query;
+};
+
 export const productDetailQuery = (productType) => {
   const query = `*[_type == "newProduct" && productName == "${productType}"]{
         productName

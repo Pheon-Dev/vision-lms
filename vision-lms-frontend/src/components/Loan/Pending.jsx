@@ -1,16 +1,17 @@
 import React from "react";
 
-export default function Submissions() {
+export default function Pending() {
   return (
     <>
       <div className="font-bold flex justify-center w-full text-3xl">
-        Submitted Loans List Page
+        Pending Loans Page
       </div>
       <br />
       <div className="font-bold flex justify-center w-full text-xl">
-        Shows a list of loans submitted for loan creation.
+        Shows a list of maintained loans ready for approval.
       </div>
     </>
   )
 }
+
 
