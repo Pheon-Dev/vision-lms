@@ -27,8 +27,6 @@ export default function NewProduct() {
   const pid = uuidv4().split('-')[0]
   const pcode = uuidv4().split('-')[1]
 
-  console.log(repaymentCycle)
-
   const frequencies = [
     {
       id: "0",
@@ -48,7 +46,7 @@ export default function NewProduct() {
     {
       id: "2",
       label: "Per Annum",
-      value: "year",
+      value: "annum",
     },
   ];
 
@@ -84,17 +82,17 @@ export default function NewProduct() {
     {
       id: "1",
       label: "Per Installment",
-      value: "per",
+      value: "perInstallment",
     },
     {
       id: "2",
       label: "Last Installment",
-      value: "last",
+      value: "lastInstallment",
     },
     {
       id: "3",
       label: "% of Principal",
-      value: "principal",
+      value: "percentageOfPrincipal",
     },
   ];
 
@@ -173,7 +171,6 @@ export default function NewProduct() {
       && penaltyTypeChoice
       && penaltyPaymentChoice
       && tenureMaximum
-      && tenureMaximumChoice
       && repaymentCycle
       && processingFee
       && gracePeriod
@@ -191,10 +188,38 @@ export default function NewProduct() {
         , penaltyTypeChoice
         , penaltyPaymentChoice
         , tenureMaximum
-        , tenureMaximumChoice
         , repaymentCycle
         , processingFee
         , gracePeriod
+        , product
+      };
+      client.create(doc).then(() => {
+        alert('Success')
+        navigate('/loan/maintenance')
+      });
+    } else if
+      (productName
+      && productCode
+      && minimumRange
+      && maximumRange
+      && interestRate
+      && interestFrequency
+      && tenureMaximum
+      && repaymentCycle
+      && processingFee
+      && product
+    ) {
+      const doc = {
+        _type: 'newProduct',
+        productName
+        , productCode
+        , minimumRange
+        , maximumRange
+        , interestRate
+        , interestFrequency
+        , tenureMaximum
+        , repaymentCycle
+        , processingFee
         , product
       };
       client.create(doc).then(() => {
@@ -344,70 +369,81 @@ export default function NewProduct() {
                 onChange={(e) => setProcessingFee(e.target.value)}
               />
             </div>
-            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                Grace Period
-              </label>
-              <div className="relative">
-                <select value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                  {grace.map((option) => (
-                    <option key={option.id} value={option.value}>{option?.label}</option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+            {repaymentCycle === 'daily' && (
+              <>
+                <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                    Grace Period
+                  </label>
+                  <div className="relative">
+                    <select value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                      {grace.map((option) => (
+                        <option key={option.id} value={option.value}>{option?.label}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </div>
-          <div className="flex flex-wrap mt-8 -mx-3 mb-6">
-            <div className="w-full md:w-1/3 px-3">
-              <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                Penalty Rate
-                {/* <span className="text-red-500 italic">*</span> */}
-              </label>
-              <input
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                id="penalty"
-                type="number"
-                placeholder="Penalty ..."
-                value={penalty}
-                onChange={(e) => setPenalty(e.target.value)}
-              />
-            </div>
-            <div className="w-full md:w-1/3 px-3">
-              <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                Penalty Type
-                {/* <span className="text-red-500 italic">*</span> */}
-              </label>
-              <div className="relative">
-                <select value={penaltyTypeChoice} onChange={(e) => setPenaltyTypeChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                  {penalties.map((option) => (
-                    <option key={option.id} value={option.value}>{option?.label}</option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+          {repaymentCycle === 'daily' && (
+            <>
+
+              <div className="flex flex-wrap mt-8 -mx-3 mb-6">
+                <div className="w-full md:w-1/3 px-3">
+                  <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                    Penalty Rate
+                    <span className="text-red-500 italic">
+                      {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null}
+                    </span>
+                  </label>
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    id="penalty"
+                    type="number"
+                    placeholder="Penalty ..."
+                    value={penalty}
+                    onChange={(e) => setPenalty(e.target.value)}
+                  />
+                </div>
+                <div className="w-full md:w-1/3 px-3">
+                  <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                    Penalty Type
+                    {/* <span className="text-red-500 italic">*</span> */}
+                  </label>
+                  <div className="relative">
+                    <select value={penaltyTypeChoice} onChange={(e) => setPenaltyTypeChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                      {penalties.map((option) => (
+                        <option key={option.id} value={option.value}>{option?.label}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full md:w-1/3 px-3">
+                  <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                    Penalty Payment
+                    {/* <span className="text-red-500 italic">*</span> */}
+                  </label>
+                  <div className="relative">
+                    <select value={penaltyPaymentChoice} onChange={(e) => setPenaltyPaymentChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                      {payments.map((option) => (
+                        <option key={option.id} value={option.value}>{option?.label}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="w-full md:w-1/3 px-3">
-              <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                Penalty Payment
-                {/* <span className="text-red-500 italic">*</span> */}
-              </label>
-              <div className="relative">
-                <select value={penaltyPaymentChoice} onChange={(e) => setPenaltyPaymentChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                  {payments.map((option) => (
-                    <option key={option.id} value={option.value}>{option?.label}</option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                </div>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
           <div className="flex flex-wrap mt-8 -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2">
@@ -425,19 +461,24 @@ export default function NewProduct() {
             </div>
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2">
-                <span className="uppercase text-gray-700 font-bold text-md">Tenure Choices</span>
+                {/* <span className="uppercase text-gray-700 font-bold text-md">Tenure Choices</span> */}
                 {/* <span className="text-red-500 italic">*</span> */}
               </label>
-              <div className="relative">
-                <select value={tenureMaximumChoice} onChange={(e) => setTenureMaximumChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                  {tenures.map((option) => (
-                    <option key={option.id} value={option.value}>{option?.label}</option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                </div>
-              </div>
+              <span
+                className="appearance-none block w-full bg-gray-200 font-semibold text-xl text-gray-700 border py-3 mt-5 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              >
+                {repaymentCycle === 'daily' ? tenures[1].value : repaymentCycle === 'weekly' ? tenures[2].value : tenures[3].value}
+              </span>
+              {/* <div className="relative"> */}
+              {/*   <select value={tenureMaximumChoice} onChange={(e) => setTenureMaximumChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state"> */}
+              {/*     {tenures.map((option) => ( */}
+              {/*       <option key={option.id} value={option.value}>{option?.label}</option> */}
+              {/*     ))} */}
+              {/*   </select> */}
+              {/*   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"> */}
+              {/*     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg> */}
+              {/*   </div> */}
+              {/* </div> */}
             </div>
           </div>
         </div>

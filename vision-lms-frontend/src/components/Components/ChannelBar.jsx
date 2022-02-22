@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, NavLink } from 'react-router-dom';
 import { BsArrowRight, BsBookmark, BsBookmarkFill, BsBookmarks, BsBookmarksFill, BsHash } from 'react-icons/bs';
 import { FaChevronDown, FaChevronRight, FaPlus } from 'react-icons/fa';
-import { products } from "../../utils/data";
+// import { products } from "../../utils/data";
 
 const members = [
   {
@@ -22,6 +22,16 @@ const groups = [
   {
     name: 'All Groups',
     url: '/group/groups',
+  }
+];
+const products = [
+  {
+    name: 'New Product',
+    url: '/loan/new-product',
+  },
+  {
+    name: 'All Products',
+    url: '/loan/products',
   }
 ];
 
@@ -221,29 +231,11 @@ const ProductsDropdown = () => {
         {!expanded ? <BsBookmark size='12' className='text-gray-500 text-opacity-80 my-auto ml-auto' /> : <BsBookmarkFill size='12' className='text-gray-500 text-opacity-80 my-auto ml-auto' />}
         {/* <BsBookmarks size='12' className='text-cyan-500 text-opacity-80 my-auto ml-auto' /> */}
       </div>
-      <div className="dropdown-selection">
-        <BsArrowRight size='8' className="text-gray-400 m-2" />
-        <NavLink
-          to="/loan/new-product"
-          className="dropdown-selection-text"
-        >
-          New Product
-        </NavLink>
-      </div>
-      <div className="dropdown-selection">
-        <BsArrowRight size='8' className="text-gray-400 m-2" />
-        <NavLink
-          to="/loan/products"
-          className="dropdown-selection-text"
-        >
-          All Product
-        </NavLink>
-      </div>
       {expanded && products.slice(0, products.length - 0).map((product) => (
         <div key={product.name} className="dropdown-selection">
           <BsArrowRight size='8' className="text-gray-400 m-2" />
           <NavLink
-            to={`/product/${product.name}`}
+            to={product.url}
             className="dropdown-selection-text"
           >
             {product.name}
@@ -253,6 +245,54 @@ const ProductsDropdown = () => {
     </div>
   );
 };
+
+// const ProductsDropdown = () => {
+//   const [expanded, setExpanded] = useState(true);
+
+//   return (
+//     <div className='dropdown mr-2'>
+//       <div onClick={() => setExpanded(!expanded)} className='dropdown-header'>
+//         <ChevronIcon expanded={expanded} />
+//         <h5
+//           className={expanded ? 'dropdown-header-text-selected' : 'dropdown-header-text'}
+//         >
+//           Products
+//         </h5>
+//         {!expanded ? <BsBookmark size='12' className='text-gray-500 text-opacity-80 my-auto ml-auto' /> : <BsBookmarkFill size='12' className='text-gray-500 text-opacity-80 my-auto ml-auto' />}
+//         {/* <BsBookmarks size='12' className='text-cyan-500 text-opacity-80 my-auto ml-auto' /> */}
+//       </div>
+//       <div className="dropdown-selection">
+//         <BsArrowRight size='8' className="text-gray-400 m-2" />
+//         <NavLink
+//           to="/loan/new-product"
+//           className="dropdown-selection-text"
+//         >
+//           New Product
+//         </NavLink>
+//       </div>
+//       <div className="dropdown-selection">
+//         <BsArrowRight size='8' className="text-gray-400 m-2" />
+//         <NavLink
+//           to="/loan/products"
+//           className="dropdown-selection-text"
+//         >
+//           All Product
+//         </NavLink>
+//       </div>
+//       {expanded && products.slice(0, products.length - 0).map((product) => (
+//         <div key={product.name} className="dropdown-selection">
+//           <BsArrowRight size='8' className="text-gray-400 m-2" />
+//           <NavLink
+//             to={`/product/${product.name}`}
+//             className="dropdown-selection-text"
+//           >
+//             {product.name}
+//           </NavLink>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
 
 const Dropdown = ({ header, selections }) => {
   const [expanded, setExpanded] = useState(true);
