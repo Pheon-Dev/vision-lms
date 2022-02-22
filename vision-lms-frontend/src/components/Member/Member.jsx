@@ -9,14 +9,14 @@ import { products, feedQuery } from '../../utils/data'
 
 import { client, urlFor } from "../../client";
 
-export default function Member({ member }) {
+export default function MemberTest({ member }) {
   const [postHovered, setPostHovered] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
   const navigate = useNavigate();
 
   const { postedBy, image, _id, personalDetails } = member;
 
-  const user = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
+  // const user = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
 
   const deleteMember = (id) => {
     client.delete(id).then(() => {
@@ -24,34 +24,34 @@ export default function Member({ member }) {
     });
   };
 
-  let alreadySaved = member?.save?.filter((item) => item?.postedBy?._id === user?.googleId);
+  // let alreadySaved = member?.save?.filter((item) => item?.postedBy?._id === user?.googleId);
 
-  alreadySaved = alreadySaved?.length > 0 ? alreadySaved : [];
+  // alreadySaved = alreadySaved?.length > 0 ? alreadySaved : [];
 
   // console.log(personalDetails)
 
-  const saveMember = (id) => {
-    if (alreadySaved?.length === 0) {
-      setSavingPost(true);
+  // const saveMember = (id) => {
+  //   if (alreadySaved?.length === 0) {
+  //     setSavingPost(true);
 
-      client
-        .patch(id)
-        .setIfMissing({ save: [] })
-        .insert('after', 'save[-1]', [{
-          _key: uuidv4(),
-          userId: user?.googleId,
-          postedBy: {
-            _type: 'postedBy',
-            _ref: user?.googleId,
-          },
-        }])
-        .commit()
-        .then(() => {
-          window.location.reload();
-          setSavingPost(false);
-        });
-    }
-  };
+  //     client
+  //       .patch(id)
+  //       .setIfMissing({ save: [] })
+  //       .insert('after', 'save[-1]', [{
+  //         _key: uuidv4(),
+  //         userId: user?.googleId,
+  //         postedBy: {
+  //           _type: 'postedBy',
+  //           _ref: user?.googleId,
+  //         },
+  //       }])
+  //       .commit()
+  //       .then(() => {
+  //         window.location.reload();
+  //         setSavingPost(false);
+  //       });
+  //   }
+  // };
 
   let isPaidStyle = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
   let isNotPaidStyle = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-red-800"
@@ -67,9 +67,9 @@ export default function Member({ member }) {
       >
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="flex items-center">
-            <div className="flex-shrink-0 h-10 w-10">
-              <img className="h-10 w-10 rounded-full" src={(urlFor(image).width(250).url())} alt="member-profile" />
-            </div>
+            {/* <div className="flex-shrink-0 h-10 w-10"> */}
+            {/*   <img className="h-10 w-10 rounded-full" src={(urlFor(image).width(250).url())} alt="member-profile" /> */}
+            {/* </div> */}
             <div className="ml-4">
               <div className="text-sm font-medium text-gray-900">{personalDetails?.surName} {personalDetails?.otherNames}</div>
               <div className="text-sm text-gray-500">{personalDetails?.emailAddress}</div>

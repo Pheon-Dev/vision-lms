@@ -4,6 +4,16 @@ export default {
   type: 'document',
   fields: [
     {
+      name: 'memberSurName',
+      title: 'Member Surame',
+      type: 'string',
+    },
+    {
+      name: 'memberOtherNames',
+      title: 'Member Other Names',
+      type: 'string',
+    },
+    {
       name: 'productType',
       title: 'Product Type',
       type: 'string',
@@ -23,11 +33,6 @@ export default {
       title: 'Member ID',
       type: 'string',
     },
-    // {
-    //   name: 'memberNames',
-    //   title: 'Member Names',
-    //   type: 'string',
-    // },
     {
       name: 'loanTenure',
       title: 'Loan Tenure',

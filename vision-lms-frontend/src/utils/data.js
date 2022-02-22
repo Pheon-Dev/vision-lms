@@ -19,20 +19,13 @@ export const loanFeedQuery = `*[_type == "maintenance"] | order(_createdAt desc)
       productType,
       principalAmount,
       memberId,
+      memberSurName,
+      memberOtherNames,
       startDate,
       endDate,
       loanTenure,
     } `;
 
-// , memberNames
-// , interestRate
-// , interestAmount
-// , installments
-// , processingFee
-// , repaymentCycle
-// , gracePeriod
-// , arrears
-// , penaltyAmount
 export const loanDetailQuery = (loanId) => {
   const query = `*[_type == "maintenance" && _id == "${loanId}"]{
       _id,

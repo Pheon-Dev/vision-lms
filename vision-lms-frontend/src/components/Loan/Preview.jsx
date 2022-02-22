@@ -12,58 +12,41 @@ export default function Preview() {
   const { loanId } = useParams();
   // const { memberId } = useParams();
   const [loanDetails, setLoanDetails] = useState("");
+  const [memberDetails, setMemberDetails] = useState("");
+  const [memberIdentity, setMemberIdentity] = useState("");
   const [productDetails, setProductDetails] = useState("");
+  const [productType, setProductType] = useState("");
   const [loading, setLoading] = useState(false);
 
   const fetchLoanDetails = () => {
     const query = loanDetailQuery(loanId);
+    const memberQuery = memberDetailQuery(memberIdentity);
+    const productQuery = productDetailQuery(productType);
 
     if (query) {
       client.fetch(query).then((data) => {
         setLoanDetails(data);
       });
     }
+
+    // window.location.reload()
+    if (productQuery) {
+      client.fetch(productQuery).then((data) => {
+        setProductDetails(data);
+      });
+    }
+    if (memberQuery) {
+      client.fetch(memberQuery).then((data) => {
+        setMemberDetails(data);
+      });
+    }
   }
+
 
   useEffect(() => {
     fetchLoanDetails();
-  }, [loanId]);
+  }, [loanId, memberIdentity, productType]);
 
-  // const fetchProductDetails = () => {
-  //   const query = productDetailQuery(productType);
-
-  //   if (query) {
-  //     client.fetch(query).then((data) => {
-  //       setProductDetails(data);
-  //     });
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fetchProductDetails();
-  // }, [productType]);
-
-  // useEffect(() => {
-  //   if (loanId) {
-  //     setLoading(true);
-  //     const query = searchQuery(loanId);
-  //     client.fetch(query).then((data) => {
-  //       setLoanDetails(data);
-  //       setLoading(false);
-  //     });
-  //   } else {
-  //     setLoading(true);
-
-  //     client.fetch(loanDetailQuery).then((data) => {
-  //       setLoanDetails(data);
-  //       setLoading(false);
-  //     });
-  //   }
-  // }, [loanId]);
-
-  // console.log('Preview of :', productDetail)
-  // console.log('Member ID :', memberId)
-  console.log('Preview of :', productDetails)
   const ideaName = loanId || 'all';
   if (loading) {
     return (
@@ -76,10 +59,19 @@ export default function Preview() {
       <Spinner message={`We are populating ${ideaName} loan data to your feed!`} />
     )
   }
+  // console.log(memberDetails)
   return (
-    <pre>
-      {JSON.stringify(loanDetails, undefined, 2)}
-    </pre>
+    <>
+      <button className="bg-green-300 rounded-lg" onClick={() => {
+        setMemberIdentity(loanDetails[0].memberId)
+        setProductType(loanDetails[0].productType)
+      }}>Load Member Details</button>
+      <pre>
+        {JSON.stringify(loanDetails, undefined, 2)}
+        {JSON.stringify(memberDetails, undefined, 2)}
+        {JSON.stringify(productDetails, undefined, 2)}
+      </pre>
+    </>
   )
 }
 

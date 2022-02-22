@@ -8,7 +8,7 @@ import { products } from '../../utils/data';
 import { client } from '../../client';
 import { Spinner } from '../Components';
 
-export default function CreateMember({ user }) {
+export default function CreateMember() {
   const [title, setTitle] = useState('');
   const [about, setAbout] = useState('');
   const [loading, setLoading] = useState(false);
@@ -156,11 +156,11 @@ export default function CreateMember({ user }) {
             _ref: imageAsset?._id,
           },
         },
-        userId: user._id,
-        postedBy: {
-          _type: 'postedBy',
-          _ref: user._id,
-        },
+        // userId: user._id,
+        // postedBy: {
+        //   _type: 'postedBy',
+        //   _ref: user._id,
+        // },
         product,
       };
       client.create(doc).then(() => {
@@ -906,16 +906,16 @@ export default function CreateMember({ user }) {
                 )
               }
             </div>
-            {user && (
-              <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg ">
-                <img
-                  src={user.image}
-                  className="w-10 h-10 rounded-full"
-                  alt="user-profile"
-                />
-                <p className="font-bold">{user.userName}</p>
-              </div>
-            )}
+            {/* {user && ( */}
+            {/*   <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg "> */}
+            {/*     <img */}
+            {/*       src={user.image} */}
+            {/*       className="w-10 h-10 rounded-full" */}
+            {/*       alt="user-profile" */}
+            {/*     /> */}
+            {/*     <p className="font-bold">{user.userName}</p> */}
+            {/*   </div> */}
+            {/* )} */}
           </div>
         </div>
       </div>

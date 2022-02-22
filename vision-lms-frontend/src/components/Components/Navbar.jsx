@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useDarkMode from '../../hooks/useDarkMode';
 import logo from '../../assets/logo.svg'
 
-export default function Navbar({ searchTerm, setSearchTerm, user }) {
+export default function Navbar({ searchTerm, setSearchTerm }) {
   const navigate = useNavigate();
 
   function renderNavTwo() {
@@ -77,14 +77,14 @@ export default function Navbar({ searchTerm, setSearchTerm, user }) {
   const UserCircle = () => {
     return (
       <>
-        {/* <FaUserCircle size='24' className='top-navigation-icon' /> */}
-        <Link to={`user-profile/${user?._id}`} className="hidden md:block top-navigation-icon">
-          <img
-            src={user.image}
-            alt="user-pic"
-            className="w-12 h-12 rounded-full"
-          />
-        </Link>
+        <FaUserCircle size='24' className='top-navigation-icon' />
+        {/* <Link to={`user-profile/${user?._id}`} className="hidden md:block top-navigation-icon"> */}
+        {/*   <img */}
+        {/*     src={user.image} */}
+        {/*     alt="user-pic" */}
+        {/*     className="w-12 h-12 rounded-full" */}
+        {/*   /> */}
+        {/* </Link> */}
       </>
     )
   };
@@ -105,14 +105,14 @@ export default function Navbar({ searchTerm, setSearchTerm, user }) {
   }
 
 
-  if (user) {
+  // if (user) {
     return (
       <>
         {/* {renderNavOne()} */}
         {renderNavBar()}
       </>
     );
-  }
+  // }
 
   return null;
 }

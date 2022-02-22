@@ -135,8 +135,9 @@ export default function MaintenanceDetail() {
     }
     // navigate("/create-group")
   };
-  console.log(memberId)
+
   const handleLoanSave = () => {
+    // setMemberNames(memberDetail?.surName + memberDetail?.otherNames)
     if (
       productType
       && principalAmount
@@ -157,7 +158,7 @@ export default function MaintenanceDetail() {
       client.create(doc).then(() => {
         alert('Success')
         console.log(doc)
-        navigate('/loan/')
+        navigate('/loan')
       });
       // } else {
       //   setFields(true);

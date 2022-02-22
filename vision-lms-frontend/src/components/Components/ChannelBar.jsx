@@ -230,6 +230,15 @@ const ProductsDropdown = () => {
           New Product
         </NavLink>
       </div>
+      <div className="dropdown-selection">
+        <BsArrowRight size='8' className="text-gray-400 m-2" />
+        <NavLink
+          to="/loan/products"
+          className="dropdown-selection-text"
+        >
+          All Product
+        </NavLink>
+      </div>
       {expanded && products.slice(0, products.length - 0).map((product) => (
         <div key={product.name} className="dropdown-selection">
           <BsArrowRight size='8' className="text-gray-400 m-2" />
