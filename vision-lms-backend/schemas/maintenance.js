@@ -4,25 +4,15 @@ export default {
   type: 'document',
   fields: [
     {
-      name: 'memberSurName',
-      title: 'Member Surame',
-      type: 'string',
-    },
-    {
-      name: 'memberOtherNames',
-      title: 'Member Other Names',
-      type: 'string',
-    },
-    {
       name: 'productType',
       title: 'Product Type',
       type: 'string',
     },
-    {
-      name: 'product',
-      title: 'Product',
-      type: 'string',
-    },
+    // {
+    //   name: 'product',
+    //   title: 'Product',
+    //   type: 'string',
+    // },
     {
       name: 'principalAmount',
       title: 'Principal Amount',
@@ -38,56 +28,56 @@ export default {
       title: 'Loan Tenure',
       type: 'string',
     },
-    {
-      name: 'startDate',
-      title: 'Start Date',
-      type: 'date',
-    },
-    {
-      name: 'endDate',
-      title: 'End Date',
-      type: 'date',
-    },
-    {
-      name: 'interestRate',
-      title: 'Interest Rate (%)',
-      type: 'string',
-    },
-    {
-      name: 'interestAmount',
-      title: 'Interest Amount',
-      type: 'string',
-    },
-    {
-      name: 'installments',
-      title: 'Installments',
-      type: 'string',
-    },
-    {
-      name: 'processingFee',
-      title: 'Processing Fee',
-      type: 'string',
-    },
-    {
-      name: 'repaymentCycle',
-      title: 'Repayment Cycle',
-      type: 'string',
-    },
-    {
-      name: 'gracePeriod',
-      title: 'Grace Period',
-      type: 'number',
-    },
-    {
-      name: 'arrears',
-      title: 'Arrears',
-      type: 'string',
-    },
-    {
-      name: 'penaltyAmount',
-      title: 'Penalty Amount',
-      type: 'string',
-    },
+    // {
+    //   name: 'startDate',
+    //   title: 'Start Date',
+    //   type: 'date',
+    // },
+    // {
+    //   name: 'endDate',
+    //   title: 'End Date',
+    //   type: 'date',
+    // },
+    // {
+    //   name: 'interestRate',
+    //   title: 'Interest Rate (%)',
+    //   type: 'string',
+    // },
+    // {
+    //   name: 'interestAmount',
+    //   title: 'Interest Amount',
+    //   type: 'string',
+    // },
+    // {
+    //   name: 'installments',
+    //   title: 'Installments',
+    //   type: 'string',
+    // },
+    // {
+    //   name: 'processingFee',
+    //   title: 'Processing Fee',
+    //   type: 'string',
+    // },
+    // {
+    //   name: 'repaymentCycle',
+    //   title: 'Repayment Cycle',
+    //   type: 'string',
+    // },
+    // {
+    //   name: 'gracePeriod',
+    //   title: 'Grace Period',
+    //   type: 'number',
+    // },
+    // {
+    //   name: 'arrears',
+    //   title: 'Arrears',
+    //   type: 'string',
+    // },
+    // {
+    //   name: 'penaltyAmount',
+    //   title: 'Penalty Amount',
+    //   type: 'string',
+    // },
     {
       name: 'collateralList',
       title: 'Collaterals',

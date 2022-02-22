@@ -242,16 +242,11 @@ export default {
         },
       ]
     },
-    {
-      name: 'destination',
-      title: 'Destination',
-      type: 'url',
-    },
-    {
-      name: 'product',
-      title: 'Product',
-      type: 'string',
-    },
+    // {
+    //   name: 'product',
+    //   title: 'Product',
+    //   type: 'string',
+    // },
     {
       name: 'image',
       title: 'Image',
@@ -260,16 +255,16 @@ export default {
         hotspot: true,
       },
     },
-    {
-      name: 'userId',
-      title: 'UserId',
-      type: 'string',
-    },
-    {
-      name: 'postedBy',
-      title: 'PostedBy',
-      type: 'postedBy',
-    },
+    // {
+    //   name: 'userId',
+    //   title: 'UserId',
+    //   type: 'string',
+    // },
+    // {
+    //   name: 'postedBy',
+    //   title: 'PostedBy',
+    //   type: 'postedBy',
+    // },
     {
       name: 'save',
       title: 'Save',

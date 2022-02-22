@@ -9,11 +9,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'productId',
-      title: 'Product ID',
-      type: 'string',
-    },
-    {
       name: 'productCode',
       title: 'Product Code',
       type: 'string',
@@ -39,12 +34,17 @@ export default {
       type: 'string',
     },
     {
-      name: 'penaltyPercentageChoice',
-      title: 'Penalty Percentage Choice',
+      name: 'penaltyPaymentChoice',
+      title: 'Penalty Payment Choice',
       type: 'string',
     },
     {
-      name: 'penaltyPercentage',
+      name: 'penaltyTypeChoice',
+      title: 'Penalty Type Choice',
+      type: 'string',
+    },
+    {
+      name: 'penalty',
       title: 'Penalty Percentage',
       type: 'string',
     },

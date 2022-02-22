@@ -11,18 +11,18 @@ function App() {
 
   // if (!currentUser) navigate('/sign-in');
   // console.log(currentUser.email)
-  useEffect(() => {
-    const User =
-      localStorage.getItem('user') !== 'undefined'
-        ? JSON.parse(localStorage.getItem('user'))
-        : localStorage.clear();
+  // useEffect(() => {
+  //   const User =
+  //     localStorage.getItem('user') !== 'undefined'
+  //       ? JSON.parse(localStorage.getItem('user'))
+  //       : localStorage.clear();
 
-    // console.log(User);
-    // if (!User) navigate('/login')
-    // if (!User) navigate('/sign-in')
-    // if (!User) navigate('/authentication');
-  }, []);
-  // if (!currentUser) navigate('/sign-in');
+  //   // console.log(User);
+  //   if (!User) navigate('/login')
+  //   // if (!User) navigate('/sign-in')
+  //   // if (!User) navigate('/authentication');
+  // }, []);
+  // // if (!currentUser) navigate('/sign-in');
 
   return (
     <AuthProvider>

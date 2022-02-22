@@ -19,8 +19,6 @@ export const loanFeedQuery = `*[_type == "maintenance"] | order(_createdAt desc)
       productType,
       principalAmount,
       memberId,
-      memberSurName,
-      memberOtherNames,
       startDate,
       endDate,
       loanTenure,

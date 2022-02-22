@@ -38,15 +38,11 @@ export default function MaintenanceDetail() {
 
   useEffect(() => {
     const query = '*[_type == "newProduct"]';
-    // const brandsQuery = '*[_type == "brands"]';
 
     client.fetch(query).then((data) => {
       setProductList(data);
     });
 
-    // client.fetch(brandsQuery).then((data) => {
-    //   setBrands(data);
-    // });
   }, []);
 
   const fetchProductDetails = () => {
@@ -142,8 +138,8 @@ export default function MaintenanceDetail() {
       productType
       && principalAmount
       && memberId
-      && startDate
-      && endDate
+      // && startDate
+      // && endDate
       && loanTenure
     ) {
       const doc = {
@@ -151,8 +147,8 @@ export default function MaintenanceDetail() {
         productType
         , principalAmount
         , memberId
-        , startDate
-        , endDate
+        // , startDate
+        // , endDate
         , loanTenure
       };
       client.create(doc).then(() => {
@@ -160,50 +156,10 @@ export default function MaintenanceDetail() {
         console.log(doc)
         navigate('/loan')
       });
-      // } else {
-      //   setFields(true);
-      //   setTimeout(
-      //     () => {
-      //       setFields(false);
-      //     },
-      //     2000,
-      //   );
     }
-    // if (
-    //   collateralList
-    // ) {
-    //   setAddingCollaterals(true);
-
-    //   client
-    //     .patch(memberId)
-    //     .setIfMissing({ collateral: [], value: [], image: [] })
-    //     .insert('after', 'collateral[-1]', [{ collateral, value, image, _key: uuidv4() }])
-    //     .commit()
-    //     .then(() => {
-    //       setCollateralList('')
-    //       setAddingCollaterals(false);
-    //     })
-    //   // const doc = {
-    //   //   _type: 'maintenance',
-    //   //   collateral,
-    //   //   // value,
-    //   // };
-    //   // client.create(doc).then(() => {
-    //   //   console.log(doc)
-    //   //   alert('Success')
-    //   //   // navigate(`/loan/preview/${endDate}`)
-    //   // });
-    //   // } else {
-    //   //   setFields(true);
-    //   //   setTimeout(
-    //   //     () => {
-    //   //       setFields(false);
-    //   //     },
-    //   //     2000,
-    //   //   );
-    // }
   }
 
+  console.log(productDetails)
   function renderInterestAmount(rate, principal) {
     return ((rate * principal) / 100).toFixed(0);
   }
@@ -214,7 +170,8 @@ export default function MaintenanceDetail() {
   }
 
   function renderProcessingFeeAmount(feePercentage, principal) {
-    return ((feePercentage / 100) * principal).toFixed(0);
+    let procFee = ((feePercentage / 100) * principal).toFixed(0);
+    return (procFee < 301 ? 300 : procFee)
   }
 
   function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
@@ -222,12 +179,10 @@ export default function MaintenanceDetail() {
   }
 
   function renderArrearsAmount(feePercentage, rate, principal, tenure) {
-    // function renderArrearsAmount(penaltyPercentage, feePercentage, rate, principal, tenure) {
     let arrearsAmount = 0;
     let principalAmount = ((rate * principal) / 100);
     let installmentsAmount = ((Number(principalAmount) + Number(principal)) / tenure);
     let processingFeeAmount = ((feePercentage / 100) * Number(principal));
-    // let penalty = (((((rate * principal) / 100) + principal) / tenure) * (penaltyPercentage / 100));
     arrearsAmount = (Number(installmentsAmount) * Number(tenure) + Number(processingFeeAmount)).toFixed(0);
     return arrearsAmount;
   }
@@ -235,24 +190,14 @@ export default function MaintenanceDetail() {
   return (
     <div>
       <div className="w-full md:w-full md:mx-2">
-        {memberDetail && productDetails && (
+        {memberDetail && productList && productDetails && (
           <>
             <div className="bg-white p-3">
-              {/* <div className="bg-white p-3 border-t-4 border-cyan-400"> */}
               <div className="image overflow-hidden">
                 <img className="h-auto w-1/4 mx-auto" src={(memberDetail?.image && urlFor(memberDetail?.image).url())} alt="member-profile-pic" />
               </div>
-              {/* <div className="text-gray-700 font-lg text-semibold leading-6">{memberDetail?.memberNumber}</div> */}
-              {/* <div className="text-sm text-gray-500 hover:text-gray-700 leading-6">{memberDetail?.branchName}</div> */}
-              {/* <div className="text-gray-900 font-bold text-xl leading-8 my-1 mt-5">Personal Details</div> */}
               <div className="text-gray-900 flex justify-center font-bold text-xl leading-8 my-1">{memberDetail?.personalDetails.surName} {memberDetail?.personalDetails.otherNames}</div>
               <ul className="bg-gray-100 border border-gray-300 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
-                {/* <li className="flex items-center py-3"> */}
-                {/*   <span> */}
-                {/*     Member ID */}
-                {/*   </span> */}
-                {/*   <span className="ml-auto">{memberDetail?._id}</span> */}
-                {/* </li> */}
                 <li className="flex items-center py-3">
                   <span>
                     Date Registered
@@ -283,7 +228,7 @@ export default function MaintenanceDetail() {
           </>
         )}
         <div className="my-4"></div>
-        <div className="bg-white p-3 hover:shadow">
+        <div className="bg-white hidden p-3 hover:shadow">
           <div className="flex items-center flex justify-center space-x-3 font-semibold text-gray-900 text-xl leading-8">
             <span className="text-cyan-500">
               <svg className="h-5 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -310,35 +255,6 @@ export default function MaintenanceDetail() {
         {/* Loan */}
 
         <div className="flex flex-col uppercase text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold mt-5 p-2">Loan Maintenance</div>
-        {/* <div className="flex flex-wrap -mx-3 mb-2"> */}
-        {/*   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> */}
-        {/*       Location */}
-        {/*     </label> */}
-        {/*     <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="text" placeholder="Group Location ..." /> */}
-        {/*   </div> */}
-        {/*   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> */}
-        {/*       Area */}
-        {/*     </label> */}
-        {/*     <div className="relative"> */}
-        {/*       <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state"> */}
-        {/*         <option>Annex</option> */}
-        {/*         <option>Langas</option> */}
-        {/*         <option>West Indies</option> */}
-        {/*       </select> */}
-        {/*       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"> */}
-        {/*         <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg> */}
-        {/*       </div> */}
-        {/*     </div> */}
-        {/*   </div> */}
-        {/*   <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> */}
-        {/*       Zip */}
-        {/*     </label> */}
-        {/*     <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="90210" /> */}
-        {/*   </div> */}
-        {/* </div> */}
         <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
             <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
@@ -354,6 +270,39 @@ export default function MaintenanceDetail() {
               onChange={(e) => setPrincipalAmount(e.target.value)}
             />
           </div>
+          <div className="w-full md:w-1/3 px-3">
+            <label className="block tracking-wide text-xs mb-2">
+              <span className="uppercase text-gray-700 font-bold text-md">Loan Tenure </span>
+            </label>
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="loanTenure"
+              type="number"
+              placeholder="Loan Tenure ..."
+              value={loanTenure}
+              onChange={(e) => setLoanTenure(e.target.value)}
+            />
+          </div>
+          <div className="w-full md:w-1/3 px-3">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+              Select Product
+            </label>
+            <div className="relative">
+              <select value={productType} onChange={(e) => setProductType(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                <option
+                  className="text-gray-500"
+                >Select a Product ...</option>
+                {productList?.map((item, index) => (
+                  <option key={index.toString()}>{item.productName}</option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex hidden flex-wrap mr-auto ml-auto mt-8 -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3">
             <label className="block tracking-wide text-xs mb-2">
               <span className="uppercase text-gray-700 font-bold text-md">Start Date</span>
@@ -382,43 +331,12 @@ export default function MaintenanceDetail() {
             />
           </div>
         </div>
-        <div className="flex flex-wrap mr-auto ml-auto mt-8 -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Select Product
-            </label>
-            <div className="relative">
-              <select value={productType} onChange={(e) => setProductType(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                <option
-                  className="text-gray-500"
-                >Select a Product ...</option>
-                {productList?.map((item, index) => (
-                  <option key={index.toString()}>{item.productName}</option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-              </div>
-            </div>
-          </div>
-          <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Loan Tenure </span>
-              {/* <span className="text-red-500 italic">*</span> */}
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="loanTenure"
-              type="number"
-              placeholder="Loan Tenure ..."
-              value={loanTenure}
-              onChange={(e) => setLoanTenure(e.target.value)}
-            />
-          </div>
-        </div>
 
         {productDetails?.map((item, index) => (
           <>
+            <span className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
+            <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(item.maximumRange) ? `Maximum Principal Amount is KSHs. ${item.maximumRange}` : null}</span>
+            <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) < Number(item.minimumRange) ? `Minimum Principal Amount is KSHs. ${item.minimumRange}` : null}</span>
             <div key={index.toString()} className="bg-white flex flex-wrap p-3">
               <ul className="bg-gray-100 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                 <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
@@ -474,14 +392,24 @@ export default function MaintenanceDetail() {
                     {item?.gracePeriod}
                   </span>
                 </li>
+                {/* <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3"> */}
+                {/*   <span className="tracking-wide text-l text-gray-700 font-bold"> */}
+                {/*     Arrears */}
+                {/*   </span> */}
+                {/*   <span value={arrears} onChange={(e) => setArrears(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto"> */}
+                {/* KSHs. 00 */}
+                {/* KSHs. {renderArrearsAmount(item?.penaltyPercentage, item?.processingFee, item?.interestRate, principalAmount, loanTenure)} */}
+                {/*     KSHs. {renderArrearsAmount(item?.processingFee, item?.interestRate, principalAmount, loanTenure)} */}
+                {/*   </span> */}
+                {/* </li> */}
                 <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
                   <span className="tracking-wide text-l text-gray-700 font-bold">
-                    Arrears
+                    Product Code
                   </span>
                   <span value={arrears} onChange={(e) => setArrears(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
                     {/* KSHs. 00 */}
                     {/* KSHs. {renderArrearsAmount(item?.penaltyPercentage, item?.processingFee, item?.interestRate, principalAmount, loanTenure)} */}
-                    KSHs. {renderArrearsAmount(item?.processingFee, item?.interestRate, principalAmount, loanTenure)}
+                    DC-{item.productCode}
                   </span>
                 </li>
                 <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
@@ -495,70 +423,10 @@ export default function MaintenanceDetail() {
                 </li>
               </ul>
             </div>
-            {/* <div className="flex w-full md:w-4/6 ml-auto mr-auto justify-center items-center hover:bg-gray-300 p-2 rounded-lg py-3"> */}
-            {/*   <span className="tracking-wide text-xl text-gray-700 font-bold"> */}
-            {/*     Total */}
-            {/*   </span> */}
-            {/*   <span className="tracking-wide text-gray-500 font-semibold text-xl ml-auto"> */}
-            {/*     KSHs. {((item?.penaltyPercentage / 100) * (((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)} */}
-            {/*   </span> */}
-            {/* </div> */}
           </>
         ))}
-        {/* <div className="flex"> */}
-        {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block uppercase tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
-        {/*       Interest Rate */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block uppercase tracking-wide text-gray-700 text-l font-bold mb-2"> */}
-        {/*       Interest Amount */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block uppercase tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
-        {/*       Installments */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/* </div> */}
-        {/* <div className="flex"> */}
-        {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
-        {/*       12 % */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block tracking-wide text-gray-700 text-l font-bold mb-2"> */}
-        {/*       KSHs. 600 */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/*   <div className="w-full flex justify-center md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
-        {/*       KSHs. 800 */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/* </div> */}
-
-        {/* <div className="flex"> */}
-        {/*   <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
-        {/*       Product Three */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/*   <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block tracking-wide text-gray-700 text-l font-bold mb-2"> */}
-        {/*       in {loanTenure} {loanTenure == 1 ? "Month" : "Months"} */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/*   <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0"> */}
-        {/*     <label className="block tracking-wide text-l mb-2 text-gray-700 font-bold text-md"> */}
-        {/*       KShs. {productThree((principalAmount), (interestRate), (loanTenure)).toFixed(2)} */}
-        {/*     </label> */}
-        {/*   </div> */}
-        {/* </div> */}
-        <div className="flex flex-col uppercase text-xl text-gray-700 mb-5 items-center sm:text-xl font-semibold p-2">Guarantors add new or select</div>
-        <div className="flex flex-col justify-center w-full flex-wrap -mx-3 mt-9">
+        <div className="flex hidden flex-col uppercase text-xl text-gray-700 mb-5 items-center sm:text-xl font-semibold p-2">Guarantors add new or select</div>
+        <div className="flex hidden flex-col justify-center w-full flex-wrap -mx-3 mt-9">
           <div className="flex flex-col uppercase text-xl text-gray-700 mb-5 items-center sm:text-xl font-semibold p-2">Collateral List</div>
           <div className="flex w-full md:w-1/2 mb-6 mr-auto ml-auto flex-wrap -mx-3">
             <div className="w-full md:w-1/2 px-3 md:mb-0">
@@ -577,11 +445,6 @@ export default function MaintenanceDetail() {
           {collateralList.map((singleItem, index) => (
             <div key={index.toString()} >
               <div className="flex flex-wrap w-full mb-2">
-                {/* <div className="px-3 mb-6 md:mb-0 md:w-1/4"> */}
-                {/*   <label className="appearance-none block text-gray-700 font-bold rounded py-3 leading-tight focus:outline-none bg-white"> */}
-                {/*     {index + 1} */}
-                {/*   </label> */}
-                {/* </div> */}
                 <span className="font-bold flex justify-end w-1/6 text-gray-700 p-2 mt-1">{index + 1}.</span>
                 <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
                   <input
@@ -612,7 +475,6 @@ export default function MaintenanceDetail() {
                     <button
                       onClick={() => handleCollateralDelete(index)}
                       type="button"
-                      // className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                       className="text-red-400 hover:text-red-600 p-2 mt-1 font-bold"
                     >
                       <AiFillDelete />
@@ -622,13 +484,6 @@ export default function MaintenanceDetail() {
               </div>
               {collateralList.length - 1 === index && collateralList.length < 10 && (
                 <div className="flex justify-center items-center">
-                  {/* <button */}
-                  {/*   onClick={handleCollateralSave} */}
-                  {/*   type="button" */}
-                  {/*   className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
-                  {/* > */}
-                  {/*   « Save » */}
-                  {/* </button> */}
                   <button
                     onClick={handleCollateralAdd}
                     type="button"
@@ -640,19 +495,18 @@ export default function MaintenanceDetail() {
               )}
             </div>
           ))}
-          <div className="flex w-full mt-8 justify-center items-center ml-8">
-            <button
-              onClick={handleLoanSave}
-              type="button"
-              className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Save
-            </button>
-          </div>
+        </div>
+        <div className="flex w-full mt-8 justify-center items-center ml-8">
+          <button
+            onClick={handleLoanSave}
+            type="button"
+            className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Save
+          </button>
         </div>
         <div className="mb-6" />
       </div>
-      {/* <pre>{JSON.stringify(members, undefined, 2)}</pre> */}
     </div>
   )
 }

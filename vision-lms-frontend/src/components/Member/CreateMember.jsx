@@ -64,9 +64,13 @@ export default function CreateMember() {
   const navigate = useNavigate();
 
   const memNum = uuidv4()
-  console.log(memNum)
+  // console.log(memNum)
 
   const genderSelector = [
+    {
+      name: 'gender',
+      abbr: 'G'
+    },
     {
       name: 'female',
       abbr: 'F'
@@ -98,7 +102,7 @@ export default function CreateMember() {
     }
   };
   const saveMember = () => {
-    if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && group && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && groupName && groupLeaderName && leaderNumber && leaderIdNumber && imageAsset?._id && product) {
+    if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && group && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && groupName && groupLeaderName && leaderNumber && leaderIdNumber && imageAsset?._id) {
       const doc = {
         _type: 'member',
         memberNumber,
@@ -161,7 +165,7 @@ export default function CreateMember() {
         //   _type: 'postedBy',
         //   _ref: user._id,
         // },
-        product,
+        // product,
       };
       client.create(doc).then(() => {
         navigate('/');
@@ -873,38 +877,42 @@ export default function CreateMember() {
                 </div>
               </div>
               <div>
-                <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Product Line</p>
-                <select
-                  onChange={(e) => {
-                    setProduct(e.target.value);
-                    (e.target.value);
-                  }}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option value="others" className="sm:text-bg bg-white">Select Product</option>
-                  {products.map((item) => (
-                    <option key={item.name} className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
+                {/* <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Product Line</p> */}
+                {/* <select */}
+                {/*   onChange={(e) => { */}
+                {/*     setProduct(e.target.value); */}
+                {/*     (e.target.value); */}
+                {/*   }} */}
+                {/*   className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer" */}
+                {/* > */}
+                {/*   <option value="others" className="sm:text-bg bg-white">Select Product</option> */}
+                {/*   {products.map((item) => ( */}
+                {/*     <option key={item.name} className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}> */}
+                {/*       {item.name} */}
+                {/*     </option> */}
+                {/*   ))} */}
+                {/* </select> */}
               </div>
               <div className="flex justify-end items-end mt-5">
-                <button
-                  type="button"
-                  onClick={saveMember}
-                  className="bg-green-500 text-white font-bold p-2 rounded-full w-36 outline-none"
-                >
-                  Save Member
-                </button>
+                <div className="w-full md:w-1/2">
+                  <button
+                    type="button"
+                    onClick={saveMember}
+                    className="bg-green-500 text-white font-bold p-2 rounded-full w-36 outline-none"
+                  >
+                    Save Member
+                  </button>
+                </div>
+                <div className="w-full md:w-1/2">
+                  {
+                    fields && (
+                      <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
+                        Please Fill All the Required Fields!
+                      </p>
+                    )
+                  }
+                </div>
               </div>
-              {
-                fields && (
-                  <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
-                    Please Fill All the Required Fields!
-                  </p>
-                )
-              }
             </div>
             {/* {user && ( */}
             {/*   <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg "> */}

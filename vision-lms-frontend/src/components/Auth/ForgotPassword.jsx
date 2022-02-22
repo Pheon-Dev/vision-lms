@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import bgVideo from '../../assets/bgVideo.mp4';
 import logo from '../../assets/logowhite.png';
 
 export default function ForgotPassword() {
@@ -34,7 +33,7 @@ export default function ForgotPassword() {
       <div className="flex justify-start items-center flex-col h-screen">
         <div className="relative w-full h-full">
           <video
-            src={bgVideo}
+            src="https://res.cloudinary.com/drf1wghco/video/upload/v1645542419/video_z1bqnf.mp4"
             type="video/mp4"
             loop
             controls={false}
