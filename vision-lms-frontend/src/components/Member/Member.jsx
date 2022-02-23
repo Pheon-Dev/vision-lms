@@ -83,9 +83,9 @@ export default function MemberTest({ member }) {
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="text-sm text-gray-900">{member.memberNumber}</div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <div className="text-sm text-gray-900">{member.product}</div>
-        </td>
+        {/* <td className="px-6 py-4 whitespace-nowrap"> */}
+        {/*   <div className="text-sm text-gray-900">{member.product}</div> */}
+        {/* </td> */}
         <td className="px-6 py-4 whitespace-nowrap">
 
           <span className={(personalDetails?.mpesaTransNumber ? isPaidStyle : isNotPaidStyle)} >
@@ -93,11 +93,11 @@ export default function MemberTest({ member }) {
           </span>
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.personalDetails?.mobileNumber}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <a href="#" className="text-indigo-600 hover:text-indigo-900">
-            Edit
-          </a>
-        </td>
+        {/* <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"> */}
+        {/*   <a href="#" className="text-indigo-600 hover:text-indigo-900"> */}
+        {/*     Edit */}
+        {/*   </a> */}
+        {/* </td> */}
       </tr>
     )
   }

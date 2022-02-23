@@ -19,7 +19,7 @@ export default function Products() {
     });
 
   }, []);
-  console.log(productList)
+
   return (
     <>
       <div className="font-bold mt-5 flex justify-center w-full text-3xl">
@@ -35,7 +35,7 @@ export default function Products() {
               </span>
             </div>
           </div>
-          <ul className="bg-gray-300 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+          <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
             <li className="flex items-center py-3">
               <span>
                 Product Code

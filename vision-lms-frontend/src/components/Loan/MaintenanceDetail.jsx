@@ -16,9 +16,9 @@ export default function MaintenanceDetail() {
   const [memberDetail, setMemberDetail] = useState();
   const [comment, setComment] = useState('');
 
+  const [productList, setProductList] = useState("");
   const [productType, setProductType] = useState("");
   const [productDetails, setProductDetails] = useState("");
-  const [productList, setProductList] = useState("");
   const [principalAmount, setPrincipalAmount] = useState("");
   const [loanTenure, setLoanTenure] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -159,7 +159,6 @@ export default function MaintenanceDetail() {
     }
   }
 
-  console.log(productDetails)
   function renderInterestAmount(rate, principal) {
     return ((rate * principal) / 100).toFixed(0);
   }
@@ -190,7 +189,7 @@ export default function MaintenanceDetail() {
   return (
     <div>
       <div className="w-full md:w-full md:mx-2">
-        {memberDetail && productList && productDetails && (
+        {memberDetail && productDetails && (
           <>
             <div className="bg-white p-3">
               <div className="image overflow-hidden">

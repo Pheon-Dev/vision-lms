@@ -38,20 +38,20 @@ const products = [
 const loans = [
   {
     name: 'New Loan',
-    url: '/loan/create-loan',
-  },
-  {
-    name: 'All Loans',
-    url: '/loan',
-  },
-  {
-    name: 'Maintenance',
     url: '/loan/maintenance',
   },
+  // {
+  //   name: 'Maintain Loan',
+  //   url: '/loan/maintenance',
+  // },
   {
-    name: 'Pending',
-    url: '/loan/pending',
+    name: 'Preview Loans',
+    url: '/loan',
   },
+  // {
+  //   name: 'Pending',
+  //   url: '/loan/pending',
+  // },
   {
     name: 'Approvals',
     url: '/loan/approvals',
