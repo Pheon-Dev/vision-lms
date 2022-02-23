@@ -12,6 +12,7 @@ import newProduct from './newProduct'
 import maintenance from './maintenance'
 import collateral from './collateral'
 import guarantor from './guarantor'
+import preview from './preview'
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -24,6 +25,7 @@ export default createSchema({
     member,
     newProduct,
     maintenance,
+    preview,
     collateral,
     guarantor,
     comment,

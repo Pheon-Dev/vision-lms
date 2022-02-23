@@ -170,7 +170,7 @@ export default function MaintenanceDetail() {
 
   function renderProcessingFeeAmount(feePercentage, principal) {
     let procFee = ((feePercentage / 100) * principal).toFixed(0);
-    return (procFee < 301 ? 300 : procFee)
+    return (procFee < '301' ? '300' : procFee)
   }
 
   function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
@@ -191,37 +191,48 @@ export default function MaintenanceDetail() {
       <div className="w-full md:w-full md:mx-2">
         {memberDetail && productDetails && (
           <>
-            <div className="bg-white p-3">
-              <div className="image overflow-hidden">
-                <img className="h-auto w-1/4 mx-auto" src={(memberDetail?.image && urlFor(memberDetail?.image).url())} alt="member-profile-pic" />
+            <div>
+              <div className="ml-auto mr-auto mb-3">
+                <div className="flex justify-center items-center px-4 py-4">
+                  <div className="mt-3">
+                    <span className="font-bold text-xl mr-2">
+                      Personal Details
+                    </span>
+                  </div>
+                </div>
+                <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
+                  <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                    <span>
+                      Member Code
+                    </span>
+                    <span className="ml-auto">DC-{memberDetail?.memberNumber}</span>
+                  </li>
+                  <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                    <span>
+                      Mobile No.
+                    </span>
+                    <span className="ml-auto">{memberDetail?.personalDetails?.mobileNumber}</span>
+                  </li>
+                  <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                    <span>
+                      Email
+                    </span>
+                    <span className="ml-auto">{memberDetail?.personalDetails?.emailAddress}</span>
+                  </li>
+                  <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                    <span>
+                      ID Number
+                    </span>
+                    <span className="ml-auto">{memberDetail?.personalDetails?.idPass}</span>
+                  </li>
+                </ul>
               </div>
-              <div className="text-gray-900 flex justify-center font-bold text-xl leading-8 my-1">{memberDetail?.personalDetails.surName} {memberDetail?.personalDetails.otherNames}</div>
-              <ul className="bg-gray-100 border border-gray-300 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
-                <li className="flex items-center py-3">
-                  <span>
-                    Date Registered
-                  </span>
-                  <span className="ml-auto">{memberDetail?.date}</span>
-                </li>
-                <li className="flex items-center py-3">
-                  <span>
-                    Phone Number
-                  </span>
-                  <span className="ml-auto">{memberDetail?.personalDetails.mobileNumber}</span>
-                </li>
-                <li className="flex items-center py-3">
-                  <span>
-                    Member Number
-                  </span>
-                  <span className="ml-auto">{memberDetail?.memberNumber}</span>
-                </li>
-                <li className="flex items-center py-3">
-                  <span>Fee Payment</span>
-                  <span className="ml-auto">
-                    <span className="bg-green-500 py-1 px-2 rounded text-white text-sm">{memberDetail?.personalDetails.mpesaTransNumber}</span>
-                  </span>
-                </li>
-              </ul>
+              {/* <div className="w-full md:w-1/3"> */}
+              {/*   <div className="image overflow-hidden"> */}
+              {/*     <img className="h-auto w-1/4 md:w-1/4 p-3 mx-auto" src={(memberDetail?.image && urlFor(memberDetail?.image).url())} alt="member-profile-pic" /> */}
+              {/*   </div> */}
+              {/*   <div className="text-gray-900 flex justify-center font-bold text-xl leading-8 my-1">{memberDetail?.personalDetails.surName} {memberDetail?.personalDetails.otherNames}</div> */}
+              {/* </div> */}
             </div>
 
           </>
@@ -331,7 +342,7 @@ export default function MaintenanceDetail() {
           </div>
         </div>
 
-        {productDetails?.map((item, index) => (
+        {productDetails === 0 ? null : productDetails?.map((item, index) => (
           <>
             <span className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
             <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(item.maximumRange) ? `Maximum Principal Amount is KSHs. ${item.maximumRange}` : null}</span>

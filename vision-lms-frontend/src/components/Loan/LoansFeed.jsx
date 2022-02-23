@@ -17,6 +17,7 @@ export default function LoansFeed() {
   const [members, setMembers] = useState();
   const [memberDetail, setMemberDetail] = useState();
   const [memberIdentity, setMemberIdentity] = useState();
+  const [submittedList, setSubmittedList] = useState();
   const [loading, setLoading] = useState(false);
   const { loanId } = useParams();
 
@@ -29,6 +30,17 @@ export default function LoansFeed() {
       })
     }
   }
+
+  useEffect(() => {
+    const query = '*[_type == "preview"]';
+
+    client.fetch(query).then((data) => {
+      setSubmittedList(data);
+    });
+
+  }, []);
+
+  // console.log(submittedList)
 
   useEffect(() => {
     fetchMemberDetails()

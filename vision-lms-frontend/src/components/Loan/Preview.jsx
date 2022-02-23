@@ -10,15 +10,62 @@ import { Spinner } from '../Components'
 
 export default function Preview() {
   const { loanId } = useParams();
-  // const { memberId } = useParams();
-  const [loanDetails, setLoanDetails] = useState("");
-  const [memberDetails, setMemberDetails] = useState("");
-  const [memberIdentity, setMemberIdentity] = useState("");
-  const [productDetails, setProductDetails] = useState("");
-  const [productType, setProductType] = useState("");
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const [loanDetails, setLoanDetails] = useState("");
+  const [memberDetails, setMemberDetails] = useState("");
+  const [productDetails, setProductDetails] = useState("");
+
+  const [memberIdentity, setMemberIdentity] = useState("");
+  const [productType, setProductType] = useState("");
+
+  const [memberNames, setMemberNames] = useState("");
+  const [memberPhoneNumber, setMemberPhoneNumber] = useState("");
+  const [principalAmount, setPrincipalAmount] = useState("");
+  const [loanTenure, setLoanTenure] = useState("");
+  const [productCode, setProductCode] = useState("");
+  const [interestAmount, setInterestAmount] = useState("");
+  const [installmentAmount, setInstallmentAmount] = useState("");
+  const [processingFeeAmount, setProcessingFeeAmount] = useState("");
+  const [penaltyAmount, setPenaltyAmount] = useState("");
+
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedList, setSubmittedList] = useState();
+  let isSubmitted = '';
+  let isNotSubmitted = '';
+
+  useEffect(() => {
+    const query = '*[_type == "preview"]';
+
+    client.fetch(query).then((data) => {
+      setSubmittedList(data);
+    });
+
+  }, []);
+
+  console.log(submittedList)
+
+  function renderInterestAmount(rate, principal) {
+    return ((rate * principal) / 100).toFixed(0);
+  }
+
+  function renderInstallmentsAmount(rate, principal, tenure) {
+    let principalAmount = ((rate * principal) / 100);
+    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0);
+  }
+
+  function renderProcessingFeeAmount(feePercentage, principal) {
+    let procFee = ((feePercentage / 100) * principal).toFixed(0);
+    return (procFee < '301' ? '300' : procFee)
+  }
+
+  function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
+    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0);
+  }
+
   const fetchLoanDetails = () => {
+    setLoading(true)
     const query = loanDetailQuery(loanId);
     const memberQuery = memberDetailQuery(memberIdentity);
     const productQuery = productDetailQuery(productType);
@@ -29,7 +76,6 @@ export default function Preview() {
       });
     }
 
-    // window.location.reload()
     if (productQuery) {
       client.fetch(productQuery).then((data) => {
         setProductDetails(data);
@@ -40,11 +86,20 @@ export default function Preview() {
         setMemberDetails(data);
       });
     }
+    setLoading(false)
   }
-
 
   useEffect(() => {
     fetchLoanDetails();
+    setPrincipalAmount(loanDetails[0]?.principalAmount);
+    setLoanTenure(loanDetails[0]?.loanTenure);
+    setProductCode('DC-' + productDetails[0]?.productCode + '-' + memberDetails[0]?.memberNumber);
+    setMemberNames(memberDetails[0]?.personalDetails?.surName + ' ' + memberDetails[0]?.personalDetails?.otherNames);
+    setMemberPhoneNumber(memberDetails[0]?.personalDetails?.mobileNumber);
+    setInterestAmount(renderInterestAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount));
+    setInstallmentAmount(renderInstallmentsAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure));
+    setProcessingFeeAmount(renderProcessingFeeAmount(productDetails[0]?.processingFee, loanDetails[0]?.principalAmount));
+    setPenaltyAmount(productDetails[0]?.penaltyTypeChoice === 'amount' ? productDetails[0]?.penalty : renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure));
   }, [loanId, memberIdentity, productType]);
 
   const ideaName = loanId || 'all';
@@ -60,33 +115,62 @@ export default function Preview() {
     )
   }
 
-  function renderInterestAmount(rate, principal) {
-    return ((rate * principal) / 100).toFixed(0);
+  // console.log(submitted)
+  // console.log(
+  //   memberIdentity
+  //   , loanId
+  //   , productType
+  //   , memberNames
+  //   , principalAmount
+  //   , loanTenure
+  //   , productCode
+  //   , interestAmount
+  //   , installmentAmount
+  //   , penaltyAmount
+  //   , processingFeeAmount
+  //   , memberPhoneNumber
+  //   , submitted
+  // )
+  const handleLoanSave = () => {
+    if (
+      memberIdentity
+      && loanId
+      && productType
+      && memberNames
+      && principalAmount
+      && loanTenure
+      && productCode
+      && interestAmount
+      && installmentAmount
+      && processingFeeAmount
+      && penaltyAmount
+      && memberPhoneNumber
+      && submitted
+    ) {
+      const doc = {
+        _type: 'preview',
+        memberIdentity
+        , loanId
+        , productType
+        , memberNames
+        , principalAmount
+        , loanTenure
+        , productCode
+        , interestAmount
+        , installmentAmount
+        , penaltyAmount
+        , processingFeeAmount
+        , memberPhoneNumber
+        , submitted
+      };
+      client.create(doc).then(() => {
+        setSubmitted(true)
+        alert('Success')
+        console.log(doc)
+        navigate('/loan/approvals')
+      });
+    }
   }
-
-  function renderInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = ((rate * principal) / 100);
-    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0);
-  }
-
-  function renderProcessingFeeAmount(feePercentage, principal) {
-    let procFee = ((feePercentage / 100) * principal).toFixed(0);
-    return (procFee < 301 ? 300 : procFee)
-  }
-
-  function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
-    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0);
-  }
-
-  function renderArrearsAmount(feePercentage, rate, principal, tenure) {
-    let arrearsAmount = 0;
-    let principalAmount = ((rate * principal) / 100);
-    let installmentsAmount = ((Number(principalAmount) + Number(principal)) / tenure);
-    let processingFeeAmount = ((feePercentage / 100) * Number(principal));
-    arrearsAmount = (Number(installmentsAmount) * Number(tenure) + Number(processingFeeAmount)).toFixed(0);
-    return arrearsAmount;
-  }
-
   return (
     <>
       <div onMouseEnter={() => {
@@ -132,12 +216,6 @@ export default function Preview() {
               </span>
               <span className="ml-auto">{memberDetails[0]?.personalDetails?.idPass}</span>
             </li>
-            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-              <span>
-                Product Name
-              </span>
-              <span className="ml-auto">{productDetails[0]?.productName}</span>
-            </li>
           </ul>
         </div>
         <br />
@@ -158,6 +236,12 @@ export default function Preview() {
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
+                Product Code
+              </span>
+              <span className="ml-auto">DC-{productDetails[0]?.productCode}-{memberDetails[0]?.memberNumber}</span>
+            </li>
+            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+              <span>
                 Principal Amount
               </span>
               <span className="ml-auto">KShs. {loanDetails[0]?.principalAmount}</span>
@@ -166,7 +250,7 @@ export default function Preview() {
               <span>
                 Loan Tenure
               </span>
-              <span className="ml-auto">KShs. {loanDetails[0]?.loanTenure}</span>
+              <span className="ml-auto">{loanDetails[0]?.loanTenure} {productDetails[0]?.tenureMaximumChoice}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -184,7 +268,7 @@ export default function Preview() {
               <span>
                 Installment Amount
               </span>
-              <span className="ml-auto">KSHs. {renderInterestAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount), loanDetails[0]?.loanTenure}</span>
+              <span className="ml-auto">KSHs. {renderInstallmentsAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure)}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -255,6 +339,25 @@ export default function Preview() {
           {/* {JSON.stringify(memberDetails, undefined, 2)} */}
           {/* {JSON.stringify(productDetails, undefined, 2)} */}
         </pre>
+        {submittedList == 0 ? null : submittedList?.map((subs) => (
+          <div className="hidden" key={subs?._id}>
+            {subs?.submitted == true && subs?.loanId == loanId ?
+              'Submitted'
+              :
+              'Not Submitted'
+            }
+          </div>
+        ))}
+        <div className="flex w-full mt-8 justify-center items-center ml-8">
+          <button
+            onClick={handleLoanSave}
+            type="button"
+            className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Submit
+          </button>
+        </div>
+        <div className="mb-6" />
       </div>
     </>
   )

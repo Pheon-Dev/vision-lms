@@ -19,8 +19,6 @@ export const loanFeedQuery = `*[_type == "maintenance"] | order(_createdAt desc)
       productType,
       principalAmount,
       memberId,
-      startDate,
-      endDate,
       loanTenure,
     } `;
 
@@ -31,8 +29,6 @@ export const loanDetailQuery = (loanId) => {
       , memberId
       , principalAmount
       , loanTenure
-      , startDate
-      , endDate
   }`;
   return query;
 };
@@ -44,8 +40,6 @@ export const memberLoanDetailQuery = (memberId) => {
       , memberId
       , principalAmount
       , loanTenure
-      , startDate
-      , endDate
       , interestRate
       , interestAmount
       , installments
