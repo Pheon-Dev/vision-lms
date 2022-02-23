@@ -61,14 +61,14 @@ export const memberLoanDetailQuery = (memberId) => {
 export const productDetailQuery = (productType) => {
   const query = `*[_type == "newProduct" && productName == "${productType}"]{
         productName
-        , productId
         , productCode
         , minimumRange
         , maximumRange
         , interestRate
         , interestFrequency
-        , penaltyPercentage
-        , penaltyPercentageChoice
+        , penaltyPaymentChoice
+        , penaltyTypeChoice
+        , penalty
         , tenureMaximum
         , tenureMaximumChoice
         , repaymentCycle

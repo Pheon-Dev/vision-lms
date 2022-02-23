@@ -291,7 +291,7 @@ export default function MaintenanceDetail() {
                 <option
                   className="text-gray-500"
                 >Select a Product ...</option>
-                {productList?.map((item, index) => (
+                {productList === 0 ? null : productList?.map((item, index) => (
                   <option key={index.toString()}>{item.productName}</option>
                 ))}
               </select>

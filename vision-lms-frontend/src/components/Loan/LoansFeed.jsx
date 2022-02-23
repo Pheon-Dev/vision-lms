@@ -73,13 +73,11 @@ export default function LoansFeed() {
   return (
     <div className="flex flex-col mt-5">
       <div className="font-bold flex justify-center w-full text-xl">
-        <span className="text-gray-500 mr-auto ml-auto">
+        <span className="text-gray-500">
           Preview
         </span>
         {memberDetail && (
-          <span className="text-gray-900 ml-1/4 mr-auto">
-            {memberDetail[0]?.personalDetails?.surName} {memberDetail[0]?.personalDetails?.otherNames}
-          </span>
+          <span className="text-gray-700 ml-3">{memberDetail[0]?.personalDetails?.surName} {memberDetail[0]?.personalDetails?.otherNames}</span>
         )}
       </div>
       <br />
