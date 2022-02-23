@@ -8,7 +8,7 @@ import { client, urlFor } from '../../client';
 import { memberDetailMoreMemberQuery, productDetailQuery, searchQuery, loanDetailQuery, memberDetailQuery } from '../../utils/data';
 import { Spinner } from '../Components'
 
-export default function Preview() {
+export default function Disburse() {
   const { loanId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -30,14 +30,16 @@ export default function Preview() {
   const [processingFeeAmount, setProcessingFeeAmount] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
-  const [submitted, setSubmitted] = useState('false');
-  const [submittedList, setSubmittedList] = useState();
+  const [disbursed, setDisbursed] = useState('false');
+  const [approved, setApproved] = useState('true');
+  const [submitted, setSubmitted] = useState('true');
+  const [disbursedList, setDisbursedList] = useState();
 
   useEffect(() => {
-    const query = '*[_type == "preview"]';
+    const query = '*[_type == "disburse"]';
 
     client.fetch(query).then((data) => {
-      setSubmittedList(data);
+      setDisbursedList(data);
     });
 
   }, []);
@@ -49,7 +51,7 @@ export default function Preview() {
         {
           submittedList === 0 ? null : submittedList?.map((subs) => (
             <div key={subs?._id} className="flex justify-center mt-5">
-              {subs?.loanId === loanId && subs?.submitted !== 'true' ?
+              {subs?.loanId === loanId && subs?.approved !== 'true' ?
                 <button
                   onClick={handleLoanSave}
                   type="button"
@@ -128,7 +130,9 @@ export default function Preview() {
   }
 
   const handleLoanSave = () => {
+    setApproved('true')
     setSubmitted('true')
+    setDisbursed('true')
     setPrincipalAmount(loanDetails[0]?.principalAmount);
     setLoanTenure(loanDetails[0]?.loanTenure);
     setProductCode('DC-' + productDetails[0]?.productCode + '-' + memberDetails[0]?.memberNumber);
@@ -151,7 +155,9 @@ export default function Preview() {
       && processingFeeAmount
       && penaltyAmount
       && memberPhoneNumber
+      && approved
       && submitted
+      && disbursed
     ) {
       console.log(
         memberIdentity
@@ -166,10 +172,12 @@ export default function Preview() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
+        , approved
         , submitted
+        , disbursed
       )
       const doc = {
-        _type: 'preview',
+        _type: 'disburse',
         memberIdentity
         , loanId
         , productType
@@ -182,12 +190,14 @@ export default function Preview() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
+        , approved
         , submitted
+        , disbursed
       };
       client.create(doc).then(() => {
         alert('Success')
         console.log(doc)
-        navigate('/loan/approvals')
+        navigate('/loan')
       });
     }
   }
@@ -199,8 +209,8 @@ export default function Preview() {
       }}
       >
         <div className="font-bold mt-5 flex justify-center w-full text-3xl">
-          <span className="text-gray-500">Preview of </span>
-          <span className="text-gray-700 ml-3">{memberDetails[0]?.personalDetails?.surName} {memberDetails[0]?.personalDetails?.otherNames}</span>
+          {/* <span className="text-gray-500">Disburse for </span> */}
+          <span className="text-gray-700 ml-auto mr-auto">{memberDetails[0]?.personalDetails?.surName} {memberDetails[0]?.personalDetails?.otherNames}</span>
         </div>
         <br />
         <div className="ml-auto mr-auto mb-3">
@@ -365,7 +375,7 @@ export default function Preview() {
             type="button"
             className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
-            Submit
+            Disburse
           </button>
         </div>
         {/* {renderSubmission()} */}
@@ -374,5 +384,7 @@ export default function Preview() {
     </>
   )
 }
+
+
 
 

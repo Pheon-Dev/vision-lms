@@ -44,14 +44,14 @@ const loans = [
   //   name: 'Maintain Loan',
   //   url: '/loan/maintenance',
   // },
-  {
-    name: 'Preview Loans',
-    url: '/loan',
-  },
   // {
-  //   name: 'Pending',
-  //   url: '/loan/pending',
+  //   name: 'Preview Loans',
+  //   url: '/loan',
   // },
+  {
+    name: 'Pending',
+    url: '/loan/pending',
+  },
   {
     name: 'Approvals',
     url: '/loan/approvals',
@@ -62,6 +62,10 @@ const loans = [
   },
 ]
 const reports = [
+  {
+    name: 'All Loans',
+    url: '/loan',
+  },
   {
     name: 'General',
     url: '/report/general-report'

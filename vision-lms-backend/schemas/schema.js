@@ -13,6 +13,8 @@ import maintenance from './maintenance'
 import collateral from './collateral'
 import guarantor from './guarantor'
 import preview from './preview'
+import approve from './approve'
+import disburse from './disburse'
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -26,6 +28,8 @@ export default createSchema({
     newProduct,
     maintenance,
     preview,
+    approve,
+    disburse,
     collateral,
     guarantor,
     comment,

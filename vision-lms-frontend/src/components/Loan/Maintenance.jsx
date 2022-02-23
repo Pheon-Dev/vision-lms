@@ -51,8 +51,6 @@ export default function Maintenance() {
   let isPaidStyle = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
   let isNotPaidStyle = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-red-800"
 
-  // console.log(members)
-
   function renderMembers() {
     return (
       <tr
@@ -101,7 +99,7 @@ export default function Maintenance() {
   return (
     <div className="flex flex-col mt-5">
       <div className="font-bold flex justify-center w-full text-xl">
-        Select one for loan maintenance
+        Select one for maintenance
       </div>
       <br />
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

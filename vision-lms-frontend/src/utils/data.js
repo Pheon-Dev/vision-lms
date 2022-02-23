@@ -13,13 +13,28 @@ export const products = [
   },
 ];
 
+export const loanPreviewQuery = (memberId, productType, principalAmount, loanTenure) => {
+  const query = `*[_type == "maintenance" && memberId == "${memberId}" && productType == "${productType} && principalAmount == "${principalAmount}" && loanTenure == "${loanTenure}]{
+      _id,
+      productType
+      , memberId
+        , memberNames
+        , memberPhoneNumber
+      , principalAmount
+      , loanTenure
+  }`;
+  return query;
+};
+
 export const loanFeedQuery = `*[_type == "maintenance"] | order(_createdAt desc) {
       _id,
       loanId,
       productType,
       principalAmount,
-      memberId,
-      loanTenure,
+      memberId
+        , memberNames
+        , memberPhoneNumber
+      ,loanTenure,
     } `;
 
 export const loanDetailQuery = (loanId) => {
@@ -27,6 +42,8 @@ export const loanDetailQuery = (loanId) => {
       _id,
       productType
       , memberId
+        , memberNames
+        , memberPhoneNumber
       , principalAmount
       , loanTenure
   }`;

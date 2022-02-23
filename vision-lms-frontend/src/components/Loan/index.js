@@ -1,6 +1,8 @@
 export { default as Approvals } from './Approvals';
+export { default as Approve } from './Approve';
 export { default as LoansFeed } from './LoansFeed';
 export { default as Disbursements } from './Disbursements';
+export { default as Disburse } from './Disburse';
 export { default as Payments } from './Payments';
 export { default as Maintenance } from './Maintenance';
 export { default as MaintenanceDetail } from './MaintenanceDetail';

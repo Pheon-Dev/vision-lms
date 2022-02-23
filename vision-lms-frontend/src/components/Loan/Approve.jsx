@@ -8,7 +8,7 @@ import { client, urlFor } from '../../client';
 import { memberDetailMoreMemberQuery, productDetailQuery, searchQuery, loanDetailQuery, memberDetailQuery } from '../../utils/data';
 import { Spinner } from '../Components'
 
-export default function Preview() {
+export default function Approve() {
   const { loanId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -30,7 +30,8 @@ export default function Preview() {
   const [processingFeeAmount, setProcessingFeeAmount] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
-  const [submitted, setSubmitted] = useState('false');
+  const [approved, setApproved] = useState('false');
+  const [submitted, setSubmitted] = useState('true');
   const [submittedList, setSubmittedList] = useState();
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function Preview() {
         {
           submittedList === 0 ? null : submittedList?.map((subs) => (
             <div key={subs?._id} className="flex justify-center mt-5">
-              {subs?.loanId === loanId && subs?.submitted !== 'true' ?
+              {subs?.loanId === loanId && subs?.approved !== 'true' ?
                 <button
                   onClick={handleLoanSave}
                   type="button"
@@ -128,6 +129,7 @@ export default function Preview() {
   }
 
   const handleLoanSave = () => {
+    setApproved('true')
     setSubmitted('true')
     setPrincipalAmount(loanDetails[0]?.principalAmount);
     setLoanTenure(loanDetails[0]?.loanTenure);
@@ -151,6 +153,7 @@ export default function Preview() {
       && processingFeeAmount
       && penaltyAmount
       && memberPhoneNumber
+      && approved
       && submitted
     ) {
       console.log(
@@ -166,10 +169,11 @@ export default function Preview() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
+        , approved
         , submitted
       )
       const doc = {
-        _type: 'preview',
+        _type: 'approve',
         memberIdentity
         , loanId
         , productType
@@ -182,12 +186,13 @@ export default function Preview() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
+        , approved
         , submitted
       };
       client.create(doc).then(() => {
         alert('Success')
         console.log(doc)
-        navigate('/loan/approvals')
+        navigate('/loan/disbursements')
       });
     }
   }
@@ -199,7 +204,7 @@ export default function Preview() {
       }}
       >
         <div className="font-bold mt-5 flex justify-center w-full text-3xl">
-          <span className="text-gray-500">Preview of </span>
+          <span className="text-gray-500">Approve </span>
           <span className="text-gray-700 ml-3">{memberDetails[0]?.personalDetails?.surName} {memberDetails[0]?.personalDetails?.otherNames}</span>
         </div>
         <br />
@@ -365,7 +370,7 @@ export default function Preview() {
             type="button"
             className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
-            Submit
+            Approve
           </button>
         </div>
         {/* {renderSubmission()} */}
@@ -374,5 +379,6 @@ export default function Preview() {
     </>
   )
 }
+
 
 

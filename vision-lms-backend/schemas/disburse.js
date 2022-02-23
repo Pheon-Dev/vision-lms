@@ -1,6 +1,6 @@
 export default {
-  name: 'preview',
-  title: 'Preview',
+  name: 'disburse',
+  title: 'Disburse',
   type: 'document',
   fields: [
     {
@@ -68,8 +68,20 @@ export default {
       title: 'Submission Status',
       type: 'string',
     },
+    {
+      name: 'approved',
+      title: 'Approval Status',
+      type: 'string',
+    },
+    {
+      name: 'disbursed',
+      title: 'Disbursal Status',
+      type: 'string',
+    },
   ],
 };
+
+
 
 
 

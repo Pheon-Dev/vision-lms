@@ -5,7 +5,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import { client, urlFor } from '../../client';
-import { memberDetailMoreMemberQuery, productDetailQuery, memberDetailQuery } from '../../utils/data';
+import { memberDetailMoreMemberQuery, loanDetailQuery, productDetailQuery, memberDetailQuery, loanPreviewQuery } from '../../utils/data';
 import { Spinner } from '../Components'
 
 
@@ -21,6 +21,7 @@ export default function MaintenanceDetail() {
   const [productDetails, setProductDetails] = useState("");
   const [principalAmount, setPrincipalAmount] = useState("");
   const [loanTenure, setLoanTenure] = useState("");
+  const [loanIdentity, setLoanIdentity] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [interestRate, setInterestRate] = useState("");
@@ -32,6 +33,9 @@ export default function MaintenanceDetail() {
   const [arrears, setArrears] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
+  const [memberNames, setMemberNames] = useState("");
+  const [memberPhoneNumber, setMemberPhoneNumber] = useState("");
+
   const [addingCollaterals, setAddingCollaterals] = useState(false);
   const [collateralList, setCollateralList] = useState([{ collateral: "", value: "", image: "" }]);
   const [guarantor, setGuarantor] = useState([{ fullName: "", idNumber: "", phoneNumber: "", relationship: "" }]);
@@ -41,6 +45,15 @@ export default function MaintenanceDetail() {
 
     client.fetch(query).then((data) => {
       setProductList(data);
+    });
+
+  }, []);
+
+  useEffect(() => {
+    const query = '*[_type == "maintenance"]';
+
+    client.fetch(query).then((data) => {
+      setLoanIdentity(data);
     });
 
   }, []);
@@ -127,19 +140,22 @@ export default function MaintenanceDetail() {
       // client.create(doc).then(() => {
       //   navigate('/');
       // });
-      console.log(doc)
+      // console.log(doc)
     }
     // navigate("/create-group")
   };
 
+  // console.log(loanIdentity)
   const handleLoanSave = () => {
-    // setMemberNames(memberDetail?.surName + memberDetail?.otherNames)
+    setMemberNames(memberDetail?.personalDetails?.surName + ' ' + memberDetail?.personalDetails?.otherNames);
+    setMemberPhoneNumber(memberDetail?.personalDetails?.mobileNumber);
+    // console.log(memberNames)
     if (
       productType
       && principalAmount
       && memberId
-      // && startDate
-      // && endDate
+      && memberNames
+      && memberPhoneNumber
       && loanTenure
     ) {
       const doc = {
@@ -147,16 +163,35 @@ export default function MaintenanceDetail() {
         productType
         , principalAmount
         , memberId
-        // , startDate
-        // , endDate
+        , memberNames
+        , memberPhoneNumber
         , loanTenure
       };
       client.create(doc).then(() => {
         alert('Success')
-        console.log(doc)
-        navigate('/loan')
+        // console.log(doc)
+        navigate("/loan/pending")
+        // navigate(`/loan/preview/${_id}`)
       });
     }
+  }
+
+  let counter = 0;
+  function handlePreview() {
+    // loanIdentity?.map((e) => {
+    //   navigate(`/loan/preview/${e._id}`)
+    // })
+    if (counter < loanIdentity.length + 1) {
+      if (loanIdentity.memberId === memberId) {
+        return navigate(`/loan/preview/${loanIdentity[counter]?._id}`)
+      } else {
+        return counter++;
+      }
+      return;
+    } else {
+      return counter++;
+    }
+    return counter++;
   }
 
   function renderInterestAmount(rate, principal) {
@@ -196,7 +231,7 @@ export default function MaintenanceDetail() {
                 <div className="flex justify-center items-center px-4 py-4">
                   <div className="mt-3">
                     <span className="font-bold text-xl mr-2">
-                      Personal Details
+                      {memberDetail?.personalDetails?.surName + ' ' + memberDetail?.personalDetails?.otherNames}
                     </span>
                   </div>
                 </div>
@@ -302,7 +337,7 @@ export default function MaintenanceDetail() {
                 <option
                   className="text-gray-500"
                 >Select a Product ...</option>
-                {productList === 0 ? null : productList?.map((item, index) => (
+                {productList.length < 1 ? null : productList?.map((item, index) => (
                   <option key={index.toString()}>{item.productName}</option>
                 ))}
               </select>
@@ -515,6 +550,15 @@ export default function MaintenanceDetail() {
             Save
           </button>
         </div>
+        {/* <div className="flex w-full mt-8 justify-center items-center ml-8"> */}
+        {/*   <button */}
+        {/*     onSelect={handlePreview()} */}
+        {/*     type="button" */}
+        {/*     className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+        {/*   > */}
+        {/*     Preview */}
+        {/*   </button> */}
+        {/* </div> */}
         <div className="mb-6" />
       </div>
     </div>

@@ -4,6 +4,16 @@ export default {
   type: 'document',
   fields: [
     {
+      name: 'memberNames',
+      title: 'Member Names',
+      type: 'string',
+    },
+    {
+      name: 'memberPhoneNumber',
+      title: 'Member Phone Number',
+      type: 'string',
+    },
+    {
       name: 'productType',
       title: 'Product Type',
       type: 'string',

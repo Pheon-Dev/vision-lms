@@ -74,8 +74,6 @@ export default function MemberDetail() {
     );
   };
 
-  // console.log(memberDetail)
-
   return (
     <div className="container mx-auto my-5 p-5">
       <div className="md:flex no-wrap md:-mx-2">

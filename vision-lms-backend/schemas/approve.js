@@ -1,6 +1,6 @@
 export default {
-  name: 'preview',
-  title: 'Preview',
+  name: 'approve',
+  title: 'Approve',
   type: 'document',
   fields: [
     {
@@ -68,8 +68,14 @@ export default {
       title: 'Submission Status',
       type: 'string',
     },
+    {
+      name: 'approved',
+      title: 'Approval Status',
+      type: 'string',
+    },
   ],
 };
+
 
 
 
