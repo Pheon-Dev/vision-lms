@@ -37,6 +37,20 @@ export const loanFeedQuery = `*[_type == "maintenance"] | order(_createdAt desc)
       ,loanTenure,
     } `;
 
+export const loanDetailsQuery = (loanId) => {
+  const query = `*[_type == "maintenance" && memberId == "${loanId}"]{
+      _id,
+      productType
+      , memberId
+        , memberNames
+        , memberPhoneNumber
+      , principalAmount
+      , loanTenure
+      , maintained
+  }`;
+  return query;
+};
+
 export const loanDetailQuery = (loanId) => {
   const query = `*[_type == "maintenance" && _id == "${loanId}"]{
       _id,
@@ -46,6 +60,7 @@ export const loanDetailQuery = (loanId) => {
         , memberPhoneNumber
       , principalAmount
       , loanTenure
+      , maintained
   }`;
   return query;
 };

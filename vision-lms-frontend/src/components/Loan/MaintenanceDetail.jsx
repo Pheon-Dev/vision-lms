@@ -12,7 +12,6 @@ import { Spinner } from '../Components'
 export default function MaintenanceDetail() {
   const { memberId } = useParams();
   const navigate = useNavigate();
-  const [fields, setFields] = useState();
   const [members, setMembers] = useState();
   const [memberDetail, setMemberDetail] = useState();
   const [comment, setComment] = useState('');
@@ -160,6 +159,7 @@ export default function MaintenanceDetail() {
       && memberNames
       && memberPhoneNumber
       && loanTenure
+      && maintained
     ) {
       const doc = {
         _type: 'maintenance',
@@ -169,6 +169,7 @@ export default function MaintenanceDetail() {
         , memberNames
         , memberPhoneNumber
         , loanTenure
+        , maintained
       };
       client.create(doc).then(() => {
         alert('Success')
@@ -176,14 +177,14 @@ export default function MaintenanceDetail() {
         navigate("/loan/pending")
         // navigate(`/loan/preview/${_id}`)
       });
-    } else {
-      setFields(true);
-      setTimeout(
-        () => {
-          setFields(false);
-        },
-        2000,
-      );
+      // } else {
+      //   setFields(true);
+      //   setTimeout(
+      //     () => {
+      //       setFields(false);
+      //     },
+      //     2000,
+      //   );
     }
   }
 
@@ -581,13 +582,6 @@ export default function MaintenanceDetail() {
         {/*     Save */}
         {/*   </button> */}
         {/* </div> */}
-        {
-          fields && (
-            <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
-              Please Fill All the Required Fields!
-            </p>
-          )
-        }
         <div className="flex justify-center mt-5">
           <div className="w-full md:w-1/3 mr-auto ml-auto">
             <button
