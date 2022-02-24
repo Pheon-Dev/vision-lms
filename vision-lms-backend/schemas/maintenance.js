@@ -38,6 +38,26 @@ export default {
       title: 'Loan Tenure',
       type: 'string',
     },
+    {
+      name: 'maintained',
+      title: 'Maintainance Status',
+      type: 'string',
+    },
+    {
+      name: 'submitted',
+      title: 'Submission Status',
+      type: 'string',
+    },
+    {
+      name: 'approved',
+      title: 'Approval Status',
+      type: 'string',
+    },
+    {
+      name: 'disbursed',
+      title: 'Disbursal Status',
+      type: 'string',
+    },
     // {
     //   name: 'startDate',
     //   title: 'Start Date',

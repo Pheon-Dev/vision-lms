@@ -32,41 +32,41 @@ export default function Approve() {
 
   const [approved, setApproved] = useState('false');
   const [submitted, setSubmitted] = useState('true');
-  const [submittedList, setSubmittedList] = useState();
+  // const [submittedList, setSubmittedList] = useState();
 
-  useEffect(() => {
-    const query = '*[_type == "preview"]';
+  // useEffect(() => {
+  //   const query = '*[_type == "preview"]';
 
-    client.fetch(query).then((data) => {
-      setSubmittedList(data);
-    });
+  //   client.fetch(query).then((data) => {
+  //     setSubmittedList(data);
+  //   });
 
-  }, []);
+  // }, []);
 
-  // console.log(submittedList)
-  function renderSubmission() {
-    return (
-      <>
-        {
-          submittedList === 0 ? null : submittedList?.map((subs) => (
-            <div key={subs?._id} className="flex justify-center mt-5">
-              {subs?.loanId === loanId && subs?.approved !== 'true' ?
-                <button
-                  onClick={handleLoanSave}
-                  type="button"
-                  className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Submit
-                </button>
-                :
-                null
-              }
-            </div>
-          ))
-        }
-      </>
-    )
-  }
+  // // console.log(submittedList)
+  // function renderSubmission() {
+  //   return (
+  //     <>
+  //       {
+  //         submittedList === 0 ? null : submittedList?.map((subs) => (
+  //           <div key={subs?._id} className="flex justify-center mt-5">
+  //             {subs?.loanId === loanId && subs?.approved !== 'true' ?
+  //               <button
+  //                 onClick={handleLoanSave}
+  //                 type="button"
+  //                 className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+  //               >
+  //                 Submit
+  //               </button>
+  //               :
+  //               null
+  //             }
+  //           </div>
+  //         ))
+  //       }
+  //     </>
+  //   )
+  // }
 
   function renderInterestAmount(rate, principal) {
     return ((rate * principal) / 100).toFixed(0);

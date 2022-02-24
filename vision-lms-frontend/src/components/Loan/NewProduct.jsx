@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Spinner } from '../Components';
 import { client } from '../../client';
@@ -23,9 +23,6 @@ export default function NewProduct() {
   const [gracePeriod, setGracePeriod] = useState('');
 
   const navigate = useNavigate();
-
-  const pid = uuidv4().split('-')[0]
-  const pcode = uuidv4().split('-')[1]
 
   const frequencies = [
     {
@@ -161,6 +158,8 @@ export default function NewProduct() {
   ];
 
   const handleProductSave = () => {
+    setProductCode(`${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`)
+    console.log(productCode)
     if (productName
       && productCode
       && minimumRange
@@ -263,19 +262,19 @@ export default function NewProduct() {
                 Product Code
                 {/* <span className="text-red-500 italic">*</span> */}
               </label>
-              {/* <span */}
-              {/*   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" */}
-              {/* > */}
-              {/*   {`DC-${pcode}`} */}
-              {/* </span> */}
-              <input
+              <span
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                id="productCode"
-                type="text"
-                placeholder={`DC-${pcode}`}
-                value={productCode}
-                onChange={(e) => setProductCode(e.target.value)}
-              />
+              >
+                {`DC-${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`}
+              </span>
+              {/* <input */}
+              {/*   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" */}
+              {/*   id="productCode" */}
+              {/*   type="text" */}
+              {/*   placeholder={`DC-${pcode}`} */}
+              {/* // value={productCode} */}
+              {/* // onChange={(e) => setProductCode(e.target.value)} */}
+              {/* /> */}
             </div>
           </div>
           <div className="flex flex-wrap mt-8 -mx-3 mb-6">
@@ -369,6 +368,24 @@ export default function NewProduct() {
                 onChange={(e) => setProcessingFee(e.target.value)}
               />
             </div>
+            {repaymentCycle !== 'daily' && (
+              <div className="w-full md:w-1/3 px-3">
+                <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                  Penalty Rate
+                  <span className="text-red-500 italic">
+                    {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null}
+                  </span>
+                </label>
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="penalty"
+                  type="number"
+                  placeholder="Penalty ..."
+                  value={penalty}
+                  onChange={(e) => setPenalty(e.target.value)}
+                />
+              </div>
+            )}
             {repaymentCycle === 'daily' && (
               <>
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -389,26 +406,28 @@ export default function NewProduct() {
               </>
             )}
           </div>
-          {repaymentCycle === 'daily' && (
-            <>
+          <div className="flex flex-wrap mt-8 -mx-3 mb-6">
+            {repaymentCycle === 'daily' && (
+              <div className="w-full md:w-1/3 px-3">
+                <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                  Penalty Rate
+                  <span className="text-red-500 italic">
+                    {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null}
+                  </span>
+                </label>
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="penalty"
+                  type="number"
+                  placeholder="Penalty ..."
+                  value={penalty}
+                  onChange={(e) => setPenalty(e.target.value)}
+                />
+              </div>
+            )}
+            {repaymentCycle === 'daily' && (
+              <>
 
-              <div className="flex flex-wrap mt-8 -mx-3 mb-6">
-                <div className="w-full md:w-1/3 px-3">
-                  <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                    Penalty Rate
-                    <span className="text-red-500 italic">
-                      {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null}
-                    </span>
-                  </label>
-                  <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                    id="penalty"
-                    type="number"
-                    placeholder="Penalty ..."
-                    value={penalty}
-                    onChange={(e) => setPenalty(e.target.value)}
-                  />
-                </div>
                 <div className="w-full md:w-1/3 px-3">
                   <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
                     Penalty Type
@@ -441,9 +460,9 @@ export default function NewProduct() {
                     </div>
                   </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
           <div className="flex flex-wrap mt-8 -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2">
@@ -465,7 +484,7 @@ export default function NewProduct() {
                 {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <span
-                className="appearance-none block w-full bg-gray-200 font-semibold text-xl text-gray-700 border py-3 mt-5 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                className="appearance-none block w-full font-semibold text-xl text-gray-700 py-3 mt-5 px-2 mb-3 leading-tight focus:outline-none focus:bg-white"
               >
                 {repaymentCycle === 'daily' ? tenures[1].value : repaymentCycle === 'weekly' ? tenures[2].value : tenures[3].value}
               </span>
@@ -482,24 +501,31 @@ export default function NewProduct() {
             </div>
           </div>
         </div>
-        <div className="flex justify-end items-end mt-5">
-          <div className="w-full md:w-2/3">
+        {
+          fields && (
+            <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
+              Please Fill All the Required Fields!
+            </p>
+          )
+        }
+        <div className="flex justify-center mt-5">
+          <div className="w-full md:w-1/3 mr-auto ml-auto">
             <button
               type="button"
               onClick={handleProductSave}
-              className="bg-green-500 text-white font-bold p-2 rounded-lg outline-none"
+              className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              « Create Product »
+              Save Product
             </button>
           </div>
-          <div className="w-full md:w-1/2">
-            {
-              fields && (
-                <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
-                  Please Fill All the Required Fields!
-                </p>
-              )
-            }
+          <div className="w-full md:w-1/3 mr-auto ml-auto">
+            <button
+              type="button"
+              onClick={handleProductSave}
+              className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Submit Product
+            </button>
           </div>
         </div>
       </div>

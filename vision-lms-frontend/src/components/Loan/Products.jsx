@@ -20,6 +20,9 @@ export default function Products() {
 
   }, []);
 
+
+  console.log(productList)
+
   return (
     <>
       <div className="font-bold mt-5 flex justify-center w-full text-3xl">
@@ -40,7 +43,7 @@ export default function Products() {
               <span>
                 Product Code
               </span>
-              <span className="ml-auto">{product?.productCode}</span>
+              <span className="ml-auto">DC-{product?.productCode}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -60,14 +63,14 @@ export default function Products() {
               </span>
               <span className="ml-auto">{product?.processingFee} %</span>
             </li>
+            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+              <span>
+                Penalty
+              </span>
+              <span className="ml-auto">{product?.penaltyTypeChoice === 'amount' ? `KSHs. ${product?.penalty}` : `${product?.penalty} %`}</span>
+            </li>
             {product?.repaymentCycle === 'daily' && (
               <>
-                <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                  <span>
-                    Penalty
-                  </span>
-                  <span className="ml-auto">{product?.penalty}{product?.penaltyTypeChoice === 'amount' ? ' /=' : ' %'}</span>
-                </li>
                 <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                   <span>
                     Penalty Payment

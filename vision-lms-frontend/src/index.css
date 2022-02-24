@@ -8,7 +8,10 @@
     font-family: 'Lato', sans-serif;
   }
 }
-
+input[type="text"]:focus ~ .input-text,
+input[type="text"]:not(:placeholder-shown) ~ .input-text{
+  @apply text-gray-800 uppercase transform -translate-y-10 font-bold text-xl -translate-x-9 scale-75;
+}
 /* Hide scrollbar for Chrome, Safari and Opera */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;

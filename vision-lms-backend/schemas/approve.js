@@ -64,6 +64,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'maintained',
+      title: 'Maintainance Status',
+      type: 'string',
+    },
+    {
       name: 'submitted',
       title: 'Submission Status',
       type: 'string',
@@ -71,6 +76,11 @@ export default {
     {
       name: 'approved',
       title: 'Approval Status',
+      type: 'string',
+    },
+    {
+      name: 'disbursed',
+      title: 'Disbursal Status',
       type: 'string',
     },
   ],

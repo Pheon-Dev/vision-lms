@@ -45,7 +45,7 @@ export default {
     },
     {
       name: 'penalty',
-      title: 'Penalty Percentage',
+      title: 'Penalty',
       type: 'string',
     },
     {

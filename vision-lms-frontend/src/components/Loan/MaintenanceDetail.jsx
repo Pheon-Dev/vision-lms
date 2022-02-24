@@ -12,6 +12,7 @@ import { Spinner } from '../Components'
 export default function MaintenanceDetail() {
   const { memberId } = useParams();
   const navigate = useNavigate();
+  const [fields, setFields] = useState();
   const [members, setMembers] = useState();
   const [memberDetail, setMemberDetail] = useState();
   const [comment, setComment] = useState('');
@@ -39,6 +40,8 @@ export default function MaintenanceDetail() {
   const [addingCollaterals, setAddingCollaterals] = useState(false);
   const [collateralList, setCollateralList] = useState([{ collateral: "", value: "", image: "" }]);
   const [guarantor, setGuarantor] = useState([{ fullName: "", idNumber: "", phoneNumber: "", relationship: "" }]);
+
+  const [maintained, setMaintained] = useState('false');
 
   useEffect(() => {
     const query = '*[_type == "newProduct"]';
@@ -72,6 +75,7 @@ export default function MaintenanceDetail() {
     fetchProductDetails();
   }, [productType]);
 
+  // console.log(productDetails)
 
   const fetchMemberDetails = () => {
     let query = memberDetailQuery(memberId);
@@ -145,11 +149,10 @@ export default function MaintenanceDetail() {
     // navigate("/create-group")
   };
 
-  // console.log(loanIdentity)
   const handleLoanSave = () => {
+    setMaintained('true')
     setMemberNames(memberDetail?.personalDetails?.surName + ' ' + memberDetail?.personalDetails?.otherNames);
     setMemberPhoneNumber(memberDetail?.personalDetails?.mobileNumber);
-    // console.log(memberNames)
     if (
       productType
       && principalAmount
@@ -173,6 +176,14 @@ export default function MaintenanceDetail() {
         navigate("/loan/pending")
         // navigate(`/loan/preview/${_id}`)
       });
+    } else {
+      setFields(true);
+      setTimeout(
+        () => {
+          setFields(false);
+        },
+        2000,
+      );
     }
   }
 
@@ -195,21 +206,21 @@ export default function MaintenanceDetail() {
   }
 
   function renderInterestAmount(rate, principal) {
-    return ((rate * principal) / 100).toFixed(0);
+    return ((rate * principal) / 100).toFixed(0) | 0;
   }
 
   function renderInstallmentsAmount(rate, principal, tenure) {
     let principalAmount = ((rate * principal) / 100);
-    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0);
+    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0) | 0;
   }
 
   function renderProcessingFeeAmount(feePercentage, principal) {
-    let procFee = ((feePercentage / 100) * principal).toFixed(0);
+    let procFee = ((feePercentage / 100) * principal).toFixed(0) | 0;
     return (procFee < '301' ? '300' : procFee)
   }
 
   function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
-    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0);
+    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0) | 0;
   }
 
   function renderArrearsAmount(feePercentage, rate, principal, tenure) {
@@ -337,9 +348,11 @@ export default function MaintenanceDetail() {
                 <option
                   className="text-gray-500"
                 >Select a Product ...</option>
-                {productList.length < 1 ? null : productList?.map((item, index) => (
-                  <option key={index.toString()}>{item.productName}</option>
-                ))}
+                {productList && (
+                  productList?.map((item, index) => (
+                    <option key={index.toString()}>{item.productName}</option>
+                  )
+                  ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
@@ -377,13 +390,23 @@ export default function MaintenanceDetail() {
           </div>
         </div>
 
-        {productDetails === 0 ? null : productDetails?.map((item, index) => (
+        {productDetails && productDetails?.map((item, index) => (
           <>
-            <span className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
+            <span key={item.productName} className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
             <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(item.maximumRange) ? `Maximum Principal Amount is KSHs. ${item.maximumRange}` : null}</span>
             <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) < Number(item.minimumRange) ? `Minimum Principal Amount is KSHs. ${item.minimumRange}` : null}</span>
             <div key={index.toString()} className="bg-white flex flex-wrap p-3">
               <ul className="bg-gray-100 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                  <span className="tracking-wide text-l text-gray-700 font-bold">
+                    Product Code
+                  </span>
+                  <span value={arrears} onChange={(e) => setArrears(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {/* KSHs. 00 */}
+                    {/* KSHs. {renderArrearsAmount(item?.penaltyPercentage, item?.processingFee, item?.interestRate, principalAmount, loanTenure)} */}
+                    DC-{item.productCode}-{memberDetail?.memberNumber}
+                  </span>
+                </li>
                 <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
                   <span className="tracking-wide text-l text-gray-700 font-bold">
                     Interest Rate
@@ -410,15 +433,6 @@ export default function MaintenanceDetail() {
                     KSHs. {renderInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
                   </span>
                 </li>
-                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-                  <span className="tracking-wide text-l text-gray-700 font-bold">
-                    Processing Fee
-                  </span>
-                  <span value={processingFee} onChange={(e) => setProcessingFee(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                    {/* KSHs. {(item?.processingFee / 100) * principalAmount} */}
-                    KSHs. {renderProcessingFeeAmount(item?.processingFee, principalAmount)}
-                  </span>
-                </li>
               </ul>
               <ul className="bg-gray-100 border-l-2 border-gray-300 w-full md:w-1/2 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
                 <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
@@ -429,14 +443,18 @@ export default function MaintenanceDetail() {
                     {item?.repaymentCycle}
                   </span>
                 </li>
-                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-                  <span className="tracking-wide text-l text-gray-700 font-bold">
-                    Grace Period
-                  </span>
-                  <span value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                    {item?.gracePeriod}
-                  </span>
-                </li>
+                {item?.repaymentCycle === 'daily' ?
+                  <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                    <span className="tracking-wide text-l text-gray-700 font-bold">
+                      Grace Period
+                    </span>
+                    <span value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                      {item?.gracePeriod}
+                    </span>
+                  </li>
+                  :
+                  null
+                }
                 {/* <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3"> */}
                 {/*   <span className="tracking-wide text-l text-gray-700 font-bold"> */}
                 {/*     Arrears */}
@@ -449,23 +467,36 @@ export default function MaintenanceDetail() {
                 {/* </li> */}
                 <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
                   <span className="tracking-wide text-l text-gray-700 font-bold">
-                    Product Code
+                    Processing Fee
                   </span>
-                  <span value={arrears} onChange={(e) => setArrears(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                    {/* KSHs. 00 */}
-                    {/* KSHs. {renderArrearsAmount(item?.penaltyPercentage, item?.processingFee, item?.interestRate, principalAmount, loanTenure)} */}
-                    DC-{item.productCode}
-                  </span>
-                </li>
-                <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
-                  <span className="tracking-wide text-l text-gray-700 font-bold">
-                    Penalty
-                  </span>
-                  <span value={penaltyAmount} onChange={(e) => setPenaltyAmount(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                    {/* KSHs. {((item?.penaltyPercentage / 100) * (((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)} */}
-                    KSHs. {renderPenaltyAmount(item?.penaltyPercentage, item?.interestRate, principalAmount, loanTenure)}
+                  <span value={processingFee} onChange={(e) => setProcessingFee(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                    {/* KSHs. {(item?.processingFee / 100) * principalAmount} */}
+                    KSHs. {renderProcessingFeeAmount(item?.processingFee, principalAmount)}
                   </span>
                 </li>
+                {item?.repaymentCycle === 'daily' ?
+                  <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                    <span className="tracking-wide text-l text-gray-700 font-bold">
+                      Penalty
+                    </span>
+                    <span value={penaltyAmount} onChange={(e) => setPenaltyAmount(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                      {/* KSHs. {((item?.penaltyPercentage / 100) * (((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)} */}
+                      {/* KSHs. {renderPenaltyAmount(item?.penalty, item?.interestRate, principalAmount, loanTenure)} */}
+                      {item?.penaltyTypeChoice === 'amount' ? `KSHs. ${item?.penalty}` : `${renderPenaltyAmount(item?.penalty, item?.interestRate, principalAmount, loanTenure)} %`}
+                    </span>
+                  </li>
+                  :
+                  <li className="flex items-center hover:bg-gray-300 p-2 rounded-lg py-3">
+                    <span className="tracking-wide text-l text-gray-700 font-bold">
+                      Penalty
+                    </span>
+                    <span value={penaltyAmount} onChange={(e) => setPenaltyAmount(e.target.value)} className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                      {/* KSHs. {((item?.penaltyPercentage / 100) * (((item?.interestRate * principalAmount) / 100) + principalAmount) / loanTenure / 30).toFixed(0)} */}
+                      {/* KSHs. {renderPenaltyAmount(item?.penalty, item?.interestRate, principalAmount, loanTenure)} */}
+                      {item?.penaltyTypeChoice === 'amount' ? `KSHs. ${item?.penalty}` : `${item?.penalty} %`}
+                    </span>
+                  </li>
+                }
               </ul>
             </div>
           </>
@@ -541,14 +572,41 @@ export default function MaintenanceDetail() {
             </div>
           ))}
         </div>
-        <div className="flex w-full mt-8 justify-center items-center ml-8">
-          <button
-            onClick={handleLoanSave}
-            type="button"
-            className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Save
-          </button>
+        {/* <div className="flex w-full mt-8 justify-center items-center ml-8"> */}
+        {/*   <button */}
+        {/*     onClick={handleLoanSave} */}
+        {/*     type="button" */}
+        {/*     className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+        {/*   > */}
+        {/*     Save */}
+        {/*   </button> */}
+        {/* </div> */}
+        {
+          fields && (
+            <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
+              Please Fill All the Required Fields!
+            </p>
+          )
+        }
+        <div className="flex justify-center mt-5">
+          <div className="w-full md:w-1/3 mr-auto ml-auto">
+            <button
+              type="button"
+              onClick={handleLoanSave}
+              className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Save
+            </button>
+          </div>
+          <div className="w-full md:w-1/3 mr-auto ml-auto">
+            <button
+              type="button"
+              onClick={handleLoanSave}
+              className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Submit
+            </button>
+          </div>
         </div>
         {/* <div className="flex w-full mt-8 justify-center items-center ml-8"> */}
         {/*   <button */}

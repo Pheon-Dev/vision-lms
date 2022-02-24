@@ -64,6 +64,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'maintained',
+      title: 'Maintainance Status',
+      type: 'string',
+    },
+    {
       name: 'submitted',
       title: 'Submission Status',
       type: 'string',
