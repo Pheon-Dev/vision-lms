@@ -47,6 +47,9 @@ export const loanDetailsQuery = (loanId) => {
       , principalAmount
       , loanTenure
       , maintained
+      , submitted
+      , approved
+      , disbursed
   }`;
   return query;
 };

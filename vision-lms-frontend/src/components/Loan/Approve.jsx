@@ -31,6 +31,8 @@ export default function Approve() {
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
   const [approved, setApproved] = useState('false');
+  const [maintained, setMaintained] = useState('true');
+  const [disbursed, setDisbursed] = useState('false');
   const [submitted, setSubmitted] = useState('true');
   // const [submittedList, setSubmittedList] = useState();
 
@@ -129,8 +131,10 @@ export default function Approve() {
   }
 
   const handleLoanSave = () => {
-    setApproved('true')
-    setSubmitted('true')
+    setMaintained('true');
+    setApproved('true');
+    setDisbursed('false');
+    setSubmitted('true');
     setPrincipalAmount(loanDetails[0]?.principalAmount);
     setLoanTenure(loanDetails[0]?.loanTenure);
     setProductCode('DC-' + productDetails[0]?.productCode + '-' + memberDetails[0]?.memberNumber);
@@ -153,8 +157,10 @@ export default function Approve() {
       && processingFeeAmount
       && penaltyAmount
       && memberPhoneNumber
+      && maintained
       && approved
       && submitted
+      && disbursed
     ) {
       console.log(
         memberIdentity
@@ -169,8 +175,10 @@ export default function Approve() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
+        , maintained
         , approved
         , submitted
+        , disbursed
       )
       const doc = {
         _type: 'approve',
@@ -186,8 +194,10 @@ export default function Approve() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
+        , maintained
         , approved
         , submitted
+        , disbursed
       };
       client.create(doc).then(() => {
         alert('Success')

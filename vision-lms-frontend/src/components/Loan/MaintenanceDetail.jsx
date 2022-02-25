@@ -40,7 +40,10 @@ export default function MaintenanceDetail() {
   const [collateralList, setCollateralList] = useState([{ collateral: "", value: "", image: "" }]);
   const [guarantor, setGuarantor] = useState([{ fullName: "", idNumber: "", phoneNumber: "", relationship: "" }]);
 
-  const [maintained, setMaintained] = useState('false');
+  const [maintained, setMaintained] = useState('');
+  const [submitted, setSubmitted] = useState('');
+  const [approved, setApproved] = useState('');
+  const [disbursed, setDisbursed] = useState('');
 
   useEffect(() => {
     const query = '*[_type == "newProduct"]';
@@ -149,7 +152,10 @@ export default function MaintenanceDetail() {
   };
 
   const handleLoanSave = () => {
-    setMaintained('true')
+    setMaintained('true');
+    setApproved('false');
+    setDisbursed('false');
+    setSubmitted('false');
     setMemberNames(memberDetail?.personalDetails?.surName + ' ' + memberDetail?.personalDetails?.otherNames);
     setMemberPhoneNumber(memberDetail?.personalDetails?.mobileNumber);
     if (
@@ -160,6 +166,9 @@ export default function MaintenanceDetail() {
       && memberPhoneNumber
       && loanTenure
       && maintained
+      && approved
+      && submitted
+      && disbursed
     ) {
       const doc = {
         _type: 'maintenance',
@@ -170,6 +179,9 @@ export default function MaintenanceDetail() {
         , memberPhoneNumber
         , loanTenure
         , maintained
+        , approved
+        , submitted
+        , disbursed
       };
       client.create(doc).then(() => {
         alert('Success')

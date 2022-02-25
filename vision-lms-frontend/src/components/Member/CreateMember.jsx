@@ -111,11 +111,14 @@ export default function CreateMember() {
 
   // console.log(Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + code.length : '000' + code.length))
   // console.log(Date().split(' ')[2] + Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1])
+  // console.log(memberNumber)
   const saveMember = () => {
-    setMemberNumber(`${Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
+    // setMemberNumber(`${Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
+    setMemberNumber(`${(code.length > 9 ? code.length > 99 ? code.length > 999 ? (Number(code.length) + 1) : '0' + (Number(code.length) + 1) : '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
     console.log(memberNumber)
     // setMemberNumber(`${Date().split(' ')[2] + Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1]}`)
-    if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && group && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && groupName && groupLeaderName && leaderNumber && leaderIdNumber && imageAsset?._id) {
+    // if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && group && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && groupName && groupLeaderName && leaderNumber && leaderIdNumber && imageAsset?._id) {
+    if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && imageAsset?._id) {
       const doc = {
         _type: 'member',
         memberNumber,
@@ -147,7 +150,7 @@ export default function CreateMember() {
           businessLocation,
           businessAge,
           refereeName,
-          group,
+          // group,
           communityPosition,
           mpesaTransNumber,
         },
@@ -160,12 +163,12 @@ export default function CreateMember() {
           cityTownKin,
           mobileNumberKin,
         },
-        groupInformation: {
-          groupName,
-          groupLeaderName,
-          leaderNumber,
-          leaderIdNumber,
-        },
+        // groupInformation: {
+        //   groupName,
+        //   groupLeaderName,
+        //   leaderNumber,
+        //   leaderIdNumber,
+        // },
         image: {
           _type: 'image',
           asset: {
@@ -250,7 +253,8 @@ export default function CreateMember() {
               <span
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               >
-                {`DC-${Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`}
+                {/* {`DC-${Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`} */}
+                {`DC-${code.length > 9 ? code.length > 99 ? code.length > 999 ? (Number(code.length) + 1) : '0' + (Number(code.length) + 1) : '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1)}`}
               </span>
             )}
             {/* <input */}
@@ -636,7 +640,7 @@ export default function CreateMember() {
               onChange={(e) => setRefereeName(e.target.value)}
             />
           </div>
-          <div className="w-full md:w-1/2 px-3">
+          <div className="hidden w-full md:w-1/2 px-3">
             <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
               Group
               <span className="text-red-500 italic">*</span>
@@ -786,8 +790,8 @@ export default function CreateMember() {
             />
           </div>
         </div>
-        <div className="flex flex-col text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold p-2">GROUP INFORMATION</div>
-        <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="flex hidden flex-col text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold p-2">GROUP INFORMATION</div>
+        <div className="flex hidden flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
               Group Name
@@ -817,7 +821,7 @@ export default function CreateMember() {
             />
           </div>
         </div>
-        <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="flex hidden flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
               ID No. of Leader
@@ -832,7 +836,7 @@ export default function CreateMember() {
               onChange={(e) => setLeaderIdNumber(e.target.value)}
             />
           </div>
-          <div className="w-full md:w-1/2 px-3">
+          <div className="w-full hidden md:w-1/2 px-3">
             <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
               Mobile No. of Group Leader
               <span className="text-red-500 italic">*</span>

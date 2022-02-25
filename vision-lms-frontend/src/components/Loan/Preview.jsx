@@ -30,42 +30,23 @@ export default function Preview() {
   const [processingFeeAmount, setProcessingFeeAmount] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
-  const [submitted, setSubmitted] = useState('false');
+  const [submitted, setSubmitted] = useState('');
+  const [maintained, setMaintained] = useState('');
+  const [approved, setApproved] = useState('');
+  const [disbursed, setDisbursed] = useState('');
   const [submittedList, setSubmittedList] = useState();
+  const [subId, setSubId] = useState();
 
   useEffect(() => {
     const query = '*[_type == "preview"]';
+    // const query = `*[_type == "preview"] && loanId == ${subId}`;
 
     client.fetch(query).then((data) => {
       setSubmittedList(data);
     });
 
-  }, []);
-
-  // console.log(submittedList)
-  function renderSubmission() {
-    return (
-      <>
-        {
-          submittedList === 0 ? null : submittedList?.map((subs) => (
-            <div key={subs?._id} className="flex justify-center mt-5">
-              {subs?.loanId === loanId && subs?.submitted !== 'true' ?
-                <button
-                  onClick={handleLoanSave}
-                  type="button"
-                  className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Submit
-                </button>
-                :
-                null
-              }
-            </div>
-          ))
-        }
-      </>
-    )
-  }
+  }, [subId]);
+  console.log(submittedList)
 
   function renderInterestAmount(rate, principal) {
     return ((rate * principal) / 100).toFixed(0);
@@ -128,7 +109,10 @@ export default function Preview() {
   }
 
   const handleLoanSave = () => {
-    setSubmitted('true')
+    setMaintained('true');
+    setApproved('false');
+    setDisbursed('false');
+    setSubmitted('true');
     setPrincipalAmount(loanDetails[0]?.principalAmount);
     setLoanTenure(loanDetails[0]?.loanTenure);
     setProductCode('DC-' + productDetails[0]?.productCode + '-' + memberDetails[0]?.memberNumber);
@@ -151,7 +135,10 @@ export default function Preview() {
       && processingFeeAmount
       && penaltyAmount
       && memberPhoneNumber
+      && maintained
+      && approved
       && submitted
+      && disbursed
     ) {
       console.log(
         memberIdentity
@@ -166,7 +153,10 @@ export default function Preview() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
+        , maintained
+        , approved
         , submitted
+        , disbursed
       )
       const doc = {
         _type: 'preview',
@@ -182,7 +172,10 @@ export default function Preview() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
+        , maintained
+        , approved
         , submitted
+        , disbursed
       };
       client.create(doc).then(() => {
         alert('Success')
@@ -191,9 +184,12 @@ export default function Preview() {
       });
     }
   }
+  console.log(subId)
+  // console.log(loanDetails)
   return (
     <>
       <div onMouseEnter={() => {
+        setSubId(loanDetails[0]._id)
         setMemberIdentity(loanDetails[0].memberId)
         setProductType(loanDetails[0].productType)
       }}
@@ -359,15 +355,60 @@ export default function Preview() {
           {/* {JSON.stringify(memberDetails, undefined, 2)} */}
           {/* {JSON.stringify(productDetails, undefined, 2)} */}
         </pre>
-        <div className="flex w-full mt-8 justify-center items-center ml-8">
-          <button
-            onClick={handleLoanSave}
-            type="button"
-            className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Submit
-          </button>
-        </div>
+        {/* <div className="flex w-full mt-8 justify-center items-center ml-8"> */}
+        {/*   <button */}
+        {/*     onClick={handleLoanSave} */}
+        {/*     type="button" */}
+        {/*     className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+        {/*   > */}
+        {/*     Submit */}
+        {/*   </button> */}
+        {/* </div> */}
+
+        {submittedList &&
+          submittedList.map((subs) => (
+            subs.loanId === subId ?
+              subs.submitted === 'true' ?
+                <div key={subs.loanId} className="flex justify-center mt-5">
+                  <Link
+                    className="bg-green-500 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    to="/loan/approvals"
+                  // to={`/loan/approvals/${submittedList[0]?.loanId}`}
+                  >
+                    <span className="w-full md:w-1/3 mr-auto ml-auto">
+                      Approvals
+                    </span>
+                  </Link>
+                </div>
+                :
+                <div className="flex justify-center mt-5">
+                  <div className="w-full md:w-1/3 mr-auto ml-auto">
+                    <button
+                      type="button"
+                      // onClick={submittedList[0]?.submitted === 'true' ? navigate(`/loan/approvals/${submittedList[0]?.memberIdentity}`) : handleLoanSave}
+                      onClick={handleLoanSave}
+                      className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      Save
+
+                    </button>
+                  </div>
+
+                  <div className="w-full md:w-1/3 mr-auto ml-auto">
+                    <button
+                      type="button"
+                      onClick={handleLoanSave}
+                      // onClick={submittedList[0]?.submitted === 'true' ? navigate(`/loan/approvals/${submittedList[0]?.memberIdentity}`) : handleLoanSave}
+                      className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              :
+              null
+          ))
+        }
         {/* {renderSubmission()} */}
         <div className="mb-8" />
       </div>

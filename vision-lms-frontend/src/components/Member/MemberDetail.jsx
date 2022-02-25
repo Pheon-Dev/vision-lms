@@ -148,19 +148,19 @@ export default function MemberDetail() {
                     <ul className="list-inside space-y-2">
                       <li>
                         <div className="text-gray-900 font-bold text-sm">Group Name</div>
-                        <div className="text-teal-500 text-sm">{memberDetail?.groupInformation.groupName}</div>
+                        <div className="text-teal-500 text-sm">{memberDetail?.groupInformation?.groupName}</div>
                       </li>
                       <li>
                         <div className="text-gray-900 font-bold text-sm">Name of Group Leader</div>
-                        <div className="text-teal-500 text-sm">{memberDetail?.groupInformation.groupLeaderName}</div>
+                        <div className="text-teal-500 text-sm">{memberDetail?.groupInformation?.groupLeaderName}</div>
                       </li>
                       <li>
                         <div className="text-gray-900 font-bold text-sm">ID No. of Leader</div>
-                        <div className="text-teal-500 text-sm">{memberDetail?.groupInformation.leaderIdNumber}</div>
+                        <div className="text-teal-500 text-sm">{memberDetail?.groupInformation?.leaderIdNumber}</div>
                       </li>
                       <li>
                         <div className="text-gray-900 font-bold text-sm">Mobile No. of Leader</div>
-                        <div className="text-teal-500 text-sm">{memberDetail?.groupInformation.leaderNumber}</div>
+                        <div className="text-teal-500 text-sm">{memberDetail?.groupInformation?.leaderNumber}</div>
                       </li>
                     </ul>
                   </div>

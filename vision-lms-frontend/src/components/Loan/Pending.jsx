@@ -5,27 +5,57 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import { client, urlFor } from '../../client';
-import { products, memberDetailMoreMemberQuery, memberDetailQuery, loanFeedQuery, searchQuery } from '../../utils/data';
+import { loanDetailsQuery, memberDetailMoreMemberQuery, memberDetailQuery, loanFeedQuery, searchQuery } from '../../utils/data';
 import { Spinner, Layout } from '../Components';
 
 export default function Pending() {
+  const [maintenanceId, setMaintenanceId] = useState();
   const [maintainedList, setMaintainedList] = useState();
+  const [pendingList, setPendingList] = useState();
   const navigate = useNavigate();
   useEffect(() => {
-    const query = '*[_type == "maintenance"]';
+    const query = '*[_type == "preview"]';
 
     client.fetch(query).then((data) => {
       setMaintainedList(data);
     });
 
   }, []);
+  useEffect(() => {
+    const query = `*[_type == "preview" && memberIdentity == ${maintenanceId}]`;
+    // const query = loanDetailsQuery(maintenanceId);
+
+    client.fetch(query).then((data) => {
+      setPendingList(data);
+    });
+
+  }, [maintenanceId]);
+
   // console.log(maintainedList)
+  // console.log(maintenanceId)
+  // console.log(pendingList)
 
   function renderMaintainedLoans() {
     return (
       <div className="flex flex-col mt-5">
         <div className="font-bold flex justify-center w-full text-xl">
-          <span className="text-gray-700 ml-auto mr-auto">Pending Loans</span>
+          {/* <span className="text-gray-700 ml-auto mr-auto">Pending Loans</span> */}
+          Select to
+          {maintainedList &&
+            maintainedList[0]?.maintained === 'true' ?
+            maintainedList[0]?.submitted === 'true' ?
+              <span className="text-yellow-500 ml-2">
+                Approve
+              </span>
+              :
+              <span className="text-green-500 ml-2">
+                Preview
+              </span>
+            :
+            <span className="text-blue-500 ml-2">
+              Maintain
+            </span>
+          }
         </div>
         <br />
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -52,7 +82,16 @@ export default function Pending() {
                       // }}
                       // onMouseLeave={() => setPostHovered(false)}
                       // onClick={() => navigate(deleteLoan(member._id))}
-                      onClick={() => navigate(`/loan/preview/${member._id}`)}
+                      onMouseEnter={() => setMaintenanceId(member._id)}
+                      // onClick={() => navigate(`/loan/preview/${member._id}`)}
+                      onClick={() => {
+                        pendingList &&
+                          pendingList[0]?.maintained === 'true' ?
+                          navigate(`/loan/preview/${member._id}`)
+                          :
+                          // navigate(`/loan/preview/${pendingList[0]?._id}`)
+                          navigate(`/loan/approvals/${pendingList[0]?.memberIdentity}`)
+                      }}
                       key={member._id}
                       // value={memberIdentity}
                       // onMouseUp={() => setMemberIdentity("Try")}

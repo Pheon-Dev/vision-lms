@@ -31,6 +31,7 @@ export default function Disburse() {
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
   const [disbursed, setDisbursed] = useState('false');
+  const [maintained, setMaintained] = useState('true');
   const [approved, setApproved] = useState('true');
   const [submitted, setSubmitted] = useState('true');
   const [disbursedList, setDisbursedList] = useState();
@@ -133,6 +134,7 @@ export default function Disburse() {
     setApproved('true')
     setSubmitted('true')
     setDisbursed('true')
+    setMaintained('true');
     setPrincipalAmount(loanDetails[0]?.principalAmount);
     setLoanTenure(loanDetails[0]?.loanTenure);
     setProductCode('DC-' + productDetails[0]?.productCode + '-' + memberDetails[0]?.memberNumber);
@@ -156,6 +158,7 @@ export default function Disburse() {
       && penaltyAmount
       && memberPhoneNumber
       && approved
+      && maintained
       && submitted
       && disbursed
     ) {
@@ -173,6 +176,7 @@ export default function Disburse() {
         , processingFeeAmount
         , memberPhoneNumber
         , approved
+        , maintained
         , submitted
         , disbursed
       )
@@ -191,6 +195,7 @@ export default function Disburse() {
         , processingFeeAmount
         , memberPhoneNumber
         , approved
+        , maintained
         , submitted
         , disbursed
       };
