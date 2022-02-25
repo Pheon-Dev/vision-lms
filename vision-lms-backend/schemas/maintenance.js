@@ -14,15 +14,15 @@ export default {
       type: 'string',
     },
     {
+      name: 'loanAccNumber',
+      title: 'Loan Account Number',
+      type: 'string',
+    },
+    {
       name: 'productType',
       title: 'Product Type',
       type: 'string',
     },
-    // {
-    //   name: 'product',
-    //   title: 'Product',
-    //   type: 'string',
-    // },
     {
       name: 'principalAmount',
       title: 'Principal Amount',
@@ -41,11 +41,6 @@ export default {
     {
       name: 'maintained',
       title: 'Maintainance Status',
-      type: 'string',
-    },
-    {
-      name: 'submitted',
-      title: 'Submission Status',
       type: 'string',
     },
     {
@@ -73,21 +68,21 @@ export default {
     //   title: 'Interest Rate (%)',
     //   type: 'string',
     // },
-    // {
-    //   name: 'interestAmount',
-    //   title: 'Interest Amount',
-    //   type: 'string',
-    // },
-    // {
-    //   name: 'installments',
-    //   title: 'Installments',
-    //   type: 'string',
-    // },
-    // {
-    //   name: 'processingFee',
-    //   title: 'Processing Fee',
-    //   type: 'string',
-    // },
+    {
+      name: 'interestAmount',
+      title: 'Interest Amount',
+      type: 'string',
+    },
+    {
+      name: 'installments',
+      title: 'Installments',
+      type: 'string',
+    },
+    {
+      name: 'processingFee',
+      title: 'Processing Fee',
+      type: 'string',
+    },
     // {
     //   name: 'repaymentCycle',
     //   title: 'Repayment Cycle',
@@ -103,11 +98,11 @@ export default {
     //   title: 'Arrears',
     //   type: 'string',
     // },
-    // {
-    //   name: 'penaltyAmount',
-    //   title: 'Penalty Amount',
-    //   type: 'string',
-    // },
+    {
+      name: 'penaltyAmount',
+      title: 'Penalty Amount',
+      type: 'string',
+    },
     {
       name: 'collateralList',
       title: 'Collaterals',

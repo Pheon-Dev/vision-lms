@@ -110,7 +110,7 @@ export default function Sidebar({ closeToggle, user }) {
             <SideBarIcon icon={<AiOutlineHome size="28" />} text="Home" />
           </Link>
           <Divider />
-          <Link to="/loan/maintenance">
+          <Link to="/loan/create-loan">
             <SideBarIcon icon={<BsPlus size="28" />} text="New Loan" />
           </Link>
           <Link to="/member/create-member">
