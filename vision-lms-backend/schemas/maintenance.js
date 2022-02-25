@@ -74,8 +74,8 @@ export default {
       type: 'string',
     },
     {
-      name: 'installments',
-      title: 'Installments',
+      name: 'installmentAmount',
+      title: 'Installment Amount',
       type: 'string',
     },
     {

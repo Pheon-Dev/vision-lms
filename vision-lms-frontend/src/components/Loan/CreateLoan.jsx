@@ -11,6 +11,8 @@ import { Spinner } from '../Components'
 
 export default function CreateLoan() {
   const navigate = useNavigate();
+  const [fields, setFields] = useState();
+
   const [memberId, setMemberId] = useState("");
   const [memberIdentity, setMemberIdentity] = useState("");
   const [memberDetail, setMemberDetail] = useState();
@@ -101,7 +103,7 @@ export default function CreateLoan() {
     setMemberPhoneNumber(memberDetail[0]?.personalDetails?.mobileNumber);
     setInterestAmount(renderInterestAmount(productDetails[0]?.interestRate, principalAmount).toString());
     setInstallmentAmount(renderInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString());
-    setProcessingFee(renderProcessingFeeAmount(productDetails[0]?.processingFee, principalAmount));
+    setProcessingFee(renderProcessingFeeAmount(productDetails[0]?.processingFee, principalAmount).toString());
     setPenaltyAmount(productDetails[0]?.penaltyTypeChoice === 'amount' ? productDetails[0]?.penalty : renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, principalAmount, loanTenure).toString());
     setLoanAccNumber(productDetails[0]?.productCode + '-' + memberDetail[0]?.memberNumber)
   }
@@ -147,14 +149,14 @@ export default function CreateLoan() {
         // navigate(`/loan/preview/${_id}`)
       });
 
-      // } else {
-      //   setFields(true);
-      //   setTimeout(
-      //     () => {
-      //       setFields(false);
-      //     },
-      //     2000,
-      //   );
+    } else {
+      setFields(true);
+      setTimeout(
+        () => {
+          setFields(false);
+        },
+        2000,
+      );
     }
   }
   return (
@@ -390,6 +392,17 @@ export default function CreateLoan() {
           >
             Submit
           </button>
+        </div>
+      </div>
+      <div className="flex justify-center">
+        <div className="w-1/2 ml-auto mr-auto">
+          {
+            fields && (
+              <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
+                Please Fill All the Required Fields!
+              </p>
+            )
+          }
         </div>
       </div>
       {/* <pre>{JSON.stringify(memberDetail, undefined, 2)}</pre> */}
