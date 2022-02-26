@@ -11,20 +11,21 @@ import { Spinner } from '../Components'
 export default function Approve() {
   const { loanId } = useParams();
   const navigate = useNavigate();
+  const [fields, setFields] = useState();
   const [loading, setLoading] = useState(false);
 
   const [loanDetails, setLoanDetails] = useState("");
-  const [memberDetails, setMemberDetails] = useState("");
+  const [loanAccNumber, setLoanAccNumber] = useState("");
   const [productDetails, setProductDetails] = useState("");
-
-  const [memberIdentity, setMemberIdentity] = useState("");
   const [productType, setProductType] = useState("");
 
+  const [memberEmail, setMemberEmail] = useState("");
+  const [memberId, setMemberId] = useState("");
+  const [memberIdNumber, setMemberIdNumber] = useState("");
   const [memberNames, setMemberNames] = useState("");
   const [memberPhoneNumber, setMemberPhoneNumber] = useState("");
   const [principalAmount, setPrincipalAmount] = useState("");
   const [loanTenure, setLoanTenure] = useState("");
-  const [productCode, setProductCode] = useState("");
   const [interestAmount, setInterestAmount] = useState("");
   const [installmentAmount, setInstallmentAmount] = useState("");
   const [processingFeeAmount, setProcessingFeeAmount] = useState("");
@@ -33,26 +34,20 @@ export default function Approve() {
   const [approved, setApproved] = useState('false');
   const [maintained, setMaintained] = useState('true');
   const [disbursed, setDisbursed] = useState('false');
-  const [submitted, setSubmitted] = useState('true');
 
   const fetchLoanDetails = () => {
     setLoading(true)
     const query = `*[_type == "maintenance" && _id == '${loanId}']`;
-    const memberQuery = memberDetailQuery(memberIdentity);
     const productQuery = productDetailQuery(productType);
 
     client.fetch(query).then((data) => {
       setLoanDetails(data);
     });
 
+    console.log(loanDetails)
     if (productQuery) {
       client.fetch(productQuery).then((data) => {
         setProductDetails(data);
-      });
-    }
-    if (memberQuery) {
-      client.fetch(memberQuery).then((data) => {
-        setMemberDetails(data);
       });
     }
     setLoading(false)
@@ -60,8 +55,7 @@ export default function Approve() {
 
   useEffect(() => {
     fetchLoanDetails();
-  }, [loanId, memberIdentity, productType]);
-
+  }, [loanId, productType]);
 
   const ideaName = loanId || 'all';
   if (loading) {
@@ -77,18 +71,49 @@ export default function Approve() {
   }
 
   const handleLoanSave = () => {
-    setMaintained('true');
+    setMaintained('false');
     setApproved('true');
     setDisbursed('false');
-    setSubmitted('true');
+    setMemberId(loanDetails[0]?.memberId);
+    setMemberEmail(loanDetails[0]?.memberEmail);
+    setMemberIdNumber(loanDetails[0]?.memberIdNumber);
+    setMemberNames(loanDetails[0]?.memberNames);
+    setMemberPhoneNumber(loanDetails[0]?.memberPhoneNumber);
+    setPrincipalAmount(loanDetails[0]?.principalAmount);
+    setLoanTenure(loanDetails[0]?.loanTenure);
+    setInterestAmount(loanDetails[0]?.interestAmount);
+    setInstallmentAmount(loanDetails[0]?.installmentAmount);
+    setProcessingFeeAmount(loanDetails[0]?.processingFee);
+    setPenaltyAmount(loanDetails[0]?.penaltyAmount);
+    setLoanAccNumber(loanDetails[0]?.loanAccNumber);
+    console.log(
+      loanId
+      , productType
+      , memberNames
+      , principalAmount
+      , loanTenure
+      , interestAmount
+      , installmentAmount
+      , penaltyAmount
+      , processingFeeAmount
+      , memberPhoneNumber
+      , maintained
+      , approved
+      , disbursed
+      , memberId
+      , memberIdNumber
+      , memberEmail
+      , loanAccNumber
+    )
+  }
+
+  const handleLoanApprove = () => {
     if (
-      memberIdentity
-      && loanId
+      loanId
       && productType
       && memberNames
       && principalAmount
       && loanTenure
-      && productCode
       && interestAmount
       && installmentAmount
       && processingFeeAmount
@@ -96,36 +121,30 @@ export default function Approve() {
       && memberPhoneNumber
       && maintained
       && approved
-      && submitted
       && disbursed
+      && memberId
+      && memberIdNumber
+      && memberEmail
+      && loanAccNumber
     ) {
-      console.log(
-        memberIdentity
-        , loanId
-        , productType
-        , memberNames
-        , principalAmount
-        , loanTenure
-        , productCode
-        , interestAmount
-        , installmentAmount
-        , penaltyAmount
-        , processingFeeAmount
-        , memberPhoneNumber
-        , maintained
-        , approved
-        , submitted
-        , disbursed
-      )
+      client
+        .patch(loanId)
+        .set({
+          maintained: 'true',
+          approved: 'true',
+          disbursed: 'false'
+        })
+        .commit()
+        .then((update) => {
+          console.log(update);
+        });
       const doc = {
         _type: 'approve',
-        memberIdentity
-        , loanId
+        loanId
         , productType
         , memberNames
         , principalAmount
         , loanTenure
-        , productCode
         , interestAmount
         , installmentAmount
         , penaltyAmount
@@ -133,22 +152,25 @@ export default function Approve() {
         , memberPhoneNumber
         , maintained
         , approved
-        , submitted
         , disbursed
+        , memberId
+        , memberIdNumber
+        , memberEmail
+        , loanAccNumber
       };
       client.create(doc).then(() => {
         alert('Success')
         console.log(doc)
-        // navigate('/loan/disbursements')
+        navigate('/loan/disbursements')
       });
     }
   }
   return (
     <>
-      <div onMouseEnter={() => {
-        setMemberIdentity(loanDetails[0].memberId)
-        setProductType(loanDetails[0].productType)
-      }}
+      <div
+        onMouseEnter={() => {
+          setProductType(loanDetails[0].productType)
+        }}
       >
         <div className="font-bold mt-5 flex justify-center w-full text-3xl">
           <span className="text-gray-500">Approve </span>
@@ -311,14 +333,28 @@ export default function Approve() {
           {/* {JSON.stringify(memberDetails, undefined, 2)} */}
           {/* {JSON.stringify(productDetails, undefined, 2)} */}
         </pre>
-        <div className="flex w-full mt-8 justify-center items-center ml-8">
-          <button
-            onClick={handleLoanSave}
-            type="button"
-            className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Approve
-          </button>
+        <div className="flex justify-center mt-5">
+          <div className="w-full md:w-1/3 mr-auto ml-auto">
+            <button
+              type="button"
+              onClick={handleLoanApprove}
+              onMouseEnter={handleLoanSave}
+              className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+        <div className="flex justify-center">
+          <div className="w-1/2 ml-auto mr-auto">
+            {
+              fields && (
+                <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
+                  Please Fill All the Required Fields!
+                </p>
+              )
+            }
+          </div>
         </div>
         {/* {renderSubmission()} */}
         <div className="mb-8" />

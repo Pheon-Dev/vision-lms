@@ -11,6 +11,7 @@ import { Spinner, Layout } from '../Components';
 export default function Approvals() {
   const { loanId } = useParams();
   const [submittedList, setSubmittedList] = useState();
+  const [memberId, setMemberId] = useState("");
   const [approvedList, setApprovedList] = useState();
   const navigate = useNavigate();
   useEffect(() => {
@@ -21,7 +22,6 @@ export default function Approvals() {
     });
 
   }, []);
-  console.log(submittedList)
 
   useEffect(() => {
     const query = '*[_type == "approve"]';
@@ -30,7 +30,8 @@ export default function Approvals() {
       setApprovedList(data);
     });
 
-  }, []);
+  }, [memberId]);
+  console.log(approvedList)
 
   function renderSubmittedLoans() {
     return (
@@ -53,15 +54,18 @@ export default function Approvals() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {submittedList?.map((member) => (
-                    member.approved !== 'true' ?
+                    member.maintained !== 'false' && member.approved === 'false' && member.disbursed === 'false' ?
                       <tr
                         // onMouseEnter={() => {
                         //   setPostHovered(true);
                         //   setMemberIdentity(member.memberId);
                         // }}
                         // onMouseLeave={() => setPostHovered(false)}
+                        onClick={() => {
+                          setMemberId(member.memberId);
+                          navigate(`/loan/approvals/${member._id}`);
+                        }}
                         // onClick={() => navigate(deleteLoan(member._id))}
-                        onClick={() => navigate(`/loan/approvals/${member._id}`)}
                         key={member._id}
                         // value={memberIdentity}
                         // onMouseUp={() => setMemberIdentity("Try")}
@@ -99,6 +103,7 @@ export default function Approvals() {
       </div>
     )
   }
+  console.log(memberId)
   function renderApprovedLoans() {
     return (
       <div className="flex flex-col mt-5">
@@ -119,8 +124,8 @@ export default function Approvals() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {submittedList?.map((member) => (
-                    member.approved === 'true' ?
+                  {approvedList?.map((member) => (
+                    member.maintained !== 'true' && member.approved !== 'false' && member.disbursed === 'false' ?
                       <tr
                         // onMouseEnter={() => {
                         //   setPostHovered(true);
@@ -128,7 +133,10 @@ export default function Approvals() {
                         // }}
                         // onMouseLeave={() => setPostHovered(false)}
                         // onClick={() => navigate(deleteLoan(member._id))}
-                        onClick={() => navigate("/loan/disbursements")}
+                        onClick={() => {
+                          setMemberId(member.memberId);
+                          navigate("/loan/disbursements");
+                        }}
                         key={member._id}
                         // value={memberIdentity}
                         // onMouseUp={() => setMemberIdentity("Try")}
