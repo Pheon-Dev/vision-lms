@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Spinner } from '../Components';
 import { client } from '../../client';
-import { v4 as uuidv4 } from 'uuid';
 
 export default function NewProduct() {
   const [fields, setFields] = useState();
@@ -23,6 +21,16 @@ export default function NewProduct() {
   const [gracePeriod, setGracePeriod] = useState('');
 
   const navigate = useNavigate();
+  const [code, setCode] = useState();
+
+  useEffect(() => {
+    const query = '*[_type == "newProduct"]';
+
+    client.fetch(query).then((data) => {
+      setCode(data);
+    });
+
+  }, []);
 
   const frequencies = [
     {
@@ -158,8 +166,56 @@ export default function NewProduct() {
   ];
 
   const handleProductSave = () => {
-    setProductCode(`${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`)
-    console.log(productCode)
+    // setProductCode(`${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`)
+    setProductCode(`${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) | 0 : 'P' + (Number(code?.length) + 1) | 0 : 'P0' + (Number(code?.length) + 1) | 0 : 'P00' + (Number(code?.length) + 1) | 0)}`)
+
+    setGracePeriod(gracePeriod === '...' ? 'null' : gracePeriod)
+    setPenaltyTypeChoice(penaltyTypeChoice === '...' ? 'null' : penaltyTypeChoice)
+    setPenaltyPaymentChoice(penaltyPaymentChoice === '...' ? 'null' : penaltyPaymentChoice)
+    if (productName
+      && productCode
+      && minimumRange
+      && maximumRange
+      && interestRate
+      && interestFrequency
+      && penalty
+      && penaltyTypeChoice
+      && penaltyPaymentChoice
+      && tenureMaximum
+      && repaymentCycle
+      && processingFee
+      && gracePeriod
+      && product
+    ) {
+      const doc = {
+        _type: 'newProduct',
+        productName
+        , productCode
+        , minimumRange
+        , maximumRange
+        , interestRate
+        , interestFrequency
+        , penalty
+        , penaltyTypeChoice
+        , penaltyPaymentChoice
+        , tenureMaximum
+        , repaymentCycle
+        , processingFee
+        , gracePeriod
+        , product
+      };
+      console.log(doc)
+    } else {
+      setFields(true);
+      setTimeout(
+        () => {
+          setFields(false);
+        },
+        2000,
+      );
+    }
+  }
+  const handleProductCreate = () => {
     if (productName
       && productCode
       && minimumRange
@@ -196,35 +252,6 @@ export default function NewProduct() {
         alert('Success')
         navigate('/loan/maintenance')
       });
-    } else if
-      (productName
-      && productCode
-      && minimumRange
-      && maximumRange
-      && interestRate
-      && interestFrequency
-      && tenureMaximum
-      && repaymentCycle
-      && processingFee
-      && product
-    ) {
-      const doc = {
-        _type: 'newProduct',
-        productName
-        , productCode
-        , minimumRange
-        , maximumRange
-        , interestRate
-        , interestFrequency
-        , tenureMaximum
-        , repaymentCycle
-        , processingFee
-        , product
-      };
-      client.create(doc).then(() => {
-        alert('Success')
-        navigate('/loan/maintenance')
-      });
     } else {
       setFields(true);
       setTimeout(
@@ -246,7 +273,6 @@ export default function NewProduct() {
             <div className="w-full md:w-1/2 px-3 mb-0 md:mb-0">
               <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
                 Product Name
-                {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -260,28 +286,18 @@ export default function NewProduct() {
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
                 Product Code
-                {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <span
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               >
-                {`DC-${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`}
+                {`DC-${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) | 0 : 'P' + (Number(code?.length) + 1) | 0 : 'P0' + (Number(code?.length) + 1) | 0 : 'P00' + (Number(code?.length) + 1) | 0)}`}
               </span>
-              {/* <input */}
-              {/*   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" */}
-              {/*   id="productCode" */}
-              {/*   type="text" */}
-              {/*   placeholder={`DC-${pcode}`} */}
-              {/* // value={productCode} */}
-              {/* // onChange={(e) => setProductCode(e.target.value)} */}
-              {/* /> */}
             </div>
           </div>
           <div className="flex flex-wrap mt-8 -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label className="block tracking-wide text-xs mb-2">
                 <span className="uppercase text-gray-700 font-bold text-md">Minimum Range (KShs)</span>
-                {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -295,7 +311,6 @@ export default function NewProduct() {
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2">
                 <span className="uppercase text-gray-700 font-bold text-md">Maximum Range (KSHs)</span>
-                {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -311,7 +326,6 @@ export default function NewProduct() {
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label className="block tracking-wide text-xs mb-2">
                 <span className="uppercase text-gray-700 font-bold text-md">Interest Rate (%)</span>
-                {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -357,7 +371,6 @@ export default function NewProduct() {
             <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
               <label className="block tracking-wide text-xs mb-2">
                 <span className="uppercase text-gray-700 font-bold text-md">Processing Fee (%)</span>
-                {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -368,106 +381,103 @@ export default function NewProduct() {
                 onChange={(e) => setProcessingFee(e.target.value)}
               />
             </div>
-            {repaymentCycle !== 'daily' && (
-              <div className="w-full md:w-1/3 px-3">
-                <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                  Penalty Rate
-                  <span className="text-red-500 italic">
-                    {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null}
-                  </span>
+            {/* {repaymentCycle !== 'daily' && ( */}
+            {/*   <div className="w-full md:w-1/3 px-3"> */}
+            {/*     <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md"> */}
+            {/*       Penalty Rate */}
+            {/*       <span className="text-red-500 italic"> */}
+            {/*         {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null} */}
+            {/*       </span> */}
+            {/*     </label> */}
+            {/*     <input */}
+            {/*       className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" */}
+            {/*       id="penalty" */}
+            {/*       type="number" */}
+            {/*       placeholder="Penalty ..." */}
+            {/*       value={penalty} */}
+            {/*       onChange={(e) => setPenalty(e.target.value)} */}
+            {/*     /> */}
+            {/*   </div> */}
+            {/* )} */}
+            {/* {repaymentCycle === 'daily' && ( */}
+            <>
+              <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                  Grace Period
                 </label>
-                <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  id="penalty"
-                  type="number"
-                  placeholder="Penalty ..."
-                  value={penalty}
-                  onChange={(e) => setPenalty(e.target.value)}
-                />
-              </div>
-            )}
-            {repaymentCycle === 'daily' && (
-              <>
-                <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                    Grace Period
-                  </label>
-                  <div className="relative">
-                    <select value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                      {grace.map((option) => (
-                        <option key={option.id} value={option.value}>{option?.label}</option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                    </div>
+                <div className="relative">
+                  <select value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                    {grace.map((option) => (
+                      <option key={option.id} value={option.value}>{option?.label}</option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                   </div>
                 </div>
-              </>
-            )}
+              </div>
+            </>
+            {/* )} */}
           </div>
           <div className="flex flex-wrap mt-8 -mx-3 mb-6">
-            {repaymentCycle === 'daily' && (
+            {/* {repaymentCycle === 'daily' && ( */}
+            <div className="w-full md:w-1/3 px-3">
+              <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                Penalty Rate
+                <span className="text-red-500 italic">
+                  {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null}
+                </span>
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                id="penalty"
+                type="number"
+                placeholder="Penalty ..."
+                value={penalty}
+                onChange={(e) => setPenalty(e.target.value)}
+              />
+            </div>
+            {/* )} */}
+            {/* {repaymentCycle === 'daily' && ( */}
+            <>
+
               <div className="w-full md:w-1/3 px-3">
                 <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                  Penalty Rate
-                  <span className="text-red-500 italic">
-                    {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null}
-                  </span>
+                  Penalty Type
                 </label>
-                <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  id="penalty"
-                  type="number"
-                  placeholder="Penalty ..."
-                  value={penalty}
-                  onChange={(e) => setPenalty(e.target.value)}
-                />
+                <div className="relative">
+                  <select value={penaltyTypeChoice} onChange={(e) => setPenaltyTypeChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                    {penalties.map((option) => (
+                      <option key={option.id} value={option.value}>{option?.label}</option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                  </div>
+                </div>
               </div>
-            )}
-            {repaymentCycle === 'daily' && (
-              <>
-
-                <div className="w-full md:w-1/3 px-3">
-                  <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                    Penalty Type
-                    {/* <span className="text-red-500 italic">*</span> */}
-                  </label>
-                  <div className="relative">
-                    <select value={penaltyTypeChoice} onChange={(e) => setPenaltyTypeChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                      {penalties.map((option) => (
-                        <option key={option.id} value={option.value}>{option?.label}</option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                    </div>
+              <div className="w-full md:w-1/3 px-3">
+                <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                  Penalty Payment
+                </label>
+                <div className="relative">
+                  <select value={penaltyPaymentChoice} onChange={(e) => setPenaltyPaymentChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                    {payments.map((option) => (
+                      <option key={option.id} value={option.value}>{option?.label}</option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                   </div>
                 </div>
-                <div className="w-full md:w-1/3 px-3">
-                  <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                    Penalty Payment
-                    {/* <span className="text-red-500 italic">*</span> */}
-                  </label>
-                  <div className="relative">
-                    <select value={penaltyPaymentChoice} onChange={(e) => setPenaltyPaymentChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                      {payments.map((option) => (
-                        <option key={option.id} value={option.value}>{option?.label}</option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+              </div>
+            </>
+            {/* )} */}
           </div>
           <div className="flex flex-wrap mt-8 -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2">
                 <span className="uppercase text-gray-700 font-bold text-md">Maximum Tenure</span>
-                {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -480,30 +490,18 @@ export default function NewProduct() {
             </div>
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2">
-                {/* <span className="uppercase text-gray-700 font-bold text-md">Tenure Choices</span> */}
-                {/* <span className="text-red-500 italic">*</span> */}
               </label>
               <span
                 className="appearance-none block w-full font-semibold text-xl text-gray-700 py-3 mt-5 px-2 mb-3 leading-tight focus:outline-none focus:bg-white"
               >
                 {repaymentCycle === 'daily' ? tenures[1].value : repaymentCycle === 'weekly' ? tenures[2].value : tenures[3].value}
               </span>
-              {/* <div className="relative"> */}
-              {/*   <select value={tenureMaximumChoice} onChange={(e) => setTenureMaximumChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state"> */}
-              {/*     {tenures.map((option) => ( */}
-              {/*       <option key={option.id} value={option.value}>{option?.label}</option> */}
-              {/*     ))} */}
-              {/*   </select> */}
-              {/*   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"> */}
-              {/*     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg> */}
-              {/*   </div> */}
-              {/* </div> */}
             </div>
           </div>
         </div>
         {
           fields && (
-            <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
+            <p className="flex justify-center items-center ml-auto mr-auto text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
               Please Fill All the Required Fields!
             </p>
           )
@@ -512,19 +510,11 @@ export default function NewProduct() {
           <div className="w-full md:w-1/3 mr-auto ml-auto">
             <button
               type="button"
-              onClick={handleProductSave}
+              onClick={handleProductCreate}
+              onMouseEnter={handleProductSave}
               className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Save Product
-            </button>
-          </div>
-          <div className="w-full md:w-1/3 mr-auto ml-auto">
-            <button
-              type="button"
-              onClick={handleProductSave}
-              className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Submit Product
+              Create Product
             </button>
           </div>
         </div>

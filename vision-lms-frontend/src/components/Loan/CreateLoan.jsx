@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { MdDownloadForOffline } from 'react-icons/md';
-import { AiFillDelete } from "react-icons/ai"
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
-import { client, urlFor } from '../../client';
-import { memberDetailMoreMemberQuery, loanDetailQuery, productDetailQuery, memberDetailQuery, loanPreviewQuery } from '../../utils/data';
-import { Spinner } from '../Components'
-
+import { client } from '../../client';
+import { productDetailQuery } from '../../utils/data';
 
 export default function CreateLoan() {
   const navigate = useNavigate();
@@ -40,7 +35,6 @@ export default function CreateLoan() {
   const [disbursed, setDisbursed] = useState('');
 
   const [activeLoan, setActiveLoan] = useState("");
-  const [inactiveLoansList, setInactiveLoansList] = useState("");
 
   const id = memberIdentity.split(' ')[0]
   const sname = memberIdentity.split(' ')[1]
@@ -51,8 +45,6 @@ export default function CreateLoan() {
     const membersListQuery = '*[_type == "member"]';
     const memberQuery = `*[_type == "member" && memberNumber match '${id}' || personalDetails.surName match '${sname}' || personalDetails.otherNames match '${oname}']`;
     const productListQuery = '*[_type == "newProduct"]';
-    const inactiveLoansListQuery = `*[_type == "member" && memberNumber match '${id}']`;
-    // const inactiveLoansListQuery = `*[_type == "member" && _id match '${activeLoan._id}']`;
     const activeLoanQuery = `*[_type == "disburse" && memberNames match '${names}' ]`;
     const productTypeQuery = productDetailQuery(productType);
 
@@ -68,10 +60,6 @@ export default function CreateLoan() {
       setProductList(data);
     });
 
-    client.fetch(inactiveLoansListQuery).then((data) => {
-      setInactiveLoansList(data);
-    });
-
     client.fetch(activeLoanQuery).then((data) => {
       setActiveLoan(data);
     });
@@ -83,9 +71,6 @@ export default function CreateLoan() {
     }
 
   }, [productType, id, sname, oname, names]);
-
-  console.log('I', inactiveLoansList)
-  console.log('A', activeLoan)
 
   function renderInterestAmount(rate, principal) {
     return roundOff(((rate * principal) / 100));
@@ -444,7 +429,7 @@ export default function CreateLoan() {
             </>
           )}
         </div>
-        {memberDetail.length !== 0 ? activeLoan.length === 0 ?
+        {memberDetail?.length !== 0 ? activeLoan?.length === 0 ?
           <>
             <div className="flex justify-center mt-5">
               <div className="w-full md:w-1/3 mr-auto ml-auto">

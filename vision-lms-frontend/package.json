@@ -27,6 +27,8 @@
     "react-masonry-css": "^1.0.16",
     "react-router-dom": "^6.2.1",
     "react-scripts": "^5.0.0",
+    "react-select": "^5.2.2",
+    "react-select-search": "^3.0.9",
     "typescript": "^4.5.5",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4"
