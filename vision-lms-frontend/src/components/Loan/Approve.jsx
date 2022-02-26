@@ -11,7 +11,6 @@ import { Spinner } from '../Components'
 export default function Approve() {
   const { loanId } = useParams();
   const navigate = useNavigate();
-  const [fields, setFields] = useState();
   const [loading, setLoading] = useState(false);
 
   const [loanDetails, setLoanDetails] = useState("");
@@ -44,7 +43,6 @@ export default function Approve() {
       setLoanDetails(data);
     });
 
-    console.log(loanDetails)
     if (productQuery) {
       client.fetch(productQuery).then((data) => {
         setProductDetails(data);
@@ -71,7 +69,7 @@ export default function Approve() {
   }
 
   const handleLoanSave = () => {
-    setMaintained('false');
+    setMaintained('true');
     setApproved('true');
     setDisbursed('false');
     setMemberId(loanDetails[0]?.memberId);
@@ -314,25 +312,8 @@ export default function Approve() {
                 </li>
               </>
             )}
-            {/* <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
-            {/*   <span> */}
-            {/*     Principal Range */}
-            {/*   </span> */}
-            {/*   <span className="ml-auto">KSHs. {productDetails[0]?.minimumRange} - KSHs. {productDetails[0]?.maximumRange}</span> */}
-            {/* </li> */}
-            {/* <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
-            {/*   <span> */}
-            {/*     Maximum Tenure */}
-            {/*   </span> */}
-            {/*   <span className="ml-auto">{productDetails[0]?.tenureMaximum} {productDetails[0]?.repaymentCycle === 'weekly' ? 'weeks' : null}{productDetails[0]?.repaymentCycle === 'monthly' ? 'months' : null}{productDetails[0]?.repaymentCycle === 'daily' ? 'days' : null}</span> */}
-            {/* </li> */}
           </ul>
         </div>
-        <pre>
-          {/* {JSON.stringify(loanDetails, undefined, 2)} */}
-          {/* {JSON.stringify(memberDetails, undefined, 2)} */}
-          {/* {JSON.stringify(productDetails, undefined, 2)} */}
-        </pre>
         <div className="flex justify-center mt-5">
           <div className="w-full md:w-1/3 mr-auto ml-auto">
             <button
@@ -345,18 +326,6 @@ export default function Approve() {
             </button>
           </div>
         </div>
-        <div className="flex justify-center">
-          <div className="w-1/2 ml-auto mr-auto">
-            {
-              fields && (
-                <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
-                  Please Fill All the Required Fields!
-                </p>
-              )
-            }
-          </div>
-        </div>
-        {/* {renderSubmission()} */}
         <div className="mb-8" />
       </div>
     </>

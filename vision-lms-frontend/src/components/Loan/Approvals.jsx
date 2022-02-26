@@ -11,7 +11,6 @@ import { Spinner, Layout } from '../Components';
 export default function Approvals() {
   const { loanId } = useParams();
   const [submittedList, setSubmittedList] = useState();
-  const [memberId, setMemberId] = useState("");
   const [approvedList, setApprovedList] = useState();
   const navigate = useNavigate();
   useEffect(() => {
@@ -30,8 +29,7 @@ export default function Approvals() {
       setApprovedList(data);
     });
 
-  }, [memberId]);
-  console.log(approvedList)
+  }, []);
 
   function renderSubmittedLoans() {
     return (
@@ -56,19 +54,10 @@ export default function Approvals() {
                   {submittedList?.map((member) => (
                     member.maintained !== 'false' && member.approved === 'false' && member.disbursed === 'false' ?
                       <tr
-                        // onMouseEnter={() => {
-                        //   setPostHovered(true);
-                        //   setMemberIdentity(member.memberId);
-                        // }}
-                        // onMouseLeave={() => setPostHovered(false)}
                         onClick={() => {
-                          setMemberId(member.memberId);
                           navigate(`/loan/approvals/${member._id}`);
                         }}
-                        // onClick={() => navigate(deleteLoan(member._id))}
                         key={member._id}
-                        // value={memberIdentity}
-                        // onMouseUp={() => setMemberIdentity("Try")}
                         className="hover:bg-gray-300 cursor-pointer"
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -103,7 +92,7 @@ export default function Approvals() {
       </div>
     )
   }
-  console.log(memberId)
+
   function renderApprovedLoans() {
     return (
       <div className="flex flex-col mt-5">
@@ -127,19 +116,10 @@ export default function Approvals() {
                   {approvedList?.map((member) => (
                     member.maintained !== 'true' && member.approved !== 'false' && member.disbursed === 'false' ?
                       <tr
-                        // onMouseEnter={() => {
-                        //   setPostHovered(true);
-                        //   setMemberIdentity(member.memberId);
-                        // }}
-                        // onMouseLeave={() => setPostHovered(false)}
-                        // onClick={() => navigate(deleteLoan(member._id))}
                         onClick={() => {
-                          setMemberId(member.memberId);
                           navigate("/loan/disbursements");
                         }}
                         key={member._id}
-                        // value={memberIdentity}
-                        // onMouseUp={() => setMemberIdentity("Try")}
                         className="hover:bg-gray-300 cursor-pointer"
                       >
                         <td className="px-6 py-4 whitespace-nowrap">

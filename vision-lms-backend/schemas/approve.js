@@ -29,6 +29,26 @@ export default {
       type: 'string',
     },
     {
+      name: 'loanAccNumber',
+      title: 'Loan Account Number',
+      type: 'string',
+    },
+    {
+      name: 'memberId',
+      title: 'Member ID',
+      type: 'string',
+    },
+    {
+      name: 'memberIdNumber',
+      title: 'ID Number',
+      type: 'string',
+    },
+    {
+      name: 'memberEmail',
+      title: 'Email Address',
+      type: 'string',
+    },
+    {
       name: 'principalAmount',
       title: 'Principal Amount',
       type: 'string',

@@ -107,8 +107,7 @@ export default function Maintenance() {
                 {members?.map((member) => (
                   <tr
                     onMouseEnter={() => setPostHovered(true)}
-                    onMouseEnter={() => setMainId(member._id)}
-                    onMouseEnter={() => setMaintenanceId(member._id)} // == maintainedList.memberIdentity
+                    onMouseEnter={() => { setMaintenanceId(member._id); setMainId(member._id); }} // == maintainedList.memberIdentity
                     onMouseLeave={() => setPostHovered(false)}
                     onClick={() =>
                       //{

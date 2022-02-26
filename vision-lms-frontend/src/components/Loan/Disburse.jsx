@@ -14,100 +14,39 @@ export default function Disburse() {
   const [loading, setLoading] = useState(false);
 
   const [loanDetails, setLoanDetails] = useState("");
-  const [memberDetails, setMemberDetails] = useState("");
+  const [loanAccNumber, setLoanAccNumber] = useState("");
   const [productDetails, setProductDetails] = useState("");
-
-  const [memberIdentity, setMemberIdentity] = useState("");
   const [productType, setProductType] = useState("");
 
+  const [memberEmail, setMemberEmail] = useState("");
+  const [memberId, setMemberId] = useState("");
+  const [memberIdNumber, setMemberIdNumber] = useState("");
   const [memberNames, setMemberNames] = useState("");
   const [memberPhoneNumber, setMemberPhoneNumber] = useState("");
   const [principalAmount, setPrincipalAmount] = useState("");
   const [loanTenure, setLoanTenure] = useState("");
-  const [productCode, setProductCode] = useState("");
   const [interestAmount, setInterestAmount] = useState("");
   const [installmentAmount, setInstallmentAmount] = useState("");
   const [processingFeeAmount, setProcessingFeeAmount] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
-  const [disbursed, setDisbursed] = useState('false');
+  const [approved, setApproved] = useState('false');
   const [maintained, setMaintained] = useState('true');
-  const [approved, setApproved] = useState('true');
-  const [submitted, setSubmitted] = useState('true');
+  const [disbursed, setDisbursed] = useState('false');
   const [disbursedList, setDisbursedList] = useState();
-
-  useEffect(() => {
-    const query = '*[_type == "disburse"]';
-
-    client.fetch(query).then((data) => {
-      setDisbursedList(data);
-    });
-
-  }, []);
-
-  // console.log(submittedList)
-  function renderSubmission() {
-    return (
-      <>
-        {
-          submittedList === 0 ? null : submittedList?.map((subs) => (
-            <div key={subs?._id} className="flex justify-center mt-5">
-              {subs?.loanId === loanId && subs?.approved !== 'true' ?
-                <button
-                  onClick={handleLoanSave}
-                  type="button"
-                  className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Submit
-                </button>
-                :
-                null
-              }
-            </div>
-          ))
-        }
-      </>
-    )
-  }
-
-  function renderInterestAmount(rate, principal) {
-    return ((rate * principal) / 100).toFixed(0);
-  }
-
-  function renderInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = ((rate * principal) / 100);
-    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0);
-  }
-
-  function renderProcessingFeeAmount(feePercentage, principal) {
-    let procFee = ((feePercentage / 100) * principal).toFixed(0);
-    return (procFee < '301' ? '300' : procFee)
-  }
-
-  function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
-    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0);
-  }
 
   const fetchLoanDetails = () => {
     setLoading(true)
-    const query = loanDetailQuery(loanId);
-    const memberQuery = memberDetailQuery(memberIdentity);
+    const query = `*[_type == "approve" && _id == '${loanId}']`;
     const productQuery = productDetailQuery(productType);
 
-    if (query) {
-      client.fetch(query).then((data) => {
-        setLoanDetails(data);
-      });
-    }
+    client.fetch(query).then((data) => {
+      setLoanDetails(data);
+    });
 
     if (productQuery) {
       client.fetch(productQuery).then((data) => {
         setProductDetails(data);
-      });
-    }
-    if (memberQuery) {
-      client.fetch(memberQuery).then((data) => {
-        setMemberDetails(data);
       });
     }
     setLoading(false)
@@ -115,7 +54,9 @@ export default function Disburse() {
 
   useEffect(() => {
     fetchLoanDetails();
-  }, [loanId, memberIdentity, productType]);
+  }, [loanId, productType]);
+
+  console.log(loanDetails)
 
   const ideaName = loanId || 'all';
   if (loading) {
@@ -131,73 +72,92 @@ export default function Disburse() {
   }
 
   const handleLoanSave = () => {
-    setApproved('true')
-    setSubmitted('true')
-    setDisbursed('true')
     setMaintained('true');
+    setApproved('true');
+    setDisbursed('true');
+    setMemberId(loanDetails[0]?.memberId);
+    setMemberEmail(loanDetails[0]?.memberEmail);
+    setMemberIdNumber(loanDetails[0]?.memberIdNumber);
+    setMemberNames(loanDetails[0]?.memberNames);
+    setMemberPhoneNumber(loanDetails[0]?.memberPhoneNumber);
     setPrincipalAmount(loanDetails[0]?.principalAmount);
     setLoanTenure(loanDetails[0]?.loanTenure);
-    setProductCode('DC-' + productDetails[0]?.productCode + '-' + memberDetails[0]?.memberNumber);
-    setMemberNames(memberDetails[0]?.personalDetails?.surName + ' ' + memberDetails[0]?.personalDetails?.otherNames);
-    setMemberPhoneNumber(memberDetails[0]?.personalDetails?.mobileNumber);
-    setInterestAmount(renderInterestAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount));
-    setInstallmentAmount(renderInstallmentsAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure));
-    setProcessingFeeAmount(renderProcessingFeeAmount(productDetails[0]?.processingFee, loanDetails[0]?.principalAmount));
-    setPenaltyAmount(productDetails[0]?.penaltyTypeChoice === 'amount' ? productDetails[0]?.penalty : renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure));
+    setInterestAmount(loanDetails[0]?.interestAmount);
+    setInstallmentAmount(loanDetails[0]?.installmentAmount);
+    setProcessingFeeAmount(loanDetails[0]?.processingFeeAmount);
+    setPenaltyAmount(loanDetails[0]?.penaltyAmount);
+    setLoanAccNumber(loanDetails[0]?.loanAccNumber);
+    console.log(
+      loanId
+      , productType
+      , memberNames
+      , principalAmount
+      , loanTenure
+      , interestAmount
+      , installmentAmount
+      , penaltyAmount
+      , processingFeeAmount
+      , memberPhoneNumber
+      , maintained
+      , approved
+      , disbursed
+      , memberId
+      , memberIdNumber
+      , memberEmail
+      , loanAccNumber
+    )
+  }
+
+  const handleLoanDisburse = () => {
     if (
-      memberIdentity
-      && loanId
+      loanId
       && productType
       && memberNames
       && principalAmount
       && loanTenure
-      && productCode
       && interestAmount
       && installmentAmount
       && processingFeeAmount
       && penaltyAmount
       && memberPhoneNumber
-      && approved
       && maintained
-      && submitted
+      && approved
       && disbursed
+      && memberId
+      && memberIdNumber
+      && memberEmail
+      && loanAccNumber
     ) {
-      console.log(
-        memberIdentity
-        , loanId
-        , productType
-        , memberNames
-        , principalAmount
-        , loanTenure
-        , productCode
-        , interestAmount
-        , installmentAmount
-        , penaltyAmount
-        , processingFeeAmount
-        , memberPhoneNumber
-        , approved
-        , maintained
-        , submitted
-        , disbursed
-      )
+      client
+        .patch(loanId)
+        .set({
+          maintained: 'true',
+          approved: 'true',
+          disbursed: 'true'
+        })
+        .commit()
+        .then((update) => {
+          console.log(update);
+        });
       const doc = {
         _type: 'disburse',
-        memberIdentity
-        , loanId
+        loanId
         , productType
         , memberNames
         , principalAmount
         , loanTenure
-        , productCode
         , interestAmount
         , installmentAmount
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
-        , approved
         , maintained
-        , submitted
+        , approved
         , disbursed
+        , memberId
+        , memberIdNumber
+        , memberEmail
+        , loanAccNumber
       };
       client.create(doc).then(() => {
         alert('Success')
@@ -208,14 +168,14 @@ export default function Disburse() {
   }
   return (
     <>
-      <div onMouseEnter={() => {
-        setMemberIdentity(loanDetails[0].memberId)
-        setProductType(loanDetails[0].productType)
-      }}
+      <div
+        onMouseEnter={() => {
+          setProductType(loanDetails[0].productType)
+        }}
       >
         <div className="font-bold mt-5 flex justify-center w-full text-3xl">
-          {/* <span className="text-gray-500">Disburse for </span> */}
-          <span className="text-gray-700 ml-auto mr-auto">{memberDetails[0]?.personalDetails?.surName} {memberDetails[0]?.personalDetails?.otherNames}</span>
+          <span className="text-gray-500">Approve </span>
+          <span className="text-gray-700 ml-3">{loanDetails[0]?.memberNames}</span>
         </div>
         <br />
         <div className="ml-auto mr-auto mb-3">
@@ -231,25 +191,25 @@ export default function Disburse() {
               <span>
                 Member Code
               </span>
-              <span className="ml-auto">DC-{memberDetails[0]?.memberNumber}</span>
+              <span className="ml-auto">DC-{loanDetails[0]?.loanAccNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Mobile No.
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.mobileNumber}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberPhoneNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Email
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.emailAddress}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberEmail}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 ID Number
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.idPass}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberIdNumber}</span>
             </li>
           </ul>
         </div>
@@ -267,13 +227,13 @@ export default function Disburse() {
               <span>
                 Product Name
               </span>
-              <span className="ml-auto">{productDetails[0]?.productName}</span>
+              <span className="ml-auto">{loanDetails[0]?.productType}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
-                Product Code
+                Loan A/C Number
               </span>
-              <span className="ml-auto">DC-{productDetails[0]?.productCode}-{memberDetails[0]?.memberNumber}</span>
+              <span className="ml-auto">DC-{loanDetails[0]?.loanAccNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -285,7 +245,7 @@ export default function Disburse() {
               <span>
                 Loan Tenure
               </span>
-              <span className="ml-auto">{loanDetails[0]?.loanTenure} {productDetails[0]?.tenureMaximumChoice}</span>
+              <span className="ml-auto">{loanDetails[0]?.loanTenure} {productDetails[0]?.repaymentCycle === 'weekly' ? 'weeks' : null}{productDetails[0]?.repaymentCycle === 'monthly' ? 'months' : null}{productDetails[0]?.repaymentCycle === 'daily' ? 'days' : null}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -297,13 +257,13 @@ export default function Disburse() {
               <span>
                 Interest Amount
               </span>
-              <span className="ml-auto">KSHs. {renderInterestAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount)}</span>
+              <span className="ml-auto">KSHs. {loanDetails[0]?.interestAmount}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Installment Amount
               </span>
-              <span className="ml-auto">KSHs. {renderInstallmentsAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure)}</span>
+              <span className="ml-auto">KSHs. {loanDetails[0]?.installmentAmount}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -315,7 +275,7 @@ export default function Disburse() {
               <span>
                 Processing Fee Amount
               </span>
-              <span className="ml-auto">KShs. {renderProcessingFeeAmount(productDetails[0]?.processingFee, loanDetails[0]?.principalAmount)}</span>
+              <span className="ml-auto">KShs. {loanDetails[0]?.processingFeeAmount}</span>
             </li>
             {productDetails[0]?.repaymentCycle === 'daily' && (
               <>
@@ -332,7 +292,7 @@ export default function Disburse() {
                   {productDetails[0]?.penaltyTypeChoice === 'amount' ?
                     <span className="ml-auto">KSHs. {productDetails[0]?.penalty}</span>
                     :
-                    <span className="ml-auto">KSHs. {renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure)}</span>
+                    <span className="ml-auto">KSHs. {loanDetails[0]?.penaltyAmount}</span>
                   }
                 </li>
                 <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -355,35 +315,20 @@ export default function Disburse() {
                 </li>
               </>
             )}
-            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-              <span>
-                Principal Range
-              </span>
-              <span className="ml-auto">KSHs. {productDetails[0]?.minimumRange} - KSHs. {productDetails[0]?.maximumRange}</span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-              <span>
-                Maximum Tenure
-              </span>
-              <span className="ml-auto">{productDetails[0]?.tenureMaximum} {productDetails[0]?.tenureMaximumChoice}</span>
-            </li>
           </ul>
         </div>
-        <pre>
-          {/* {JSON.stringify(loanDetails, undefined, 2)} */}
-          {/* {JSON.stringify(memberDetails, undefined, 2)} */}
-          {/* {JSON.stringify(productDetails, undefined, 2)} */}
-        </pre>
-        <div className="flex w-full mt-8 justify-center items-center ml-8">
-          <button
-            onClick={handleLoanSave}
-            type="button"
-            className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Disburse
-          </button>
+        <div className="flex justify-center mt-5">
+          <div className="w-full md:w-1/3 mr-auto ml-auto">
+            <button
+              type="button"
+              onClick={handleLoanDisburse}
+              onMouseEnter={handleLoanSave}
+              className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Disburse
+            </button>
+          </div>
         </div>
-        {/* {renderSubmission()} */}
         <div className="mb-8" />
       </div>
     </>
