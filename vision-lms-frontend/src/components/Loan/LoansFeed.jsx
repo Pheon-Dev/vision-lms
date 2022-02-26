@@ -317,6 +317,14 @@ export default function LoansFeed() {
     )
   }
 
+  function renderEmpty(header, text) {
+    return (
+      <div className="font-bold flex flex-col mt-5 mb-8 pb-7 pt-7 justify-center w-full text-xl">
+        <span className="text-gray-700 ml-auto mr-auto">{header} Loans</span>
+        <span className="text-gray-500 ml-auto mr-auto">{text}</span>
+      </div>
+    )
+  }
   return (
     <>
       {renderSubmittedLoans()}
