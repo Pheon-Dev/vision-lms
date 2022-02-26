@@ -13,19 +13,16 @@ export default function Approvals() {
   const [submittedList, setSubmittedList] = useState();
   const [approvedList, setApprovedList] = useState();
   const navigate = useNavigate();
-  useEffect(() => {
-    const query = '*[_type == "maintenance"]';
 
-    client.fetch(query).then((data) => {
+  useEffect(() => {
+    const mquery = '*[_type == "maintenance"]';
+    const aquery = '*[_type == "approve"]';
+
+    client.fetch(mquery).then((data) => {
       setSubmittedList(data);
     });
 
-  }, []);
-
-  useEffect(() => {
-    const query = '*[_type == "approve"]';
-
-    client.fetch(query).then((data) => {
+    client.fetch(aquery).then((data) => {
       setApprovedList(data);
     });
 

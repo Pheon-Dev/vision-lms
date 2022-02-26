@@ -15,18 +15,14 @@ export default function Disbursement() {
   const [disbursedList, setDisbursedList] = useState();
 
   useEffect(() => {
-    const query = '*[_type == "disburse"]';
+    const dquery = '*[_type == "disburse"]';
+    const aquery = '*[_type == "approve"]';
 
-    client.fetch(query).then((data) => {
+    client.fetch(dquery).then((data) => {
       setDisbursedList(data);
     });
 
-  }, []);
-
-  useEffect(() => {
-    const query = '*[_type == "approve"]';
-
-    client.fetch(query).then((data) => {
+    client.fetch(aquery).then((data) => {
       setApprovedList(data);
     });
 
@@ -115,7 +111,7 @@ export default function Disbursement() {
                   {disbursedList?.map((member) => (
                     member.maintained !== 'false' && member.approved === 'true' && member.disbursed !== 'false' ?
                       <tr
-                        onClick={() => navigate(`/loan/disbursements/${member.loanId}`)}
+                        onClick={() => navigate("/loan")}
                         key={member._id}
                         className="hover:bg-gray-300 cursor-pointer"
                       >

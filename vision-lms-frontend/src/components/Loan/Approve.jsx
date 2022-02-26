@@ -322,7 +322,7 @@ export default function Approve() {
               onMouseEnter={handleLoanSave}
               className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Submit
+              Approve
             </button>
           </div>
         </div>
