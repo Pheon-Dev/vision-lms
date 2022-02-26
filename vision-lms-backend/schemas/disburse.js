@@ -9,11 +9,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'memberIdentity',
-      title: 'Member Identity',
-      type: 'string',
-    },
-    {
       name: 'memberPhoneNumber',
       title: 'Member Phone Number',
       type: 'string',
@@ -39,8 +34,23 @@ export default {
       type: 'string',
     },
     {
-      name: 'productCode',
-      title: 'Product Code',
+      name: 'loanAccNumber',
+      title: 'Loan Account Number',
+      type: 'string',
+    },
+    {
+      name: 'memberId',
+      title: 'Member ID',
+      type: 'string',
+    },
+    {
+      name: 'memberIdNumber',
+      title: 'ID Number',
+      type: 'string',
+    },
+    {
+      name: 'memberEmail',
+      title: 'Email Address',
       type: 'string',
     },
     {
@@ -66,11 +76,6 @@ export default {
     {
       name: 'maintained',
       title: 'Maintainance Status',
-      type: 'string',
-    },
-    {
-      name: 'submitted',
-      title: 'Submission Status',
       type: 'string',
     },
     {

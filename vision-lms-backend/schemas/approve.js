@@ -9,11 +9,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'memberIdentity',
-      title: 'Member Identity',
-      type: 'string',
-    },
-    {
       name: 'memberPhoneNumber',
       title: 'Member Phone Number',
       type: 'string',
@@ -59,11 +54,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'productCode',
-      title: 'Product Code',
-      type: 'string',
-    },
-    {
       name: 'interestAmount',
       title: 'Interest Amount',
       type: 'string',
@@ -86,11 +76,6 @@ export default {
     {
       name: 'maintained',
       title: 'Maintainance Status',
-      type: 'string',
-    },
-    {
-      name: 'submitted',
-      title: 'Submission Status',
       type: 'string',
     },
     {
