@@ -14,6 +14,8 @@ export default function CreateLoan() {
   const [fields, setFields] = useState();
 
   const [memberId, setMemberId] = useState("");
+  const [memberIdNumber, setMemberIdNumber] = useState("");
+  const [memberEmail, setMemberEmail] = useState("");
   const [memberIdentity, setMemberIdentity] = useState("");
   const [memberDetail, setMemberDetail] = useState();
   const [membersList, setMembersList] = useState("");
@@ -68,30 +70,25 @@ export default function CreateLoan() {
   }, [productType, id, sname, oname]);
 
   function renderInterestAmount(rate, principal) {
-    return ((rate * principal) / 100).toFixed(0) | 0;
+    return roundOff(((rate * principal) / 100));
   }
 
   function renderInstallmentsAmount(rate, principal, tenure) {
     let principalAmount = ((rate * principal) / 100);
-    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0) | 0;
+    return roundOff((Number(principalAmount) + Number(principal)) / tenure);
   }
 
   function renderProcessingFeeAmount(feePercentage, principal) {
-    let procFee = ((feePercentage / 100) * principal).toFixed(0) | 0;
+    let procFee = roundOff((feePercentage / 100) * principal);
     return (procFee < '301' ? '300' : procFee)
   }
 
   function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
-    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0) | 0;
+    return roundOff(((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100));
   }
 
-  function renderArrearsAmount(feePercentage, rate, principal, tenure) {
-    let arrearsAmount = 0;
-    let principalAmount = ((rate * principal) / 100);
-    let installmentsAmount = ((Number(principalAmount) + Number(principal)) / tenure);
-    let processingFeeAmount = ((feePercentage / 100) * Number(principal));
-    arrearsAmount = (Number(installmentsAmount) * Number(tenure) + Number(processingFeeAmount)).toFixed(0);
-    return arrearsAmount;
+  function roundOff(x) {
+    return ((Number((x).toString().split('.')[1]) > 0 ? Number((x).toString().split('.')[0]) + 1 : Number((x).toString().split('.')[0]) + 0).toString())
   }
 
   const handleLoanSave = () => {
@@ -106,6 +103,8 @@ export default function CreateLoan() {
     setProcessingFee(renderProcessingFeeAmount(productDetails[0]?.processingFee, principalAmount).toString());
     setPenaltyAmount(productDetails[0]?.penaltyTypeChoice === 'amount' ? productDetails[0]?.penalty : renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, principalAmount, loanTenure).toString());
     setLoanAccNumber(productDetails[0]?.productCode + '-' + memberDetail[0]?.memberNumber)
+    setMemberIdNumber(memberDetail[0]?.personalDetails?.idPass)
+    setMemberEmail(memberDetail[0]?.personalDetails?.emailAddress)
   }
 
   const handleLoanSubmit = () => {
@@ -113,6 +112,8 @@ export default function CreateLoan() {
       productType
       && principalAmount
       && memberId
+      && memberIdNumber
+      && memberEmail
       && memberNames
       && memberPhoneNumber
       && loanTenure
@@ -130,6 +131,8 @@ export default function CreateLoan() {
         productType
         , principalAmount
         , memberId
+        , memberIdNumber
+        , memberEmail
         , memberNames
         , memberPhoneNumber
         , loanTenure
@@ -295,8 +298,6 @@ export default function CreateLoan() {
                         KSHs. {renderInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
                       </span>
                     </li>
-                    {/* </ul> */}
-                    {/* <ul className="bg-gray-100 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm"> */}
                     <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                       <span className="tracking-wide text-l text-gray-700 font-bold">
                         Repayment Cycle

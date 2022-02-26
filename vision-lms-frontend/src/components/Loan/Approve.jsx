@@ -34,71 +34,16 @@ export default function Approve() {
   const [maintained, setMaintained] = useState('true');
   const [disbursed, setDisbursed] = useState('false');
   const [submitted, setSubmitted] = useState('true');
-  // const [submittedList, setSubmittedList] = useState();
-
-  // useEffect(() => {
-  //   const query = '*[_type == "preview"]';
-
-  //   client.fetch(query).then((data) => {
-  //     setSubmittedList(data);
-  //   });
-
-  // }, []);
-
-  // // console.log(submittedList)
-  // function renderSubmission() {
-  //   return (
-  //     <>
-  //       {
-  //         submittedList === 0 ? null : submittedList?.map((subs) => (
-  //           <div key={subs?._id} className="flex justify-center mt-5">
-  //             {subs?.loanId === loanId && subs?.approved !== 'true' ?
-  //               <button
-  //                 onClick={handleLoanSave}
-  //                 type="button"
-  //                 className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-  //               >
-  //                 Submit
-  //               </button>
-  //               :
-  //               null
-  //             }
-  //           </div>
-  //         ))
-  //       }
-  //     </>
-  //   )
-  // }
-
-  function renderInterestAmount(rate, principal) {
-    return ((rate * principal) / 100).toFixed(0);
-  }
-
-  function renderInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = ((rate * principal) / 100);
-    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0);
-  }
-
-  function renderProcessingFeeAmount(feePercentage, principal) {
-    let procFee = ((feePercentage / 100) * principal).toFixed(0);
-    return (procFee < '301' ? '300' : procFee)
-  }
-
-  function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
-    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0);
-  }
 
   const fetchLoanDetails = () => {
     setLoading(true)
-    const query = loanDetailQuery(loanId);
+    const query = `*[_type == "maintenance" && _id == '${loanId}']`;
     const memberQuery = memberDetailQuery(memberIdentity);
     const productQuery = productDetailQuery(productType);
 
-    if (query) {
-      client.fetch(query).then((data) => {
-        setLoanDetails(data);
-      });
-    }
+    client.fetch(query).then((data) => {
+      setLoanDetails(data);
+    });
 
     if (productQuery) {
       client.fetch(productQuery).then((data) => {
@@ -116,6 +61,7 @@ export default function Approve() {
   useEffect(() => {
     fetchLoanDetails();
   }, [loanId, memberIdentity, productType]);
+
 
   const ideaName = loanId || 'all';
   if (loading) {
@@ -135,15 +81,6 @@ export default function Approve() {
     setApproved('true');
     setDisbursed('false');
     setSubmitted('true');
-    setPrincipalAmount(loanDetails[0]?.principalAmount);
-    setLoanTenure(loanDetails[0]?.loanTenure);
-    setProductCode('DC-' + productDetails[0]?.productCode + '-' + memberDetails[0]?.memberNumber);
-    setMemberNames(memberDetails[0]?.personalDetails?.surName + ' ' + memberDetails[0]?.personalDetails?.otherNames);
-    setMemberPhoneNumber(memberDetails[0]?.personalDetails?.mobileNumber);
-    setInterestAmount(renderInterestAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount));
-    setInstallmentAmount(renderInstallmentsAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure));
-    setProcessingFeeAmount(renderProcessingFeeAmount(productDetails[0]?.processingFee, loanDetails[0]?.principalAmount));
-    setPenaltyAmount(productDetails[0]?.penaltyTypeChoice === 'amount' ? productDetails[0]?.penalty : renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure));
     if (
       memberIdentity
       && loanId
@@ -202,7 +139,7 @@ export default function Approve() {
       client.create(doc).then(() => {
         alert('Success')
         console.log(doc)
-        navigate('/loan/disbursements')
+        // navigate('/loan/disbursements')
       });
     }
   }
@@ -215,7 +152,7 @@ export default function Approve() {
       >
         <div className="font-bold mt-5 flex justify-center w-full text-3xl">
           <span className="text-gray-500">Approve </span>
-          <span className="text-gray-700 ml-3">{memberDetails[0]?.personalDetails?.surName} {memberDetails[0]?.personalDetails?.otherNames}</span>
+          <span className="text-gray-700 ml-3">{loanDetails[0]?.memberNames}</span>
         </div>
         <br />
         <div className="ml-auto mr-auto mb-3">
@@ -231,25 +168,25 @@ export default function Approve() {
               <span>
                 Member Code
               </span>
-              <span className="ml-auto">DC-{memberDetails[0]?.memberNumber}</span>
+              <span className="ml-auto">DC-{loanDetails[0]?.loanAccNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Mobile No.
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.mobileNumber}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberPhoneNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Email
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.emailAddress}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberEmail}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 ID Number
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.idPass}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberIdNumber}</span>
             </li>
           </ul>
         </div>
@@ -267,13 +204,13 @@ export default function Approve() {
               <span>
                 Product Name
               </span>
-              <span className="ml-auto">{productDetails[0]?.productName}</span>
+              <span className="ml-auto">{loanDetails[0]?.productType}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
-                Product Code
+                Loan A/C Number
               </span>
-              <span className="ml-auto">DC-{productDetails[0]?.productCode}-{memberDetails[0]?.memberNumber}</span>
+              <span className="ml-auto">DC-{loanDetails[0]?.loanAccNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -285,7 +222,7 @@ export default function Approve() {
               <span>
                 Loan Tenure
               </span>
-              <span className="ml-auto">{loanDetails[0]?.loanTenure} {productDetails[0]?.tenureMaximumChoice}</span>
+              <span className="ml-auto">{loanDetails[0]?.loanTenure} {productDetails[0]?.repaymentCycle === 'weekly' ? 'weeks' : null}{productDetails[0]?.repaymentCycle === 'monthly' ? 'months' : null}{productDetails[0]?.repaymentCycle === 'daily' ? 'days' : null}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -297,13 +234,13 @@ export default function Approve() {
               <span>
                 Interest Amount
               </span>
-              <span className="ml-auto">KSHs. {renderInterestAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount)}</span>
+              <span className="ml-auto">KSHs. {loanDetails[0]?.interestAmount}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Installment Amount
               </span>
-              <span className="ml-auto">KSHs. {renderInstallmentsAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure)}</span>
+              <span className="ml-auto">KSHs. {loanDetails[0]?.installmentAmount}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -315,7 +252,7 @@ export default function Approve() {
               <span>
                 Processing Fee Amount
               </span>
-              <span className="ml-auto">KShs. {renderProcessingFeeAmount(productDetails[0]?.processingFee, loanDetails[0]?.principalAmount)}</span>
+              <span className="ml-auto">KShs. {loanDetails[0]?.processingFee}</span>
             </li>
             {productDetails[0]?.repaymentCycle === 'daily' && (
               <>
@@ -332,7 +269,7 @@ export default function Approve() {
                   {productDetails[0]?.penaltyTypeChoice === 'amount' ?
                     <span className="ml-auto">KSHs. {productDetails[0]?.penalty}</span>
                     :
-                    <span className="ml-auto">KSHs. {renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure)}</span>
+                    <span className="ml-auto">KSHs. {loanDetails[0]?.penaltyAmount}</span>
                   }
                 </li>
                 <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -355,18 +292,18 @@ export default function Approve() {
                 </li>
               </>
             )}
-            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-              <span>
-                Principal Range
-              </span>
-              <span className="ml-auto">KSHs. {productDetails[0]?.minimumRange} - KSHs. {productDetails[0]?.maximumRange}</span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-              <span>
-                Maximum Tenure
-              </span>
-              <span className="ml-auto">{productDetails[0]?.tenureMaximum} {productDetails[0]?.tenureMaximumChoice}</span>
-            </li>
+            {/* <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
+            {/*   <span> */}
+            {/*     Principal Range */}
+            {/*   </span> */}
+            {/*   <span className="ml-auto">KSHs. {productDetails[0]?.minimumRange} - KSHs. {productDetails[0]?.maximumRange}</span> */}
+            {/* </li> */}
+            {/* <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
+            {/*   <span> */}
+            {/*     Maximum Tenure */}
+            {/*   </span> */}
+            {/*   <span className="ml-auto">{productDetails[0]?.tenureMaximum} {productDetails[0]?.repaymentCycle === 'weekly' ? 'weeks' : null}{productDetails[0]?.repaymentCycle === 'monthly' ? 'months' : null}{productDetails[0]?.repaymentCycle === 'daily' ? 'days' : null}</span> */}
+            {/* </li> */}
           </ul>
         </div>
         <pre>

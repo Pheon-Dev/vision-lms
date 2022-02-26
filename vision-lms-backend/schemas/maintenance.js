@@ -53,16 +53,16 @@ export default {
       title: 'Disbursal Status',
       type: 'string',
     },
-    // {
-    //   name: 'startDate',
-    //   title: 'Start Date',
-    //   type: 'date',
-    // },
-    // {
-    //   name: 'endDate',
-    //   title: 'End Date',
-    //   type: 'date',
-    // },
+    {
+      name: 'memberIdNumber',
+      title: 'ID Number',
+      type: 'string',
+    },
+    {
+      name: 'memberEmail',
+      title: 'Email Address',
+      type: 'string',
+    },
     // {
     //   name: 'interestRate',
     //   title: 'Interest Rate (%)',
