@@ -280,7 +280,7 @@ export default function LoansFeed() {
       <div className="flex flex-col mt-5">
         <div className="font-bold flex justify-center w-full text-xl">
           <span className="text-gray-700 ml-auto mr-auto">Disbursed Loans</span>
-          <span className="text-gray-500 ml-auto mr-auto">(disbursed today)</span>
+          <span className="text-gray-500 ml-auto mr-auto">(All disbursed loans)</span>
         </div>
         <br />
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

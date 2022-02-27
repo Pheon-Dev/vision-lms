@@ -14,6 +14,11 @@ export default {
       type: 'date',
     },
     {
+      name: 'maintained',
+      title: 'Maintained',
+      type: 'string',
+    },
+    {
       name: 'branchName',
       title: 'Branch Name',
       type: 'string',

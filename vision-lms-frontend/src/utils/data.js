@@ -118,6 +118,7 @@ export const memberDetailQuery = (memberId) => {
     _id,
     memberNumber,
     date,
+    maintained,
     branchName,
     personalDetails{
       surName,
@@ -200,6 +201,7 @@ export const memberDetailMoreMemberQuery = (member) => {
     _id,
     memberNumber,
     date,
+    maintained,
     branchName,
     personalDetails{
       surName,
@@ -272,6 +274,7 @@ export const feedQuery = `*[_type == "member"] | order(_createdAt desc) {
       _id,
       memberNumber,
       date,
+      maintained,
       branchName,
       personalDetails{
         surName,
@@ -302,7 +305,7 @@ export const userQuery = (userId) => {
 };
 
 export const searchQuery = (searchTerm) => {
-  const query = `*[_type == "member" && memberNumber match '${searchTerm}*' || personalDetails.mpesaTransNumber match '${searchTerm}*' || product match '${searchTerm}*' || date match '${searchTerm}*' || branchName match '${searchTerm}*' || personalDetails.surName match '${searchTerm}*' || personalDetails.otherNames match '${searchTerm}*' || personalDetails.mobileNumber match '${searchTerm}*' || personalDetails.emailAddress match '${searchTerm}*']{
+  const query = `*[_type == "member" && memberNumber match '${searchTerm}*' || personalDetails.mpesaTransNumber match '${searchTerm}*' || product match '${searchTerm}*' || date match '${searchTerm}*' || maintained match '${searchTerm}*' || branchName match '${searchTerm}*' || personalDetails.surName match '${searchTerm}*' || personalDetails.otherNames match '${searchTerm}*' || personalDetails.mobileNumber match '${searchTerm}*' || personalDetails.emailAddress match '${searchTerm}*']{
     image{
       asset->{
         url
@@ -311,6 +314,7 @@ export const searchQuery = (searchTerm) => {
     _id,
     memberNumber,
     date,
+    maintained,
     branchName,
     personalDetails{
       surName,
@@ -384,6 +388,7 @@ export const userCreatedMembersQuery = (userId) => {
     _id,
     memberNumber,
     date,
+    maintained,
     branchName,
     personalDetails{
       surName,
@@ -457,6 +462,7 @@ export const userSavedMembersQuery = (userId) => {
     _id,
     memberNumber,
     date,
+    maintained,
     branchName,
     personalDetails{
       surName,

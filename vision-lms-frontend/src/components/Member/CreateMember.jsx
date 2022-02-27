@@ -61,6 +61,8 @@ export default function CreateMember() {
   const [leaderIdNumber, setLeaderIdNumber] = useState('');
   const [leaderNumber, setLeaderNumber] = useState('');
 
+  const [maintained, setMaintained] = useState('false');
+
   const navigate = useNavigate();
   const [code, setCode] = useState();
 
@@ -116,15 +118,17 @@ export default function CreateMember() {
   // console.log(memberNumber)
   const saveMember = () => {
     // setMemberNumber(`${Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
+    setMaintained('false');
     setMemberNumber(`${(code.length > 9 ? code.length > 99 ? code.length > 999 ? (Number(code.length) + 1) : '0' + (Number(code.length) + 1) : '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
     console.log(memberNumber)
     // setMemberNumber(`${Date().split(' ')[2] + Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1]}`)
     // if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && group && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && groupName && groupLeaderName && leaderNumber && leaderIdNumber && imageAsset?._id) {
-    if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && imageAsset?._id) {
+    if (date && maintained && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && imageAsset?._id) {
       const doc = {
         _type: 'member',
         memberNumber,
         date,
+        maintained,
         branchName,
         personalDetails: {
           surName,

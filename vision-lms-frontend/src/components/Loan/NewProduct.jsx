@@ -169,7 +169,7 @@ export default function NewProduct() {
 
   const handleProductSave = () => {
     // setProductCode(`${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`)
-    setProductCode(`${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) | 0 : 'P' + (Number(code?.length) + 1) | 0 : 'P0' + (Number(code?.length) + 1) | 0 : 'P00' + (Number(code?.length) + 1) | 0)}`)
+    setProductCode(`${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) : 'P' + (Number(code?.length) + 1) : 'P0' + (Number(code?.length) + 1) : 'P00' + (Number(code?.length) + 1))}`)
 
     setGracePeriod(gracePeriod === '...' ? 'null' : gracePeriod)
     setPenaltyTypeChoice(penaltyTypeChoice === '...' ? 'null' : penaltyTypeChoice)
@@ -292,7 +292,7 @@ export default function NewProduct() {
               <span
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               >
-                {`DC-${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) | 0 : 'P' + (Number(code?.length) + 1) | 0 : 'P0' + (Number(code?.length) + 1) | 0 : 'P00' + (Number(code?.length) + 1) | 0)}`}
+                {`DC-${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) : 'P' + (Number(code?.length) + 1) : 'P0' + (Number(code?.length) + 1) : 'P00' + (Number(code?.length) + 1))}`}
               </span>
             </div>
           </div>

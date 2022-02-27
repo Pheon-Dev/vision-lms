@@ -106,7 +106,7 @@ export default function Maintenance() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {members?.map((member) => (
                   <tr
-                    onMouseEnter={() => setPostHovered(true)}
+                    // onMouseEnter={() => setPostHovered(true)}
                     onMouseEnter={() => { setMaintenanceId(member._id); setMainId(member._id); }} // == maintainedList.memberIdentity
                     onMouseLeave={() => setPostHovered(false)}
                     onClick={() =>

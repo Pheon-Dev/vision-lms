@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { client } from '../../client';
 import { productDetailQuery } from '../../utils/data';
@@ -34,18 +34,15 @@ export default function CreateLoan() {
   const [approved, setApproved] = useState('');
   const [disbursed, setDisbursed] = useState('');
 
-  const [activeLoan, setActiveLoan] = useState("");
-
   const id = memberIdentity.split(' ')[0]
   const sname = memberIdentity.split(' ')[1]
   const oname = memberIdentity.split(' ')[2] + ' ' + memberIdentity.split(' ')[3]
   const names = sname + ' ' + oname
 
   useEffect(() => {
-    const membersListQuery = '*[_type == "member"]';
+    const membersListQuery = '*[_type == "member" && maintained == "false"]';
     const memberQuery = `*[_type == "member" && memberNumber match '${id}' || personalDetails.surName match '${sname}' || personalDetails.otherNames match '${oname}']`;
     const productListQuery = '*[_type == "newProduct"]';
-    const activeLoanQuery = `*[_type == "disburse" && memberNames match '${names}' ]`;
     const productTypeQuery = productDetailQuery(productType);
 
     client.fetch(membersListQuery).then((data) => {
@@ -58,10 +55,6 @@ export default function CreateLoan() {
 
     client.fetch(productListQuery).then((data) => {
       setProductList(data);
-    });
-
-    client.fetch(activeLoanQuery).then((data) => {
-      setActiveLoan(data);
     });
 
     if (productTypeQuery) {
@@ -129,6 +122,15 @@ export default function CreateLoan() {
       && disbursed
       && loanAccNumber
     ) {
+      client
+        .patch(memberId)
+        .set({
+          maintained: 'true',
+        })
+        .commit()
+        .then((update) => {
+          console.log(update);
+        });
       const doc = {
         _type: 'maintenance',
         productType
@@ -177,7 +179,7 @@ export default function CreateLoan() {
             <>
               <div className="flex justify-center items-center px-4 py-4">
                 {
-                  activeLoan.length === 0 ?
+                  membersList.length !== 0 ?
                     <div className="mt-3">
                       {memberDetail.length === 0 ?
                         <span className="font-bold text-blue-500 text-xl mr-2">
@@ -201,15 +203,15 @@ export default function CreateLoan() {
                     <div className="flex flex-col justify-center items-center ml-auto mr-auto">
                       <div className="mt-3">
                         <span className="font-bold text-red-500 text-xl mr-2">
-                          {memberDetail[0]?.personalDetails?.surName + ' ' + memberDetail[0]?.personalDetails?.otherNames}
+                          No
                         </span>
                         <span className="font-bold text-gray-500 text-xl mr-2">
-                          has an active Loan.
+                          members available ...
                         </span>
                       </div>
                       <div>
                         <span className="font-bold text-blue-500 text-xl mr-2">
-                          Select another Member
+                          They've either been maintained for or have an active loan.
                         </span>
                       </div>
                     </div>
@@ -226,14 +228,12 @@ export default function CreateLoan() {
                         className="text-gray-500"
                       >Select a Member ...</option>
                       {
-                        activeLoan.length === 0 ?
-                          membersList && (
-                            membersList?.map((member, index) => (
-                              <option key={index.toString()}>{member.memberNumber + ' ' + member.personalDetails.surName + ' ' + member.personalDetails.otherNames}</option>
-                            )
-                            ))
-                          :
-                          <option className="text-red-500">Select Another Member</option>}
+                        membersList && (
+                          membersList?.map((member, index) => (
+                            <option key={index.toString()}>{member.memberNumber + ' ' + member.personalDetails.surName + ' ' + member.personalDetails.otherNames}</option>
+                          )
+                          ))
+                      }
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
@@ -291,105 +291,102 @@ export default function CreateLoan() {
                 </div>
               </div>
               {productDetails && productDetails?.map((item, index) => (
-                activeLoan.length === 0 ?
-                  <>
-                    <span key={item._id} className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
-                    <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(item.maximumRange) ? `Maximum Principal Amount is KSHs. ${item.maximumRange}` : null}</span>
-                    <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) < Number(item.minimumRange) ? `Minimum Principal Amount is KSHs. ${item.minimumRange}` : null}</span>
-                    <div key={index.toString()} className="flex flex-wrap">
-                      <ul className="bg-gray-100 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
+                <>
+                  <span key={item._id} className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
+                  <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(item.maximumRange) ? `Maximum Principal Amount is KSHs. ${item.maximumRange}` : null}</span>
+                  <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) < Number(item.minimumRange) ? `Minimum Principal Amount is KSHs. ${item.minimumRange}` : null}</span>
+                  <div key={index.toString()} className="flex flex-wrap">
+                    <ul className="bg-gray-100 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Product Type
+                        </span>
+                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                          {item.productName}
+                        </span>
+                      </li>
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Loan A/C Number
+                        </span>
+                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                          DC-{item.productCode}-{memberDetail[0]?.memberNumber}
+                        </span>
+                      </li>
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Interest Rate
+                        </span>
+                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                          {item?.interestRate}
+                        </span>
+                      </li>
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Interest Amount
+                        </span>
+                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                          KSHs. {renderInterestAmount(item?.interestRate, principalAmount)}
+                        </span>
+                      </li>
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Installments
+                        </span>
+                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                          KSHs. {renderInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                        </span>
+                      </li>
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Repayment Cycle
+                        </span>
+                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                          {item?.repaymentCycle}
+                        </span>
+                      </li>
+                      {item?.repaymentCycle === 'daily' ?
                         <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                           <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Product Type
+                            Grace Period
                           </span>
                           <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {item.productName}
+                            {item?.gracePeriod}
                           </span>
                         </li>
+                        :
+                        null
+                      }
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Processing Fee
+                        </span>
+                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                          KSHs. {renderProcessingFeeAmount(item?.processingFee, principalAmount)}
+                        </span>
+                      </li>
+                      {item?.repaymentCycle === 'daily' ?
                         <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                           <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Loan A/C Number
+                            Penalty
                           </span>
                           <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            DC-{item.productCode}-{memberDetail[0]?.memberNumber}
+                            {item?.penaltyTypeChoice === 'amount' ? `KSHs. ${item?.penalty}` : `${renderPenaltyAmount(item?.penalty, item?.interestRate, principalAmount, loanTenure)} %`}
                           </span>
                         </li>
+                        :
                         <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                           <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Interest Rate
+                            Penalty
                           </span>
                           <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {item?.interestRate}
+                            {item?.penaltyTypeChoice === 'amount' ? `KSHs. ${item?.penalty}` : `${item?.penalty} %`}
                           </span>
                         </li>
-                        <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                          <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Interest Amount
-                          </span>
-                          <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            KSHs. {renderInterestAmount(item?.interestRate, principalAmount)}
-                          </span>
-                        </li>
-                        <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                          <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Installments
-                          </span>
-                          <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            KSHs. {renderInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
-                          </span>
-                        </li>
-                        <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                          <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Repayment Cycle
-                          </span>
-                          <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {item?.repaymentCycle}
-                          </span>
-                        </li>
-                        {item?.repaymentCycle === 'daily' ?
-                          <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                            <span className="tracking-wide text-l text-gray-700 font-bold">
-                              Grace Period
-                            </span>
-                            <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                              {item?.gracePeriod}
-                            </span>
-                          </li>
-                          :
-                          null
-                        }
-                        <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                          <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Processing Fee
-                          </span>
-                          <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            KSHs. {renderProcessingFeeAmount(item?.processingFee, principalAmount)}
-                          </span>
-                        </li>
-                        {item?.repaymentCycle === 'daily' ?
-                          <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                            <span className="tracking-wide text-l text-gray-700 font-bold">
-                              Penalty
-                            </span>
-                            <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                              {item?.penaltyTypeChoice === 'amount' ? `KSHs. ${item?.penalty}` : `${renderPenaltyAmount(item?.penalty, item?.interestRate, principalAmount, loanTenure)} %`}
-                            </span>
-                          </li>
-                          :
-                          <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                            <span className="tracking-wide text-l text-gray-700 font-bold">
-                              Penalty
-                            </span>
-                            <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                              {item?.penaltyTypeChoice === 'amount' ? `KSHs. ${item?.penalty}` : `${item?.penalty} %`}
-                            </span>
-                          </li>
-                        }
-                      </ul>
-                    </div>
-                  </>
-                  :
-                  null
+                      }
+                    </ul>
+                  </div>
+                </>
               ))}
               {memberDetail.length !== 0 ?
                 <div>
@@ -429,37 +426,31 @@ export default function CreateLoan() {
             </>
           )}
         </div>
-        {memberDetail?.length !== 0 ? activeLoan?.length === 0 ?
-          <>
-            <div className="flex justify-center mt-5">
-              <div className="w-full md:w-1/3 mr-auto ml-auto">
-                <button
-                  type="button"
-                  onClick={handleLoanSubmit}
-                  onMouseEnter={handleLoanSave}
-                  className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Submit
-                </button>
-              </div>
+        <>
+          <div className="flex justify-center mt-5">
+            <div className="w-full md:w-1/3 mr-auto ml-auto">
+              <button
+                type="button"
+                onClick={handleLoanSubmit}
+                onMouseEnter={handleLoanSave}
+                className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Submit
+              </button>
             </div>
-            <div className="flex justify-center">
-              <div className="w-1/2 ml-auto mr-auto">
-                {
-                  fields && (
-                    <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
-                      Please Fill All the Required Fields!
-                    </p>
-                  )
-                }
-              </div>
+          </div>
+          <div className="flex justify-center">
+            <div className="w-1/2 ml-auto mr-auto">
+              {
+                fields && (
+                  <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
+                    Please Fill All the Required Fields!
+                  </p>
+                )
+              }
             </div>
-          </>
-          :
-          null
-          :
-          null
-        }
+          </div>
+        </>
         {/* <pre>{JSON.stringify(memberDetail, undefined, 2)}</pre> */}
         <br />
       </>
@@ -468,7 +459,40 @@ export default function CreateLoan() {
 
   return (
     <>
-      {renderMaintenance()}
+      {membersList?.length === 0 ?
+        <>
+          <div className="flex flex-col justify-center items-center ml-auto mr-auto">
+            <div className="mt-9">
+              <span className="font-bold text-red-500 text-xl mr-2">
+                No
+              </span>
+              <span className="font-bold text-gray-500 text-xl mr-2">
+                members available ...
+              </span>
+            </div>
+            <div className="mt-5">
+              <span className="font-bold text-blue-400 text-xl mr-2">
+                They've either been maintained for or have an active loan.
+              </span>
+            </div>
+            <div className="mt-0">
+              <span className="font-bold text-blue-500 text-xl mr-2">
+                Checkout the approval list ...
+              </span>
+            </div>
+            <div className="mt-8">
+              <Link
+                to="/loan/approvals"
+                className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Approval List
+              </Link>
+            </div>
+          </div>
+        </>
+        :
+        renderMaintenance()
+      }
     </>
   );
 }
