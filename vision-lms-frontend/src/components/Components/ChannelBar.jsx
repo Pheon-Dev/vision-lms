@@ -64,7 +64,7 @@ const loans = [
 const reports = [
   {
     name: 'All Loans',
-    url: '/loan',
+    url: '/loan/',
   },
   {
     name: 'General',
@@ -84,7 +84,10 @@ const reports = [
   // },
 ];
 
-export default function ChannelBar({ user }) {
+const isNotActiveStyle = 'dropdown-selection-text';
+const isActiveStyle = 'dropdown-selection-text text-cyan-500';
+
+export default function ChannelBar() {
   return (
     <div className='w-full h-full mr-0 m-0 ml-16 bg-gray-200 dark:bg-gray-800 overflow-hidden shadow-lg'>
       <ChannelBlock />
@@ -100,8 +103,12 @@ export default function ChannelBar({ user }) {
   );
 };
 
-const ReportsDropdown = () => {
+const ReportsDropdown = ({ closeToggle }) => {
   const [expanded, setExpanded] = useState(true);
+  const handleCloseSidebar = () => {
+    if (closeToggle) closeToggle(false);
+  };
+
 
   return (
     <div className='dropdown mr-2'>
@@ -120,7 +127,8 @@ const ReportsDropdown = () => {
           <BsArrowRight size='8' className="text-gray-400 m-2" />
           <NavLink
             to={report.url}
-            className="dropdown-selection-text"
+            onClick={handleCloseSidebar}
+            className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)}
           >
             {report.name}
           </NavLink>
@@ -130,8 +138,12 @@ const ReportsDropdown = () => {
   );
 };
 
-const LoansDropdown = () => {
+const LoansDropdown = ({ closeToggle }) => {
   const [expanded, setExpanded] = useState(true);
+  const handleCloseSidebar = () => {
+    if (closeToggle) closeToggle(false);
+  };
+
 
   return (
     <div className='dropdown mr-2'>
@@ -150,7 +162,8 @@ const LoansDropdown = () => {
           <BsArrowRight size='8' className="text-gray-400 m-2" />
           <NavLink
             to={loan.url}
-            className="dropdown-selection-text"
+            onClick={handleCloseSidebar}
+            className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)}
           >
             {loan.name}
           </NavLink>
@@ -160,8 +173,12 @@ const LoansDropdown = () => {
   );
 };
 
-const GroupsDropdown = () => {
+const GroupsDropdown = ({ closeToggle }) => {
   const [expanded, setExpanded] = useState(true);
+  const handleCloseSidebar = () => {
+    if (closeToggle) closeToggle(false);
+  };
+
 
   return (
     <div className='dropdown mr-2'>
@@ -180,7 +197,8 @@ const GroupsDropdown = () => {
           <BsArrowRight size='8' className="text-gray-400 m-2" />
           <NavLink
             to={group.url}
-            className="dropdown-selection-text"
+            onClick={handleCloseSidebar}
+            className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)}
           >
             {group.name}
           </NavLink>
@@ -190,8 +208,12 @@ const GroupsDropdown = () => {
   );
 };
 
-const MembersDropdown = () => {
+const MembersDropdown = ({ closeToggle }) => {
   const [expanded, setExpanded] = useState(true);
+  const handleCloseSidebar = () => {
+    if (closeToggle) closeToggle(false);
+  };
+
 
   return (
     <div className='dropdown mr-2'>
@@ -210,7 +232,8 @@ const MembersDropdown = () => {
           <BsArrowRight size='8' className="text-gray-400 m-2" />
           <NavLink
             to={member.url}
-            className="dropdown-selection-text"
+            className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)}
+            onClick={handleCloseSidebar}
           >
             {member.name}
           </NavLink>
@@ -220,8 +243,12 @@ const MembersDropdown = () => {
   );
 };
 
-const ProductsDropdown = () => {
+const ProductsDropdown = ({ closeToggle }) => {
   const [expanded, setExpanded] = useState(true);
+  const handleCloseSidebar = () => {
+    if (closeToggle) return closeToggle(false);
+  };
+
 
   return (
     <div className='dropdown mr-2'>
@@ -240,7 +267,8 @@ const ProductsDropdown = () => {
           <BsArrowRight size='8' className="text-gray-400 m-2" />
           <NavLink
             to={product.url}
-            className="dropdown-selection-text"
+            className={({ isActive }) => (isActive ? isActiveStyle : isNotActiveStyle)}
+            onClick={handleCloseSidebar}
           >
             {product.name}
           </NavLink>

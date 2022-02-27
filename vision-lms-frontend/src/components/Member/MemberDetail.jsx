@@ -50,6 +50,7 @@ export default function MemberDetail() {
 
   useEffect(() => {
     fetchMemberDetails();
+    return (() => console.log('unsubscribing'));
   }, [memberId]);
 
   // const addComment = () => {

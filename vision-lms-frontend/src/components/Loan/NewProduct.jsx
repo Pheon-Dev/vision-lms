@@ -30,6 +30,8 @@ export default function NewProduct() {
       setCode(data);
     });
 
+    return (() => console.log('unsubscribing'));
+
   }, []);
 
   const frequencies = [

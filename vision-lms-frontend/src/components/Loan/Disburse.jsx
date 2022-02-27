@@ -54,20 +54,21 @@ export default function Disburse() {
 
   useEffect(() => {
     fetchLoanDetails();
+    return (() => console.log('unsubscribing'));
   }, [loanId, productType]);
 
-  console.log(loanDetails)
+  // console.log(loanDetails)
 
-  const ideaName = loanId || 'all';
+  const ideaName = memberNames || 'all';
   if (loading) {
     return (
-      <Spinner message={`We are populating ${ideaName} loan data to your feed!`} />
+      <Spinner message={`Fetching ${ideaName} data ...`} />
     );
   }
 
   if (loanDetails?.length === 0) {
     return (
-      <Spinner message={`We are populating ${ideaName} loan data to your feed!`} />
+      <Spinner message={`Fetching ${ideaName} data ...`} />
     )
   }
 

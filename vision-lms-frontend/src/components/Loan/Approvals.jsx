@@ -10,23 +10,51 @@ import { Spinner, Layout } from '../Components';
 
 export default function Approvals() {
   const { loanId } = useParams();
+  const [loading, setLoading] = useState(false);
   const [submittedList, setSubmittedList] = useState();
   const [approvedList, setApprovedList] = useState();
   const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
     const mquery = '*[_type == "maintenance"]';
     const aquery = '*[_type == "approve"]';
 
     client.fetch(mquery).then((data) => {
       setSubmittedList(data);
+      setLoading(false);
     });
 
     client.fetch(aquery).then((data) => {
       setApprovedList(data);
+      setLoading(false);
     });
 
+    return (() => console.log('unsubscribing'));
+
   }, []);
+
+  const approvals = 'Approval';
+  const approved = 'Approved';
+
+  if (loading) {
+    return (
+      <Spinner message={`Fetching all data pending ${approvals} and ${approved} data ...`} />
+    );
+  }
+
+  if (submittedList?.length === 0) {
+    return (
+      <div className="text-xl font-bold text-center items-center">Fetching data pending {approvals} ...</div>
+    )
+  }
+
+  if (approvedList?.length === 0) {
+    return (
+      <div className="text-xl font-bold text-center items-center">Loading {approved} data ...</div>
+    )
+  }
+
 
   function renderSubmittedLoans() {
     return (

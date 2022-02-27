@@ -53,18 +53,19 @@ export default function Approve() {
 
   useEffect(() => {
     fetchLoanDetails();
+    return (() => console.log('unsubscribing'));
   }, [loanId, productType]);
 
-  const ideaName = loanId || 'all';
+  const ideaName = memberNames || 'all';
   if (loading) {
     return (
-      <Spinner message={`We are populating ${ideaName} loan data to your feed!`} />
+      <Spinner message={`Fetching ${ideaName} data ...`} />
     );
   }
 
   if (loanDetails?.length === 0) {
     return (
-      <Spinner message={`We are populating ${ideaName} loan data to your feed!`} />
+      <Spinner message={`Fetching ${ideaName} data ...`} />
     )
   }
 

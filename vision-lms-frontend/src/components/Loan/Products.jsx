@@ -8,20 +8,28 @@ import { client, urlFor } from '../../client';
 import { memberDetailMoreMemberQuery, productDetailQuery, memberDetailQuery } from '../../utils/data';
 import { Spinner } from '../Components'
 
-
 export default function Products() {
   const [productList, setProductList] = useState("");
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true)
     const query = '*[_type == "newProduct"]';
 
     client.fetch(query).then((data) => {
       setProductList(data);
+      setLoading(false)
     });
+
+    return (() => console.log('unsubscribing'));
 
   }, []);
 
-
-  console.log(productList)
+  const prod = 'Products' || 'all';
+  if (productList?.length === 0) {
+    return (
+      <Spinner message={`Loading all ${prod} ...`} />
+    )
+  }
 
   return (
     <>

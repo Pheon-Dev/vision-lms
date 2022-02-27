@@ -71,6 +71,8 @@ export default function CreateMember() {
       setCode(data);
     });
 
+    return (() => console.log('unsubscribing'));
+
   }, []);
 
   const genderSelector = [

@@ -10,23 +10,50 @@ import { Spinner, Layout } from '../Components';
 
 export default function Disbursement() {
   const { loanId } = useParams();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [approvedList, setApprovedList] = useState();
   const [disbursedList, setDisbursedList] = useState();
 
   useEffect(() => {
+    setLoading(true);
     const dquery = '*[_type == "disburse"]';
     const aquery = '*[_type == "approve"]';
 
     client.fetch(dquery).then((data) => {
       setDisbursedList(data);
+      setLoading(false);
     });
 
     client.fetch(aquery).then((data) => {
       setApprovedList(data);
+      setLoading(false);
     });
 
+    return (() => console.log('unsubscribing'));
+
   }, []);
+
+  const disbursals = 'Disbursal';
+  const disbursed = 'Disbursed';
+
+  if (loading) {
+    return (
+      <Spinner message={`Fetching all data pending ${disbursals} and ${disbursed} data ...`} />
+    );
+  }
+
+  if (approvedList?.length === 0) {
+    return (
+      <div className="text-xl font-bold text-center items-center">Fetching data pending {disbursals} ...</div>
+    )
+  }
+
+  if (disbursedList?.length === 0) {
+    return (
+      <div className="text-xl font-bold text-center items-center">Loading {disbursed} data ...</div>
+    )
+  }
 
   function renderApprovedLoans() {
     return (
