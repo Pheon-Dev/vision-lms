@@ -116,14 +116,17 @@ export default function CreateMember() {
   // console.log(Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + code.length : '000' + code.length))
   // console.log(Date().split(' ')[2] + Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1])
   // console.log(memberNumber)
+  const preSaveMember = () => {
+    setMaintained('false');
+    setGroup('false');
+    setMemberNumber(`${(code.length > 9 ? code.length > 99 ? code.length > 999 ? (Number(code.length) + 1) : '0' + (Number(code.length) + 1) : '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
+  }
+
   const saveMember = () => {
     // setMemberNumber(`${Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
-    setMaintained('false');
-    setMemberNumber(`${(code.length > 9 ? code.length > 99 ? code.length > 999 ? (Number(code.length) + 1) : '0' + (Number(code.length) + 1) : '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
-    console.log(memberNumber)
     // setMemberNumber(`${Date().split(' ')[2] + Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1]}`)
     // if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && group && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && groupName && groupLeaderName && leaderNumber && leaderIdNumber && imageAsset?._id) {
-    if (date && maintained && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && imageAsset?._id) {
+    if (date && maintained && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && group && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && imageAsset?._id) {
       const doc = {
         _type: 'member',
         memberNumber,
@@ -156,7 +159,7 @@ export default function CreateMember() {
           businessLocation,
           businessAge,
           refereeName,
-          // group,
+          group,
           communityPosition,
           mpesaTransNumber,
         },
@@ -939,6 +942,7 @@ export default function CreateMember() {
                   <button
                     type="button"
                     onClick={saveMember}
+                    onMouseEnter={preSaveMember}
                     className="bg-green-500 text-white font-bold p-2 rounded-lg w-36 outline-none"
                   >
                     Save Member

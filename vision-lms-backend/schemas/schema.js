@@ -15,6 +15,8 @@ import guarantor from './guarantor'
 import preview from './preview'
 import approve from './approve'
 import disburse from './disburse'
+import groups from './groups'
+import groupMembers from './groupMembers'
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -25,6 +27,8 @@ export default createSchema({
   types: schemaTypes.concat([
     user,
     member,
+    groups,
+    groupMembers,
     newProduct,
     maintenance,
     preview,

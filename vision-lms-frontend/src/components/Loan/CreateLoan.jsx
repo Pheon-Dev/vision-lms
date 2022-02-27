@@ -224,9 +224,9 @@ export default function CreateLoan() {
                   </label>
                   <div className="relative">
                     <select value={memberIdentity} onChange={(e) => setMemberIdentity(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                      <option
-                        className="text-gray-500"
-                      >Select a Member ...</option>
+                      {/* <option */}
+                      {/*   className="text-gray-500" */}
+                      {/* >Select a Member ...</option> */}
                       {
                         membersList && (
                           membersList?.map((member, index) => (
@@ -246,9 +246,9 @@ export default function CreateLoan() {
                   </label>
                   <div className="relative">
                     <select value={productType} onChange={(e) => setProductType(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                      <option
-                        className="text-gray-500"
-                      >Select a Product ...</option>
+                      {/* <option */}
+                      {/*   className="text-gray-500" */}
+                      {/* >Select a Product ...</option> */}
                       {productList && (
                         productList?.map((item, index) => (
                           <option key={index.toString()}>{item.productName}</option>
