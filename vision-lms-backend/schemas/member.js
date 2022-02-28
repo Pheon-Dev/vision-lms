@@ -260,6 +260,11 @@ export default {
         hotspot: true,
       },
     },
+    {
+      name: 'group',
+      title: 'Group',
+      type: 'string',
+    },
     // {
     //   name: 'userId',
     //   title: 'UserId',

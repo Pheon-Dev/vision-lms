@@ -43,15 +43,20 @@ export default {
       title: 'Group Leader Phone',
       type: 'string',
     },
-    // {
-    //   name: 'groupMembers',
-    //   title: 'Group Members',
-    //   type: 'array',
-    //   of: [{
-    //     type: 'groupMembers'
-    //   }
-    //   ],
-    // }
+    {
+      name: 'group',
+      title: 'Group',
+      type: 'string',
+    },
+    {
+      name: 'groupMembers',
+      title: 'Group Members',
+      type: 'array',
+      of: [{
+        type: 'groupMembers'
+      }
+      ],
+    }
   ],
 };
 
