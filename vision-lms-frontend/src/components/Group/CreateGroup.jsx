@@ -20,7 +20,6 @@ export default function CreateGroup() {
   const [groupLeaderPhone, setGroupLeaderPhone] = useState('');
 
   const [group, setGroup] = useState('');
-  const [selected, setSelected] = useState(false);
   const navigate = useNavigate();
 
   const lead_id = groupInitiatorName.split(' ')[0]
@@ -70,11 +69,6 @@ export default function CreateGroup() {
   };
   // console.log(memberList)
 
-  const handleMemberAdd = () => {
-    setMembersList([...memberList, { member: "", idNumber: "" }]);
-    console.log(membersList)
-  };
-
   const handleDeleteGroupMember = (index) => {
     const list = [...memberList];
     list.splice(index, 1);
@@ -86,22 +80,6 @@ export default function CreateGroup() {
     list.splice(index, 1);
     setMemberList(list);
   };
-
-  const handleSelected = (index) => {
-    <AiFillCheckSquare size="24" key={index} />
-  }
-  function handleAddMember() {
-    client
-      .patch(memberList[0]?._id)
-      // .set({ group: groupName })
-      .setIfMissing({ groupMembers: [] })
-      .insert('after', 'groupMembers[-1]', [{
-        groupMemberName: memberList[0]?.personalDetails.otherNames,
-        groupMemberId: memberList[0]?.memberNumber
-      }])
-      .commit()
-      .then((update) => console.log(update));
-  }
 
   const handleGroupSave = () => {
     setGroupLeaderName(lead_names);
@@ -236,7 +214,6 @@ export default function CreateGroup() {
                   name="member"
                   placeholder="Full Names ..."
                   value={singleMember?.personalDetails?.surName + ' ' + singleMember?.personalDetails?.otherNames}
-                  // value={singleMember.member}
                   onChange={(e) => handleMemberChange(e, index)}
                   required
                 />
@@ -266,43 +243,14 @@ export default function CreateGroup() {
                           .then(() => { handleDeleteMember(index) });
                       }}
                       type="button"
-                      // className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                       className="text-blue-500 hover:text-blue-700 p-2 mt-1 font-bold"
                     >
-                      <AiFillPlusCircle onClick={() => handleSelected(index)} size="24" />
+                      <AiFillPlusCircle size="24" />
                     </button>
                   </span>
-                  {/* <span> */}
-                  {/*   <button */}
-                  {/*     onClick={() => handleDeleteMember(index)} */}
-                  {/*     type="button" */}
-                  {/*     // className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
-                  {/*     className="text-red-400 hover:text-red-600 p-2 mt-1 font-bold" */}
-                  {/*   > */}
-                  {/*     <AiFillDelete size="24" /> */}
-                  {/*   </button> */}
-                  {/* </span> */}
                 </>
               )}
             </div>
-            {/* {memberList.length - 1 === index && memberList.length < 10 && ( */}
-            {/*   <div className="justify-center items-center ml-8"> */}
-            {/*     <button */}
-            {/*       // onClick={handleMemberSave} */}
-            {/*       type="button" */}
-            {/*       className="bg-green-500 w-1/3 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
-            {/*     > */}
-            {/*       « Save Member » */}
-            {/*     </button> */}
-            {/*     <button */}
-            {/*       onClick={handleMemberAdd} */}
-            {/*       type="button" */}
-            {/*       className="bg-blue-500 m-2 w-1/3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
-            {/*     > */}
-            {/*       + Add a Member + */}
-            {/*     </button> */}
-            {/*   </div> */}
-            {/* )} */}
           </div>
         ))}
       </>

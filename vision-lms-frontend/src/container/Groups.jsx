@@ -21,7 +21,8 @@ export default function Groups({ user }) {
           {/* <Route path="/search" element={<Search searchTerm={searchTerm} setSearchTerm={searchTerm} />} /> */}
           <Route path="/create-group" element={<CreateGroup searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
           <Route path="/groups" element={<Group searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
-          <Route path="/group-detail" element={<GroupDetail searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
+          <Route path="/groups/:groupId" element={<GroupDetail searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
+          {/* <Route path="/group-detail" element={<GroupDetail searchTerm={searchTerm} setSearchTerm={searchTerm} />} /> */}
         </Routes>
       </div>
     </div>
