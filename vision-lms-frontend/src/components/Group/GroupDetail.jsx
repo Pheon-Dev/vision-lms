@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { client } from "../../client";
 
@@ -8,6 +8,8 @@ export default function GroupDetail() {
   const [groupDetails, setGroupDetails] = useState("");
   const [groupMembers, setGroupMembers] = useState("");
   const [groupName, setGroupName] = useState("");
+
+  const navigate = useNavigate();
 
   const fetchGroupDetails = () => {
     const query = `*[_type == "groups" && _id == '${groupId}']`;
@@ -65,9 +67,7 @@ export default function GroupDetail() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {groupMembers?.map((member) => (
                     <tr
-                      onMouseEnter={() => setPostHovered(true)}
-                      onMouseLeave={() => setPostHovered(false)}
-                      onClick={() => navigate(`/member/member-detail/${_id}`)}
+                      onClick={() => navigate(`/member/member-detail/${member._id}`)}
                       key={member._id}
                       className="hover:bg-gray-300 cursor-pointer"
                     >

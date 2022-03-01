@@ -5,3 +5,5 @@ vision-ams-frontend/src/firebase.js
 
 # Local Netlify folder
 .netlify
+/vision-lms-frontend/src/mpesa.js
+vision-lms-frontend/src/mpesa.js

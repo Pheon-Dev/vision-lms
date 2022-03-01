@@ -11,4 +11,5 @@ export { default as Submissions } from './Submissions';
 export { default as CreateLoan } from './CreateLoan';
 export { default as Preview } from './Preview';
 export { default as Products } from './Products';
+export { default as ProductDetails } from './ProductDetails';
 export { default as Pending } from './Pending';

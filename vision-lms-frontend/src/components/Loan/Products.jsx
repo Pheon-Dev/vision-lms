@@ -11,6 +11,8 @@ import { Spinner } from '../Components'
 export default function Products() {
   const [productList, setProductList] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
     setLoading(true)
     const query = '*[_type == "newProduct"]';
@@ -41,9 +43,9 @@ export default function Products() {
         <div key={index} className="ml-auto mr-auto mb-3">
           <div className="flex justify-center items-center px-4 py-4">
             <div className="mt-3">
-              <span className="font-bold text-xl mr-2">
+              <Link to={`/loan/products/${product._id}`} className="font-bold text-xl mr-2 hover:text-blue-500">
                 {product.productName}
-              </span>
+              </Link>
             </div>
           </div>
           <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
@@ -77,28 +79,28 @@ export default function Products() {
               </span>
               <span className="ml-auto">{product?.penaltyTypeChoice === 'amount' ? `KSHs. ${product?.penalty}` : `${product?.penalty} %`}</span>
             </li>
-            {product?.repaymentCycle === 'daily' && (
-              <>
-                <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                  <span>
-                    Penalty Payment
-                  </span>
-                  <span className="ml-auto">{product?.penaltyPaymentChoice === 'perInstallment' ? 'Per Installment' : product?.penaltyPaymentChoice === 'lastInstallment' ? 'Last Installment' : 'Percentage of Principal'}</span>
-                </li>
-                <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                  <span>
-                    Repayment Cycle
-                  </span>
-                  <span className="ml-auto">Paid {product?.repaymentCycle}</span>
-                </li>
-                <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                  <span>
-                    Grace Period
-                  </span>
-                  <span className="ml-auto">{product?.gracePeriod} day</span>
-                </li>
-              </>
-            )}
+            {/* {product?.repaymentCycle === 'daily' && ( */}
+            <>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Penalty Payment
+                </span>
+                <span className="ml-auto">{product?.penaltyPaymentChoice === 'perInstallment' ? 'Per Installment' : product?.penaltyPaymentChoice === 'lastInstallment' ? 'Last Installment' : 'Percentage of Principal'}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Repayment Cycle
+                </span>
+                <span className="ml-auto">Paid {product?.repaymentCycle}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Grace Period
+                </span>
+                <span className="ml-auto">{product?.gracePeriod} day</span>
+              </li>
+            </>
+            {/* )} */}
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Principal Range

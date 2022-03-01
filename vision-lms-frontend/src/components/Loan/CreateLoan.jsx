@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 
-import { client } from '../../client';
+import { client, urlFor } from '../../client';
 import { productDetailQuery } from '../../utils/data';
 
 export default function CreateLoan() {
@@ -390,6 +390,9 @@ export default function CreateLoan() {
               ))}
               {memberDetail.length !== 0 ?
                 <div>
+                  <div className="image overflow-hidden">
+                    <img className="h-auto w-1/4 mx-auto" src={(memberDetail[0]?.image && urlFor(memberDetail[0]?.image).url())} alt="member-profile-pic" />
+                  </div>
                   <div className="ml-auto mr-auto mb-3">
                     <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">

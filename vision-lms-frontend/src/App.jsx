@@ -1,13 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
 import { AuthProvider } from "./contexts/AuthContext";
+// import { useLipaNaMpesa } from "./mpesa";
 
 import { Dashboard, Members } from './container';
 import { Login, SignIn, SignUp, UpdateProfile, ForgotPassword, PrivateRoute, PageNotFound } from './components/Auth';
 
 function App() {
   const navigate = useNavigate();
+  // const [lipaNaMpesa, setLipaNaMpesa] = useState('')
+  // const { data } = useLipaNaMpesa();
+
+  // console.log(data);
 
   // if (!currentUser) navigate('/sign-in');
   // console.log(currentUser.email)

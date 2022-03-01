@@ -42,7 +42,7 @@ export default function Navbar({ searchTerm, setSearchTerm }) {
   }
   function Search() {
     return (
-      <div className="search w-1/2">
+      <div className="search flex ml-auto mr-auto justify-center w-3/5">
         {/* <IoMdSearch fontSize={21} className="ml-1" /> */}
         <input
           type="text"
@@ -106,12 +106,12 @@ export default function Navbar({ searchTerm, setSearchTerm }) {
 
 
   // if (user) {
-    return (
-      <>
-        {/* {renderNavOne()} */}
-        {renderNavBar()}
-      </>
-    );
+  return (
+    <>
+      {/* {renderNavOne()} */}
+      {renderNavBar()}
+    </>
+  );
   // }
 
   return null;
