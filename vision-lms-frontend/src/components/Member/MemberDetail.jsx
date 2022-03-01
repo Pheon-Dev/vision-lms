@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdDownloadForOffline } from 'react-icons/md';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import { client, urlFor } from '../../client';
@@ -15,6 +15,8 @@ export default function MemberDetail() {
   const [groupDetails, setGroupDetails] = useState('');
   const [groupId, setGroupId] = useState('');
   const [addingComment, setAddingComment] = useState(false);
+
+  const navigate = useNavigate();
 
   const fetchMemberDetails = () => {
     // let mquery = memberDetailQuery(memberId);
@@ -470,21 +472,52 @@ export default function MemberDetail() {
       {groupInfo.length === 0 ?
         <div className="flex justify-center mt-5">
           <div className="w-full md:w-1/3 mr-auto ml-auto">
-            <button
-              type="button"
-              onClick={() => {
-                setGroupId(memberDetail.group)
-              }}
-              // onMouseEnter={handleLoanSave}
-              className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Load Group Info
-            </button>
+            {
+              groupDetails.length === 0 ?
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGroupId(memberDetail.group)
+                  }}
+                  // onMouseEnter={handleLoanSave}
+                  className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  Load Group Details
+                </button>
+                :
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGroupId(memberDetail.group)
+                  }}
+                  // onMouseEnter={handleLoanSave}
+                  className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  Load Group Info
+                </button>
+            }
           </div>
         </div>
         :
+        groupDetails.length !== 0 ?
+          renderGroupInfo()
+          :
+          <div className="flex justify-center mt-5">
+            <div className="w-full md:w-1/3 mr-auto ml-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  navigate(`/group/create-group`)
+                }}
+                // onMouseEnter={handleLoanSave}
+                className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Add to Group
+              </button>
+            </div>
+          </div>
+
         // renderGroupMembers()
-        renderGroupInfo()
       }
       {renderMoreInfo()}
     </>
