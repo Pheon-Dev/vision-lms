@@ -241,7 +241,7 @@ export default function MemberDetail() {
       <>
         <div>
           <div className="image overflow-hidden">
-            <img className="h-auto w-full p-3 md:w-1/3 mx-auto" src={(memberDetail?.image && urlFor(memberDetail?.image).url())} alt="member-profile-pic" />
+            <img className="h-64 w-64 p-3 mx-auto" src={(memberDetail?.image && urlFor(memberDetail?.image).url())} alt="member-profile-pic" />
           </div>
           <div className="flex flex-wrap justify-center items-center mr-auto ml-auto mb-4">
             <h1 className="font-bold text-xl text-gray-500">{memberDetail?.personalDetails.surName} {memberDetail?.personalDetails.otherNames}</h1>

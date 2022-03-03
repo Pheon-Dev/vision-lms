@@ -83,21 +83,26 @@ export default {
       title: 'Processing Fee',
       type: 'string',
     },
-    // {
-    //   name: 'repaymentCycle',
-    //   title: 'Repayment Cycle',
-    //   type: 'string',
-    // },
-    // {
-    //   name: 'gracePeriod',
-    //   title: 'Grace Period',
-    //   type: 'number',
-    // },
-    // {
-    //   name: 'arrears',
-    //   title: 'Arrears',
-    //   type: 'string',
-    // },
+    {
+      name: 'guarantorId',
+      title: 'Guarantor ID',
+      type: 'string',
+    },
+    {
+      name: 'guarantorName',
+      title: 'Guarantor Name',
+      type: 'string',
+    },
+    {
+      name: 'guarantorRelationship',
+      title: 'Guarantor Relationship',
+      type: 'string',
+    },
+    {
+      name: 'guarantorPhone',
+      title: 'Guarantor Phone',
+      type: 'string',
+    },
     {
       name: 'penaltyAmount',
       title: 'Penalty Amount',

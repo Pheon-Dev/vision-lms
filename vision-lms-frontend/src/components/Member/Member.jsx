@@ -89,7 +89,7 @@ export default function MemberTest({ member }) {
         <td className="px-6 py-4 whitespace-nowrap">
 
           <span className={(member?.maintained === 'true' ? isPaidStyle : isNotPaidStyle)} >
-            {member?.maintained === 'true' ? 'Maintained' : 'Not Maintained'}
+            {member?.maintained === 'true' ? 'Active' : 'Inactive'}
           </span>
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.personalDetails?.mobileNumber}</td>

@@ -4,9 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { client, urlFor } from '../../client';
 import { productDetailQuery } from '../../utils/data';
 
+import Spinner from '../Components/Spinner';
+
 export default function CreateLoan() {
   const navigate = useNavigate();
   const [fields, setFields] = useState();
+  const [loading, setLoading] = useState(false);
 
   const [memberId, setMemberId] = useState("");
   const [memberIdNumber, setMemberIdNumber] = useState("");
@@ -30,6 +33,14 @@ export default function CreateLoan() {
   const [processingFee, setProcessingFee] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
+  const [guarantorsList, setGuarantorsList] = useState('');
+  const [guarantorName, setGuarantorName] = useState('');
+  const [guarantorId, setGuarantorId] = useState('');
+  const [guarantorDetails, setGuarantorDetails] = useState('');
+  const [guarantor, setGuarantor] = useState('');
+  const [guarantorRelationship, setGuarantorRelationship] = useState('');
+  const [guarantorPhone, setGuarantorPhone] = useState('');
+
   const [maintained, setMaintained] = useState('');
   const [approved, setApproved] = useState('');
   const [disbursed, setDisbursed] = useState('');
@@ -39,14 +50,31 @@ export default function CreateLoan() {
   const oname = memberIdentity.split(' ')[2] + ' ' + memberIdentity.split(' ')[3]
   const names = sname + ' ' + oname
 
+  const gid = guarantorDetails.split(' ')[0]
+  const gsname = guarantorDetails.split(' ')[1]
+  const goname = guarantorDetails.split(' ')[2] + ' ' + guarantorDetails.split(' ')[3]
+  const gnames = gsname + ' ' + goname
+
   useEffect(() => {
     const membersListQuery = '*[_type == "member" && maintained == "false"]';
     const memberQuery = `*[_type == "member" && memberNumber match '${id}' || personalDetails.surName match '${sname}' || personalDetails.otherNames match '${oname}']`;
     const productListQuery = '*[_type == "newProduct"]';
+    const guarantorsListQuery = '*[_type == "member"]';
+    const guarantorQuery = `*[_type == "member" && memberNumber match '${gid}' || personalDetails.surName match '${gsname}' || personalDetails.otherNames match '${goname}']`;
     const productTypeQuery = productDetailQuery(productType);
 
     client.fetch(membersListQuery).then((data) => {
+      // setLoading(true);
       setMembersList(data);
+      // setLoading(false);
+    });
+
+    client.fetch(guarantorsListQuery).then((data) => {
+      setGuarantorsList(data);
+    });
+
+    client.fetch(guarantorQuery).then((data) => {
+      setGuarantor(data);
     });
 
     client.fetch(memberQuery).then((data) => {
@@ -63,20 +91,40 @@ export default function CreateLoan() {
       });
     }
 
-  }, [productType, id, sname, oname, names]);
+  }, [productType, id, sname, oname, names, gid, goname, gsname]);
 
-  function renderInterestAmount(rate, principal) {
+  // console.log(guarantor)
+  function renderDailyInterestAmount(rate, principal, tenure) {
+    return roundOff(((rate * principal) / 3000) * tenure);
+  }
+
+  function renderWeeklyInterestAmount(rate, principal, tenure) {
+    return roundOff(((rate * principal) / 400) * tenure);
+  }
+
+  function renderMonthlyInterestAmount(rate, principal) {
     return roundOff(((rate * principal) / 100));
   }
 
-  function renderInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = ((rate * principal) / 100);
+  // Note Sundays
+  function renderDailyInstallmentsAmount(rate, principal, tenure) {
+    let principalAmount = ((rate * principal) / 3000 * tenure);
+    return roundOff((Number(principalAmount) + Number(principal)) / tenure); // - sundays
+  }
+
+  function renderWeeklyInstallmentsAmount(rate, principal, tenure) {
+    let principalAmount = (((rate * principal) / 400) * tenure);
+    return roundOff((Number(principalAmount) + Number(principal)) / Number(tenure));
+  }
+
+  function renderMonthlyInstallmentsAmount(rate, principal, tenure) {
+    let principalAmount = ((rate * principal) / 100 * tenure);
     return roundOff((Number(principalAmount) + Number(principal)) / tenure);
   }
 
   function renderProcessingFeeAmount(feePercentage, principal) {
     let procFee = roundOff((feePercentage / 100) * principal);
-    return (procFee < '301' ? '300' : procFee)
+    return (procFee < 301 ? '300' : procFee)
   }
 
   function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
@@ -87,20 +135,65 @@ export default function CreateLoan() {
     return ((Number((x).toString().split('.')[1]) > 0 ? Number((x).toString().split('.')[0]) + 1 : Number((x).toString().split('.')[0]) + 0).toString())
   }
 
+  // const ideaName = 'Member Details';
+  // if (loading) {
+  //   return (
+  //     <Spinner message={`Loading ${ideaName} ...`} />
+  //   );
+  // }
+  // if (membersList?.length === 0) {
+  //   return (
+  //     <div className="flex flex-col justify-center items-center ml-auto mr-auto">
+  //       <div className="mt-3">
+  //         <span className="font-bold text-red-500 text-xl mr-2">
+  //           No
+  //         </span>
+  //         <span className="font-bold text-gray-500 text-xl mr-2">
+  //           members available ...
+  //         </span>
+  //       </div>
+  //       <div>
+  //         <span className="font-bold text-blue-500 text-xl mr-2">
+  //           They've either been maintained for or have an active loan.
+  //         </span>
+  //       </div>
+  //     </div>
+  //   )
+  // }
+
+
   const handleLoanSave = () => {
     setMaintained('true');
     setApproved('false');
     setDisbursed('false');
     setMemberId(memberDetail[0]?._id);
-    setMemberNames(memberDetail[0]?.personalDetails?.surName + ' ' + memberDetail[0]?.personalDetails?.otherNames);
+    setMemberNames(names);
+    // setMemberNames(memberDetail[0]?.personalDetails?.surName + ' ' + memberDetail[0]?.personalDetails?.otherNames);
     setMemberPhoneNumber(memberDetail[0]?.personalDetails?.mobileNumber);
-    setInterestAmount(renderInterestAmount(productDetails[0]?.interestRate, principalAmount).toString());
-    setInstallmentAmount(renderInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString());
+    setInterestAmount(
+      // renderInterestAmount(productDetails[0]?.interestRate, principalAmount).toString()
+      productDetails[0]?.repaymentCycle === 'weekly' ?
+        productDetails[0]?.repaymentCycle === 'monthly' ?
+          renderMonthlyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
+          : renderWeeklyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
+        : renderDailyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
+    );
+    setInstallmentAmount(
+      productDetails[0]?.repaymentCycle === 'weekly' ?
+        productDetails[0]?.repaymentCycle === 'monthly' ?
+          renderMonthlyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
+          : renderWeeklyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
+        : renderDailyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
+    );
     setProcessingFee(renderProcessingFeeAmount(productDetails[0]?.processingFee, principalAmount).toString());
     setPenaltyAmount(productDetails[0]?.penaltyTypeChoice === 'amount' ? productDetails[0]?.penalty : renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, principalAmount, loanTenure).toString());
     setLoanAccNumber(productDetails[0]?.productCode + '-' + memberDetail[0]?.memberNumber)
     setMemberIdNumber(memberDetail[0]?.personalDetails?.idPass)
     setMemberEmail(memberDetail[0]?.personalDetails?.emailAddress)
+    setGuarantorName(guarantorDetails === '...' ? guarantorName : gnames)
+    setGuarantorId(guarantorDetails === '...' ? guarantorId : guarantor[0]?.personalDetails?.idPass)
+    setGuarantorPhone(guarantorDetails === '...' ? guarantorPhone : guarantor[0]?.personalDetails?.mobileNumber)
+    // setGuarantorRelationship(guarantorDetails === '...' ? guarantorRelationship : guarantorRelationship)
   }
 
   const handleLoanSubmit = () => {
@@ -121,6 +214,10 @@ export default function CreateLoan() {
       && approved
       && disbursed
       && loanAccNumber
+      && guarantorName
+      && guarantorId
+      && guarantorPhone
+      && guarantorRelationship
     ) {
       client
         .patch(memberId)
@@ -149,6 +246,10 @@ export default function CreateLoan() {
         , approved
         , disbursed
         , loanAccNumber
+        , guarantorName
+        , guarantorId
+        , guarantorPhone
+        , guarantorRelationship
       };
       client.create(doc).then(() => {
         alert('Loan Maintained Successfully!')
@@ -168,6 +269,130 @@ export default function CreateLoan() {
     }
   }
 
+  function renderGuarantors() {
+    return (
+      <>
+        <div className="w-full flex justify-center mr-auto ml-auto px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xl font-bold mb-2">
+            Guarantor Details
+          </label>
+        </div>
+        <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+              Select Guarantor
+            </label>
+            <div className="relative">
+              <select value={guarantorDetails} onChange={(e) => setGuarantorDetails(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                <option
+                  className="text-gray-500"
+                >...</option>
+                {
+                  guarantorsList && (
+                    guarantorsList?.map((member, index) => (
+                      <option key={index}>{member?.memberNumber + ' ' + member?.personalDetails?.surName + ' ' + member?.personalDetails?.otherNames}</option>
+                    )
+                    ))
+                }
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+              </div>
+            </div>
+          </div>
+          <div className="w-full md:w-1/2 px-3">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+              Guarantor Names
+            </label>
+            {guarantorDetails === '...' ?
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                id="principalAmount"
+                type="text"
+                placeholder="Guarantor Names ..."
+                value={guarantorName}
+                onChange={(e) => setGuarantorName(e.target.value)}
+              />
+              :
+              <span
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              >
+                {gnames}
+              </span>
+            }
+          </div>
+        </div>
+        <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
+          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+              Guarantor Phone
+              <span className="text-red-500 italic">*</span>
+            </label>
+            {guarantorDetails === '...' ?
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                type="number"
+                placeholder="Phone Number ..."
+                value={guarantorPhone}
+                onChange={(e) => setGuarantorPhone(e.target.value)}
+              />
+              :
+              <span
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              >
+                {guarantor[0]?.personalDetails?.mobileNumber}
+              </span>
+            }
+          </div>
+          <div className="w-full md:w-1/3 px-3">
+            <label className="block tracking-wide text-xs mb-2">
+              <span className="uppercase text-gray-700 font-bold text-md">Guarantor ID</span>
+            </label>
+            {guarantorDetails === '...' ?
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                type="number"
+                placeholder="ID Number ..."
+                value={guarantorId}
+                onChange={(e) => setGuarantorId(e.target.value)}
+              />
+              :
+              <span
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              >
+                {guarantor[0]?.personalDetails?.idPass}
+              </span>
+            }
+          </div>
+          <div className="w-full md:w-1/3 px-3">
+            <label className="block tracking-wide text-xs mb-2">
+              <span className="uppercase text-gray-700 font-bold text-md">Guarantor Relationship</span>
+            </label>
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              type="text"
+              placeholder="Relationship ..."
+              value={guarantorRelationship}
+              onChange={(e) => setGuarantorRelationship(e.target.value)}
+            />
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  function renderCollaterals() {
+    return (
+      <>
+        <div className="w-full flex justify-center mr-auto ml-auto px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xl font-bold mb-2">
+            Collaterals
+          </label>
+        </div>
+      </>
+    )
+  }
+
   function renderMaintenance() {
     return (
       <>
@@ -182,8 +407,8 @@ export default function CreateLoan() {
                   membersList.length !== 0 ?
                     <div className="mt-3">
                       {memberDetail.length === 0 ?
-                        <span className="font-bold text-blue-500 text-xl mr-2">
-                          Select a Member
+                        <span className="font-bold uppercase text-blue-500 text-xl mr-2">
+                          Select a Member & a product
                         </span>
                         :
                         <>
@@ -194,7 +419,8 @@ export default function CreateLoan() {
                             for
                           </span>
                           <span className="font-bold text-xl mr-2">
-                            {memberDetail[0]?.personalDetails?.surName + ' ' + memberDetail[0]?.personalDetails?.otherNames}
+                            {names}
+                            {/* {memberDetail[0]?.personalDetails?.surName + ' ' + memberDetail[0]?.personalDetails?.otherNames} */}
                           </span>
                         </>
                       }
@@ -217,6 +443,43 @@ export default function CreateLoan() {
                     </div>
                 }
               </div>
+              {memberDetail.length !== 0 ?
+                <div>
+                  <div className="image overflow-hidden">
+                    <img className="h-auto w-1/4 mx-auto" src={(memberDetail[0]?.image && urlFor(memberDetail[0]?.image).url())} alt="member-profile-pic" />
+                  </div>
+                  <div className="ml-auto mr-auto mb-3">
+                    <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Member Code
+                        </span>
+                        <span className="ml-auto">DC-{memberDetail[0]?.memberNumber}</span>
+                      </li>
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Mobile No.
+                        </span>
+                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.mobileNumber}</span>
+                      </li>
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          Email
+                        </span>
+                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.emailAddress}</span>
+                      </li>
+                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                        <span className="tracking-wide text-l text-gray-700 font-bold">
+                          ID Number
+                        </span>
+                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.idPass}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                :
+                null
+              }
               <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                   <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -230,7 +493,7 @@ export default function CreateLoan() {
                       {
                         membersList && (
                           membersList?.map((member, index) => (
-                            <option key={index.toString()}>{member.memberNumber + ' ' + member.personalDetails.surName + ' ' + member.personalDetails.otherNames}</option>
+                            <option key={index}>{member.memberNumber + ' ' + member.personalDetails.surName + ' ' + member.personalDetails.otherNames}</option>
                           )
                           ))
                       }
@@ -251,7 +514,7 @@ export default function CreateLoan() {
                       >Select a Product ...</option>
                       {productList && (
                         productList?.map((item, index) => (
-                          <option key={index.toString()}>{item.productName}</option>
+                          <option key={index}>{item.productName}</option>
                         )
                         ))}
                     </select>
@@ -278,7 +541,9 @@ export default function CreateLoan() {
                 </div>
                 <div className="w-full md:w-1/2 px-3">
                   <label className="block tracking-wide text-xs mb-2">
-                    <span className="uppercase text-gray-700 font-bold text-md">Loan Tenure </span>
+                    {productDetails && (
+                      <span className="uppercase text-gray-700 font-bold text-md">Loan Tenure {productDetails[0]?.tenureMaximumChoice}</span>
+                    )}
                   </label>
                   <input
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -318,7 +583,7 @@ export default function CreateLoan() {
                           Interest Rate
                         </span>
                         <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          {item?.interestRate}
+                          {item?.interestRate} %
                         </span>
                       </li>
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -326,7 +591,15 @@ export default function CreateLoan() {
                           Interest Amount
                         </span>
                         <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          KSHs. {renderInterestAmount(item?.interestRate, principalAmount)}
+                          KSHs. {
+                            // renderInterestAmount(item?.interestRate, principalAmount)}
+                            item?.repaymentCycle === 'weekly' ?
+                              item?.repaymentCycle === 'monthly' ?
+                                renderMonthlyInterestAmount(item?.interestRate, principalAmount)
+                                :
+                                renderWeeklyInterestAmount(item?.interestRate, principalAmount, loanTenure)
+                              :
+                              renderDailyInterestAmount(item?.interestRate, principalAmount, loanTenure)}
                         </span>
                       </li>
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -334,7 +607,15 @@ export default function CreateLoan() {
                           Installments
                         </span>
                         <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          KSHs. {renderInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                          KSHs. {
+                            item?.repaymentCycle === 'weekly' ?
+                              item?.repaymentCycle === 'monthly' ?
+                                renderMonthlyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)
+                                :
+                                renderWeeklyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)
+                              :
+                              renderDailyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)
+                          }
                         </span>
                       </li>
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -388,72 +669,10 @@ export default function CreateLoan() {
                   </div>
                 </>
               ))}
-              {memberDetail.length !== 0 ?
-                <div>
-                  <div className="image overflow-hidden">
-                    <img className="h-auto w-1/4 mx-auto" src={(memberDetail[0]?.image && urlFor(memberDetail[0]?.image).url())} alt="member-profile-pic" />
-                  </div>
-                  <div className="ml-auto mr-auto mb-3">
-                    <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Member Code
-                        </span>
-                        <span className="ml-auto">DC-{memberDetail[0]?.memberNumber}</span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Mobile No.
-                        </span>
-                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.mobileNumber}</span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Email
-                        </span>
-                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.emailAddress}</span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          ID Number
-                        </span>
-                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.idPass}</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                :
-                null
-              }
 
             </>
           )}
         </div>
-        <>
-          <div className="flex justify-center mt-5">
-            <div className="w-full md:w-1/3 mr-auto ml-auto">
-              <button
-                type="button"
-                onClick={handleLoanSubmit}
-                onMouseEnter={handleLoanSave}
-                className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <div className="w-1/2 ml-auto mr-auto">
-              {
-                fields && (
-                  <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
-                    Please Fill All the Required Fields!
-                  </p>
-                )
-              }
-            </div>
-          </div>
-        </>
         {/* <pre>{JSON.stringify(memberDetail, undefined, 2)}</pre> */}
         <br />
       </>
@@ -494,7 +713,36 @@ export default function CreateLoan() {
           </div>
         </>
         :
-        renderMaintenance()
+        <>
+          {renderMaintenance()}
+          {renderGuarantors()}
+          {renderCollaterals()}
+          <>
+            <div className="flex justify-center mt-5">
+              <div className="w-full md:w-1/3 mr-auto ml-auto">
+                <button
+                  type="button"
+                  onClick={handleLoanSubmit}
+                  onMouseEnter={handleLoanSave}
+                  className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <div className="w-1/2 ml-auto mr-auto">
+                {
+                  fields && (
+                    <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
+                      Please Fill All the Required Fields!
+                    </p>
+                  )
+                }
+              </div>
+            </div>
+          </>
+        </>
       }
     </>
   );

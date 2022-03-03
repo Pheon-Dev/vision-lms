@@ -48,15 +48,15 @@ export default {
       title: 'Group',
       type: 'string',
     },
-    {
-      name: 'groupMembers',
-      title: 'Group Members',
-      type: 'array',
-      of: [{
-        type: 'groupMembers'
-      }
-      ],
-    }
+    // {
+    //   name: 'groupMembers',
+    //   title: 'Group Members',
+    //   type: 'array',
+    //   of: [{
+    //     type: 'groupMembers'
+    //   }
+    //   ],
+    // }
   ],
 };
 

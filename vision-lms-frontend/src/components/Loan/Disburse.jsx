@@ -175,7 +175,7 @@ export default function Disburse() {
         }}
       >
         <div className="font-bold mt-5 flex justify-center w-full text-3xl">
-          <span className="text-gray-500">Approve </span>
+          <span className="text-gray-500">Disburse </span>
           <span className="text-gray-700 ml-3">{loanDetails[0]?.memberNames}</span>
         </div>
         <br />

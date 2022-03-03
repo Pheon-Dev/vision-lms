@@ -386,6 +386,7 @@ export default function CreateMember() {
               )}
             </select>
           </div>
+          {/* Calculate age */}
           <div className="w-full md:w-1/3 px-3">
             <label className="block tracking-wide text-xs mb-2">
               <span className="uppercase text-gray-700 font-bold text-md">Age</span>
@@ -518,6 +519,7 @@ export default function CreateMember() {
               onChange={(e) => setResidentialAddress(e.target.value)}
             />
           </div>
+          {/* // valid email */}
           <div className="w-full md:w-1/2 px-3">
             <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
               Email Address
@@ -576,6 +578,7 @@ export default function CreateMember() {
             />
           </div>
         </div>
+        {/* Show business if not employed */}
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">

@@ -152,12 +152,12 @@ export default function NewProduct() {
   const grace = [
     {
       id: "0",
-      label: "...",
-      value: null,
+      label: "0",
+      value: "0",
     },
     {
       id: "1",
-      label: "1 Day",
+      label: "1",
       value: "1",
     },
     // {
@@ -171,7 +171,7 @@ export default function NewProduct() {
     // setProductCode(`${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`)
     setProductCode(`${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) : 'P' + (Number(code?.length) + 1) : 'P0' + (Number(code?.length) + 1) : 'P00' + (Number(code?.length) + 1))}`)
 
-    setGracePeriod(gracePeriod === '...' ? 'null' : gracePeriod)
+    setGracePeriod(gracePeriod === '...' ? 0 : gracePeriod)
     setPenaltyTypeChoice(penaltyTypeChoice === '...' ? 'null' : penaltyTypeChoice)
     setPenaltyPaymentChoice(penaltyPaymentChoice === '...' ? 'null' : penaltyPaymentChoice)
     if (productName
@@ -409,8 +409,9 @@ export default function NewProduct() {
                 </label>
                 <div className="relative">
                   <select value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                    <option>...</option>
                     {grace.map((option) => (
-                      <option key={option.id} value={option.value}>{option?.label}</option>
+                      <option key={option.id} value={option.value}>{option?.label} Day</option>
                     ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">

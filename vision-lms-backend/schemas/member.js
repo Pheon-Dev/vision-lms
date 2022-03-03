@@ -275,17 +275,17 @@ export default {
     //   title: 'PostedBy',
     //   type: 'postedBy',
     // },
-    {
-      name: 'save',
-      title: 'Save',
-      type: 'array',
-      of: [{ type: 'save' }],
-    },
-    {
-      name: 'comments',
-      title: 'Comments',
-      type: 'array',
-      of: [{ type: 'comment' }],
-    }
+    // {
+    //   name: 'save',
+    //   title: 'Save',
+    //   type: 'array',
+    //   of: [{ type: 'save' }],
+    // },
+    // {
+    //   name: 'comments',
+    //   title: 'Comments',
+    //   type: 'array',
+    //   of: [{ type: 'comment' }],
+    // }
   ]
 }

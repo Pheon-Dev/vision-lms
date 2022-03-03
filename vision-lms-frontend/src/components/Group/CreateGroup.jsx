@@ -20,6 +20,7 @@ export default function CreateGroup() {
   const [groupLeaderPhone, setGroupLeaderPhone] = useState('');
 
   const [group, setGroup] = useState('');
+  const [groups, setGroups] = useState('');
   const navigate = useNavigate();
 
   const lead_id = groupInitiatorName.split(' ')[0]
@@ -48,17 +49,21 @@ export default function CreateGroup() {
   }, [])
 
   useEffect(() => {
-    // const mquery = '*[_type == "member" && personalDetails.group == "false"]'
+    const query = '*[_type == "groups"]';
     const gquery = `*[_type == "member" && group == '${groupName}']`
 
     client.fetch(gquery).then((data) => {
       setGroupList(data);
     });
 
+    client.fetch(query).then((data) => {
+      setGroups(data);
+    });
+
     return (() => console.log('unsubscribing'));
   }, [groupName])
 
-  console.log(groupList)
+  // console.log(groupList)
 
   const handleMemberChange = (e, index) => {
     const { name, value } = e.target;
@@ -321,9 +326,11 @@ export default function CreateGroup() {
                   <option
                     className="text-gray-500"
                   >Select ...</option>
-                  {groupsList && (
-                    groupsList?.map((group, index) => (
+                  {groups && (
+                    groups?.map((group, index) => (
+                      // group.group !== 'false' && group.group !== null ?
                       <option key={index.toString()}>{group.group}</option>
+                      // : null
                     )
                     ))}
                 </select>

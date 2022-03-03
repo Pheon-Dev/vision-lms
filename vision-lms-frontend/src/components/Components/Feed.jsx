@@ -30,16 +30,16 @@ export default function Feed() {
     }
   }, [productId]);
 
-  const ideaName = productId || 'all';
+  const ideaName = 'Members';
   if (loading) {
     return (
-      <Spinner message={`We are populating ${ideaName} product data to your feed!`} />
+      <Spinner message={`Loading all ${ideaName} ...`} />
     );
   }
 
   if (members?.length === 0) {
     return (
-      <div className="text-xl font-bold text-center items-center">No data available yet for {ideaName} product.</div>
+      <div className="text-xl font-bold text-center items-center">No data available yet for all {ideaName}.</div>
     )
   }
 
