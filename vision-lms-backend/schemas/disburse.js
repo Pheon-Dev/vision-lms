@@ -19,6 +19,16 @@ export default {
       type: 'string',
     },
     {
+      name: 'repaymentCycle',
+      title: 'Repayment Cycle',
+      type: 'string',
+    },
+    {
+      name: 'productId',
+      title: 'Product ID',
+      type: 'string',
+    },
+    {
       name: 'productType',
       title: 'Product Type',
       type: 'string',

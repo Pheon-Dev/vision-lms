@@ -14,6 +14,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'repaymentCycle',
+      title: 'Repayment Cycle',
+      type: 'string',
+    },
+    {
       name: 'loanId',
       title: 'Loan ID',
       type: 'string',
@@ -26,6 +31,11 @@ export default {
     {
       name: 'loanAccNumber',
       title: 'Loan Account Number',
+      type: 'string',
+    },
+    {
+      name: 'productId',
+      title: 'Product ID',
       type: 'string',
     },
     {

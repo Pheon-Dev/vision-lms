@@ -478,7 +478,7 @@ export default function MemberDetail() {
           } </div>
         {
           loanStatus?.map((loan) => (
-            <div className="bg-gray-400 ml-auto mr-auto p-2 mb-7 rounded-lg">
+            <div key={loan?.loanId} className="bg-gray-400 ml-auto mr-auto p-2 mb-7 rounded-lg">
               <div>
                 <div className="ml-auto mr-auto mb-3">
                   <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
@@ -516,18 +516,22 @@ export default function MemberDetail() {
                 </div>
               </div>
               <div className="flex flex-wrap">
-                <div className="w-1/2 p-2">
-                  <div className="w-full md:w-1/2 mr-auto ml-auto">
-                    <button
-                      type="button"
-                      // onClick={handleProductCreate}
-                      // onMouseEnter={handleProductSave}
-                      className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >
-                      {loan?.approve === 'false' ? 'Approve' : 'Disburse'}
-                    </button>
+                {loan?.approve === 'true' ?
+                  <div className="w-1/2 p-2">
+                    <div className="w-full md:w-1/2 mr-auto ml-auto">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigate(loan?.disburse === 'false' ? `/loan/approvals/${loan?.memberId}` : `/loan/disbursements/${loan?.memberId}`)
+                        }}
+                        className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      >
+                        {loan?.disburse === 'false' ? 'Approve' : 'Disburse'}
+                      </button>
+                    </div>
                   </div>
-                </div>
+                  : null
+                }
                 <div className="w-1/2 p-2">
                   <div className="w-full md:w-1/2 mr-auto ml-auto">
                     <button

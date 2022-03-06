@@ -9,6 +9,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'repaymentCycle',
+      title: 'Repayment Cycle',
+      type: 'string',
+    },
+    {
       name: 'memberPhoneNumber',
       title: 'Member Phone Number',
       type: 'string',
@@ -26,6 +31,11 @@ export default {
     {
       name: 'principalAmount',
       title: 'Principal Amount',
+      type: 'string',
+    },
+    {
+      name: 'productId',
+      title: 'Product ID',
       type: 'string',
     },
     {

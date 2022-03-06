@@ -20,6 +20,7 @@ export default function CreateLoan() {
   const [memberNames, setMemberNames] = useState("");
   const [memberPhoneNumber, setMemberPhoneNumber] = useState("");
 
+  const [productId, setProductId] = useState("");
   const [productList, setProductList] = useState("");
   const [productType, setProductType] = useState("");
   const [productDetails, setProductDetails] = useState("");
@@ -27,6 +28,7 @@ export default function CreateLoan() {
   const [principalAmount, setPrincipalAmount] = useState("");
   const [loanTenure, setLoanTenure] = useState("");
   const [loanAccNumber, setLoanAccNumber] = useState("");
+  const [repaymentCycle, setRepaymentCycle] = useState("");
 
   const [interestAmount, setInterestAmount] = useState("");
   const [installmentAmount, setInstallmentAmount] = useState("");
@@ -61,7 +63,8 @@ export default function CreateLoan() {
     const productListQuery = '*[_type == "newProduct"]';
     const guarantorsListQuery = '*[_type == "member"]';
     const guarantorQuery = `*[_type == "member" && memberNumber match '${gid}' || personalDetails.surName match '${gsname}' || personalDetails.otherNames match '${goname}']`;
-    const productTypeQuery = productDetailQuery(productType);
+    // const productTypeQuery = productDetailQuery(productType);
+    const productTypeQuery = `*[_type == "newProduct" && productName == "${productType}"]`;
 
     client.fetch(membersListQuery).then((data) => {
       // setLoading(true);
@@ -161,12 +164,21 @@ export default function CreateLoan() {
   //   )
   // }
 
+  console.log(productDetails)
 
   const handleLoanSave = () => {
     setMaintained('true');
     setApproved('false');
     setDisbursed('false');
     setMemberId(memberDetail[0]?._id);
+    setProductId(productDetails[0]?._id);
+    setRepaymentCycle(
+      productDetails[0]?.repaymentCycle === 'weekly' ?
+        productDetails[0]?.repaymentCycle === 'monthly' ?
+          'months'
+          : 'weeks'
+        : 'days'
+    );
     setMemberNames(names);
     // setMemberNames(memberDetail[0]?.personalDetails?.surName + ' ' + memberDetail[0]?.personalDetails?.otherNames);
     setMemberPhoneNumber(memberDetail[0]?.personalDetails?.mobileNumber);
@@ -201,6 +213,7 @@ export default function CreateLoan() {
       productType
       && principalAmount
       && memberId
+      && productId
       && memberIdNumber
       && memberEmail
       && memberNames
@@ -218,6 +231,7 @@ export default function CreateLoan() {
       && guarantorId
       && guarantorPhone
       && guarantorRelationship
+      && repaymentCycle
     ) {
       client
         .patch(memberId)
@@ -232,7 +246,9 @@ export default function CreateLoan() {
         _type: 'maintenance',
         productType
         , principalAmount
+        , repaymentCycle
         , memberId
+        , productId
         , memberIdNumber
         , memberEmail
         , memberNames
@@ -295,16 +311,13 @@ export default function CreateLoan() {
                     ))
                 }
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-              </div>
             </div>
           </div>
           <div className="w-full md:w-1/2 px-3">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
               Guarantor Names
             </label>
-            {guarantorDetails === '...' ?
+            {!guarantorDetails && (
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                 id="principalAmount"
@@ -313,12 +326,15 @@ export default function CreateLoan() {
                 value={guarantorName}
                 onChange={(e) => setGuarantorName(e.target.value)}
               />
-              :
+            )
+            }
+            {guarantorDetails && (
               <span
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               >
                 {gnames}
               </span>
+            )
             }
           </div>
         </div>
@@ -328,7 +344,7 @@ export default function CreateLoan() {
               Guarantor Phone
               <span className="text-red-500 italic">*</span>
             </label>
-            {guarantorDetails === '...' ?
+            {!guarantorDetails && (
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                 type="number"
@@ -336,19 +352,22 @@ export default function CreateLoan() {
                 value={guarantorPhone}
                 onChange={(e) => setGuarantorPhone(e.target.value)}
               />
-              :
+            )
+            }
+            {guarantorDetails && (
               <span
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               >
                 {guarantor[0]?.personalDetails?.mobileNumber}
               </span>
+            )
             }
           </div>
           <div className="w-full md:w-1/3 px-3">
             <label className="block tracking-wide text-xs mb-2">
               <span className="uppercase text-gray-700 font-bold text-md">Guarantor ID</span>
             </label>
-            {guarantorDetails === '...' ?
+            {!guarantorDetails && (
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                 type="number"
@@ -356,12 +375,15 @@ export default function CreateLoan() {
                 value={guarantorId}
                 onChange={(e) => setGuarantorId(e.target.value)}
               />
-              :
+            )
+            }
+            {guarantorDetails && (
               <span
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               >
                 {guarantor[0]?.personalDetails?.idPass}
               </span>
+            )
             }
           </div>
           <div className="w-full md:w-1/3 px-3">
@@ -498,9 +520,6 @@ export default function CreateLoan() {
                           ))
                       }
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                    </div>
                   </div>
                 </div>
                 <div className="w-full md:w-1/2 px-3">
@@ -518,9 +537,6 @@ export default function CreateLoan() {
                         )
                         ))}
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                    </div>
                   </div>
                 </div>
               </div>

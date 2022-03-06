@@ -22,7 +22,6 @@ export default function ProductDetails() {
     fetchProductDetails();
   }, [productId]);
 
-  console.log(productDetails)
   function renderProductDetails() {
     return (
       <>
