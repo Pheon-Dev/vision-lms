@@ -102,8 +102,8 @@ export default function CreateLoan() {
     return roundOff(((rate * principal) / 400) * tenure);
   }
 
-  function renderMonthlyInterestAmount(rate, principal) {
-    return roundOff(((rate * principal) / 100));
+  function renderMonthlyInterestAmount(rate, principal, tenure) {
+    return roundOff(((rate * principal) / 100) * tenure);
   }
 
   // Note Sundays
@@ -118,7 +118,7 @@ export default function CreateLoan() {
   }
 
   function renderMonthlyInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = ((rate * principal) / 100 * tenure);
+    let principalAmount = (((rate * principal) / 100) * tenure);
     return roundOff((Number(principalAmount) + Number(principal)) / tenure);
   }
 
@@ -590,33 +590,41 @@ export default function CreateLoan() {
                         <span className="tracking-wide text-l text-gray-700 font-bold">
                           Interest Amount
                         </span>
-                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          KSHs. {
-                            // renderInterestAmount(item?.interestRate, principalAmount)}
-                            item?.repaymentCycle === 'weekly' ?
-                              item?.repaymentCycle === 'monthly' ?
-                                renderMonthlyInterestAmount(item?.interestRate, principalAmount)
-                                :
-                                renderWeeklyInterestAmount(item?.interestRate, principalAmount, loanTenure)
+                        {
+                          item?.repaymentCycle === 'weekly' ?
+                            <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                              KSHs. {renderWeeklyInterestAmount(item?.interestRate, principalAmount, loanTenure)}
+                            </span>
+                            :
+                            item?.repaymentCycle === 'monthly' ?
+                              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                                KSHs. {renderMonthlyInterestAmount(item?.interestRate, principalAmount, loanTenure)}
+                              </span>
                               :
-                              renderDailyInterestAmount(item?.interestRate, principalAmount, loanTenure)}
-                        </span>
+                              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                                KSHs. {renderDailyInterestAmount(item?.interestRate, principalAmount, loanTenure)}
+                              </span>
+                        }
                       </li>
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                         <span className="tracking-wide text-l text-gray-700 font-bold">
                           Installments
                         </span>
-                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          KSHs. {
-                            item?.repaymentCycle === 'weekly' ?
-                              item?.repaymentCycle === 'monthly' ?
-                                renderMonthlyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)
-                                :
-                                renderWeeklyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)
+                        {
+                          item?.repaymentCycle === 'weekly' ?
+                            <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                              KSHs. {renderWeeklyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                            </span>
+                            :
+                            item?.repaymentCycle === 'monthly' ?
+                              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                                KSHs. {renderMonthlyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                              </span>
                               :
-                              renderDailyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)
-                          }
-                        </span>
+                              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
+                                KSHs. {renderDailyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                              </span>
+                        }
                       </li>
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                         <span className="tracking-wide text-l text-gray-700 font-bold">

@@ -46,7 +46,7 @@ export default function CreateMember() {
   const [businessLocation, setBusinessLocation] = useState('');
   const [businessAge, setBusinessAge] = useState('');
   const [refereeName, setRefereeName] = useState('');
-  const [group, setGroup] = useState('');
+  const [group, setGroup] = useState('false');
   const [communityPosition, setCommunityPosition] = useState('');
   const [mpesaTransNumber, setMpesaTransNumber] = useState('');
   const [nameKin, setNameKin] = useState('');
@@ -525,7 +525,7 @@ export default function CreateMember() {
               Email Address
               <span className="text-red-500 italic">*</span>
             </label>
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500"
               id="emailAddress"
               type="email"
               placeholder="Email Address ..."
@@ -541,7 +541,7 @@ export default function CreateMember() {
               <span className="text-red-500 italic">*</span>
             </label>
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className="appearance-none block w-full bg-gray-200 required:border-red-500 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="rented"
               type="text"
               placeholder="Rented ..."

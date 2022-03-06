@@ -25,24 +25,24 @@ export default function LoansFeed() {
   const [disbursedList, setDisbursedList] = useState();
 
   useEffect(() => {
-    setLoading(true)
+    // setLoading(true)
     const mquery = '*[_type == "maintenance"]';
     const dquery = '*[_type == "disburse"]';
     const aquery = '*[_type == "approve"]';
 
     client.fetch(mquery).then((data) => {
       setSubmittedList(data);
-      setLoading(false)
+      // setLoading(false)
     });
 
     client.fetch(dquery).then((data) => {
       setDisbursedList(data);
-      setLoading(false)
+      // setLoading(false)
     });
 
     client.fetch(aquery).then((data) => {
       setApprovedList(data);
-      setLoading(false)
+      // setLoading(false)
     });
 
     return (() => console.log('unsubscribing'));
@@ -56,32 +56,32 @@ export default function LoansFeed() {
     })
   }
 
-  const dis = 'Disbursed' || 'all';
-  const app = 'Approved' || 'all';
-  const sub = 'Submitted' || 'all';
-  if (loading) {
-    return (
-      <Spinner message={`Fetching ${sub}, ${app} and ${dis} data ...`} />
-    );
-  }
+  // const dis = 'Disbursed' || 'all';
+  // const app = 'Approved' || 'all';
+  // const sub = 'Submitted' || 'all';
+  // if (loading) {
+  //   return (
+  //     <Spinner message={`Fetching ${sub}, ${app} and ${dis} data ...`} />
+  //   );
+  // }
 
-  if (submittedList?.length === 0) {
-    return (
-      <Spinner message={`Fetching ${sub} data ...`} />
-    )
-  }
+  // if (submittedList?.length === 0) {
+  //   return (
+  //     <Spinner message={`Fetching ${sub} data ...`} />
+  //   )
+  // }
 
-  if (approvedList?.length === 0) {
-    return (
-      <Spinner message={`Fetching ${app} data ...`} />
-    )
-  }
+  // if (approvedList?.length === 0) {
+  //   return (
+  //     <Spinner message={`Fetching ${app} data ...`} />
+  //   )
+  // }
 
-  if (disbursedList?.length === 0) {
-    return (
-      <Spinner message={`Fetching ${dis} data ...`} />
-    )
-  }
+  // if (disbursedList?.length === 0) {
+  //   return (
+  //     <Spinner message={`Fetching ${dis} data ...`} />
+  //   )
+  // }
   // console.log(members)
 
   let isPaidStyle = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"

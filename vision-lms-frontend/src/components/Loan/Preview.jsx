@@ -34,42 +34,10 @@ export default function Preview() {
   const [maintained, setMaintained] = useState('');
   const [approved, setApproved] = useState('');
   const [disbursed, setDisbursed] = useState('');
-  const [submittedList, setSubmittedList] = useState();
-  const [subId, setSubId] = useState();
-
-  useEffect(() => {
-    const query = '*[_type == "preview"]';
-    // const query = `*[_type == "preview"] && loanId == ${subId}`;
-
-    client.fetch(query).then((data) => {
-      setSubmittedList(data);
-    });
-
-  }, [subId]);
-  console.log(submittedList)
-
-  function renderInterestAmount(rate, principal) {
-    return ((rate * principal) / 100).toFixed(0);
-  }
-
-  function renderInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = ((rate * principal) / 100);
-    return ((Number(principalAmount) + Number(principal)) / tenure).toFixed(0);
-  }
-
-  function renderProcessingFeeAmount(feePercentage, principal) {
-    let procFee = ((feePercentage / 100) * principal).toFixed(0);
-    return (procFee < '301' ? '300' : procFee)
-  }
-
-  function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
-    return (((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100)).toFixed(0);
-  }
 
   const fetchLoanDetails = () => {
-    setLoading(true)
-    const query = loanDetailQuery(loanId);
-    const memberQuery = memberDetailQuery(memberIdentity);
+    const query = `*[_type == "approve" && loanId == '${loanId}']`;
+    // const memberQuery = memberDetailQuery(memberIdentity);
     const productQuery = productDetailQuery(productType);
 
     if (query) {
@@ -83,45 +51,21 @@ export default function Preview() {
         setProductDetails(data);
       });
     }
-    if (memberQuery) {
-      client.fetch(memberQuery).then((data) => {
-        setMemberDetails(data);
-      });
-    }
-    setLoading(false)
+    // if (memberQuery) {
+    //   client.fetch(memberQuery).then((data) => {
+    //     setMemberDetails(data);
+    //   });
+    // }
   }
 
   useEffect(() => {
     fetchLoanDetails();
-  }, [loanId, memberIdentity, productType]);
+    return console.log('unsubscribing')
+  }, [loanId, productType]);
 
-  const ideaName = loanId || 'all';
-  if (loading) {
-    return (
-      <Spinner message={`We are populating ${ideaName} loan data to your feed!`} />
-    );
-  }
-
-  if (loanDetails?.length === 0) {
-    return (
-      <Spinner message={`We are populating ${ideaName} loan data to your feed!`} />
-    )
-  }
+  console.log(productDetails)
 
   const handleLoanSave = () => {
-    setMaintained('true');
-    setApproved('false');
-    setDisbursed('false');
-    setSubmitted('true');
-    setPrincipalAmount(loanDetails[0]?.principalAmount);
-    setLoanTenure(loanDetails[0]?.loanTenure);
-    setProductCode('DC-' + productDetails[0]?.productCode + '-' + memberDetails[0]?.memberNumber);
-    setMemberNames(memberDetails[0]?.personalDetails?.surName + ' ' + memberDetails[0]?.personalDetails?.otherNames);
-    setMemberPhoneNumber(memberDetails[0]?.personalDetails?.mobileNumber);
-    setInterestAmount(renderInterestAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount));
-    setInstallmentAmount(renderInstallmentsAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure));
-    setProcessingFeeAmount(renderProcessingFeeAmount(productDetails[0]?.processingFee, loanDetails[0]?.principalAmount));
-    setPenaltyAmount(productDetails[0]?.penaltyTypeChoice === 'amount' ? productDetails[0]?.penalty : renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure));
     if (
       memberIdentity
       && loanId
@@ -184,19 +128,17 @@ export default function Preview() {
       });
     }
   }
-  console.log(subId)
+  // console.log(subId)
   // console.log(loanDetails)
   return (
     <>
       <div onMouseEnter={() => {
-        setSubId(loanDetails[0]._id)
-        setMemberIdentity(loanDetails[0].memberId)
         setProductType(loanDetails[0].productType)
       }}
       >
         <div className="font-bold mt-5 flex justify-center w-full text-3xl">
           <span className="text-gray-500">Preview of </span>
-          <span className="text-gray-700 ml-3">{memberDetails[0]?.personalDetails?.surName} {memberDetails[0]?.personalDetails?.otherNames}</span>
+          <span className="text-gray-700 ml-3">{loanDetails[0]?.memberNames}</span>
         </div>
         <br />
         <div className="ml-auto mr-auto mb-3">
@@ -212,25 +154,25 @@ export default function Preview() {
               <span>
                 Member Code
               </span>
-              <span className="ml-auto">DC-{memberDetails[0]?.memberNumber}</span>
+              <span className="ml-auto">DC-{loanDetails[0]?.loanAccNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Mobile No.
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.mobileNumber}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberPhoneNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Email
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.emailAddress}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberEmail}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 ID Number
               </span>
-              <span className="ml-auto">{memberDetails[0]?.personalDetails?.idPass}</span>
+              <span className="ml-auto">{loanDetails[0]?.memberIdNumber}</span>
             </li>
           </ul>
         </div>
@@ -248,13 +190,13 @@ export default function Preview() {
               <span>
                 Product Name
               </span>
-              <span className="ml-auto">{productDetails[0]?.productName}</span>
+              <span className="ml-auto">{loanDetails[0]?.productType}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Product Code
               </span>
-              <span className="ml-auto">DC-{productDetails[0]?.productCode}-{memberDetails[0]?.memberNumber}</span>
+              <span className="ml-auto">DC-{loanDetails[0]?.loanAccNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -278,13 +220,13 @@ export default function Preview() {
               <span>
                 Interest Amount
               </span>
-              <span className="ml-auto">KSHs. {renderInterestAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount)}</span>
+              <span className="ml-auto">KSHs. {loanDetails[0]?.interestAmount}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
                 Installment Amount
               </span>
-              <span className="ml-auto">KSHs. {renderInstallmentsAmount(productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure)}</span>
+              <span className="ml-auto">KSHs. {loanDetails[0]?.installmentAmount}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -296,7 +238,7 @@ export default function Preview() {
               <span>
                 Processing Fee Amount
               </span>
-              <span className="ml-auto">KShs. {renderProcessingFeeAmount(productDetails[0]?.processingFee, loanDetails[0]?.principalAmount)}</span>
+              <span className="ml-auto">KShs. {loanDetails[0]?.processingFeeAmount}</span>
             </li>
             {productDetails[0]?.repaymentCycle === 'daily' && (
               <>
@@ -313,7 +255,7 @@ export default function Preview() {
                   {productDetails[0]?.penaltyTypeChoice === 'amount' ?
                     <span className="ml-auto">KSHs. {productDetails[0]?.penalty}</span>
                     :
-                    <span className="ml-auto">KSHs. {renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, loanDetails[0]?.principalAmount, loanDetails[0]?.loanTenure)}</span>
+                    <span className="ml-auto">KSHs. {loanDetails?.loanAccNumber}</span>
                   }
                 </li>
                 <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -336,18 +278,18 @@ export default function Preview() {
                 </li>
               </>
             )}
-            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-              <span>
-                Principal Range
-              </span>
-              <span className="ml-auto">KSHs. {productDetails[0]?.minimumRange} - KSHs. {productDetails[0]?.maximumRange}</span>
-            </li>
-            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-              <span>
-                Maximum Tenure
-              </span>
-              <span className="ml-auto">{productDetails[0]?.tenureMaximum} {productDetails[0]?.tenureMaximumChoice}</span>
-            </li>
+            {/* <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
+            {/*   <span> */}
+            {/*     Principal Range */}
+            {/*   </span> */}
+            {/*   <span className="ml-auto">KSHs. {productDetails[0]?.minimumRange} - KSHs. {productDetails[0]?.maximumRange}</span> */}
+            {/* </li> */}
+            {/* <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
+            {/*   <span> */}
+            {/*     Maximum Tenure */}
+            {/*   </span> */}
+            {/*   <span className="ml-auto">{productDetails[0]?.tenureMaximum} {productDetails[0]?.tenureMaximumChoice}</span> */}
+            {/* </li> */}
           </ul>
         </div>
         <pre>
@@ -365,50 +307,50 @@ export default function Preview() {
         {/*   </button> */}
         {/* </div> */}
 
-        {submittedList &&
-          submittedList.map((subs) => (
-            subs.loanId === subId ?
-              subs.submitted === 'true' ?
-                <div key={subs.loanId} className="flex justify-center mt-5">
-                  <Link
-                    className="bg-green-500 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    to="/loan/approvals"
-                  // to={`/loan/approvals/${submittedList[0]?.loanId}`}
-                  >
-                    <span className="w-full md:w-1/3 mr-auto ml-auto">
-                      Approvals
-                    </span>
-                  </Link>
-                </div>
-                :
-                <div className="flex justify-center mt-5">
-                  <div className="w-full md:w-1/3 mr-auto ml-auto">
-                    <button
-                      type="button"
-                      // onClick={submittedList[0]?.submitted === 'true' ? navigate(`/loan/approvals/${submittedList[0]?.memberIdentity}`) : handleLoanSave}
-                      onClick={handleLoanSave}
-                      className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >
-                      Save
+        {/* {submittedList && */}
+        {/*   submittedList.map((subs) => ( */}
+        {/*     subs.loanId === subId ? */}
+        {/*       subs.submitted === 'true' ? */}
+        {/*         <div key={subs.loanId} className="flex justify-center mt-5"> */}
+        {/*           <Link */}
+        {/*             className="bg-green-500 hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+        {/*             to="/loan/approvals" */}
+        {/*           // to={`/loan/approvals/${submittedList[0]?.loanId}`} */}
+        {/*           > */}
+        {/*             <span className="w-full md:w-1/3 mr-auto ml-auto"> */}
+        {/*               Approvals */}
+        {/*             </span> */}
+        {/*           </Link> */}
+        {/*         </div> */}
+        {/*         : */}
+        {/*         <div className="flex justify-center mt-5"> */}
+        {/*           <div className="w-full md:w-1/3 mr-auto ml-auto"> */}
+        {/*             <button */}
+        {/*               type="button" */}
+        {/*               // onClick={submittedList[0]?.submitted === 'true' ? navigate(`/loan/approvals/${submittedList[0]?.memberIdentity}`) : handleLoanSave} */}
+        {/*               onClick={handleLoanSave} */}
+        {/*               className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+        {/*             > */}
+        {/*               Save */}
 
-                    </button>
-                  </div>
+        {/*             </button> */}
+        {/*           </div> */}
 
-                  <div className="w-full md:w-1/3 mr-auto ml-auto">
-                    <button
-                      type="button"
-                      onClick={handleLoanSave}
-                      // onClick={submittedList[0]?.submitted === 'true' ? navigate(`/loan/approvals/${submittedList[0]?.memberIdentity}`) : handleLoanSave}
-                      className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >
-                      Submit
-                    </button>
-                  </div>
-                </div>
-              :
-              null
-          ))
-        }
+        {/*           <div className="w-full md:w-1/3 mr-auto ml-auto"> */}
+        {/*             <button */}
+        {/*               type="button" */}
+        {/*               onClick={handleLoanSave} */}
+        {/*               // onClick={submittedList[0]?.submitted === 'true' ? navigate(`/loan/approvals/${submittedList[0]?.memberIdentity}`) : handleLoanSave} */}
+        {/*               className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+        {/*             > */}
+        {/*               Submit */}
+        {/*             </button> */}
+        {/*           </div> */}
+        {/*         </div> */}
+        {/*       : */}
+        {/*       null */}
+        {/*   )) */}
+        {/* } */}
         {/* {renderSubmission()} */}
         <div className="mb-8" />
       </div>

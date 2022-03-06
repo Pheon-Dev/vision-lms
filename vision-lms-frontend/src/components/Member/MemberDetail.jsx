@@ -86,82 +86,6 @@ export default function MemberDetail() {
     );
   };
 
-  function renderGroupMembers() {
-    return (
-      <>
-        {groupInfo.length === 0 ?
-          <div className="flex justify-center mt-5">
-            <div className="w-full md:w-1/3 mr-auto ml-auto">
-              {
-                groupDetails.length === 0 ?
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setGroupId(memberDetail.group)
-                    }}
-                    // onMouseEnter={handleLoanSave}
-                    className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    Load Group Details
-                  </button>
-                  :
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setGroupId(memberDetail.group)
-                    }}
-                    // onMouseEnter={handleLoanSave}
-                    className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    Load Group Info
-                  </button>
-              }
-            </div>
-          </div>
-          :
-          groupDetails.length !== 0 ?
-            renderGroupInfo()
-            :
-            <div className="flex justify-center mt-5">
-              <div className="w-full md:w-1/3 mr-auto ml-auto">
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigate(`/group/create-group`)
-                  }}
-                  // onMouseEnter={handleLoanSave}
-                  className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Add to Group
-                </button>
-              </div>
-            </div>
-
-          // renderGroupMembers()
-        }
-        <div className="flex flex-wrap items-center justify-center">
-          <div className="flex flex-col bg-gray-800 rounded-lg shadow-xl p-8 w-full md:w-1/2">
-            {/* <div className="mb-4"> */}
-            {/*   <h1 className="font-semibold text-gray-50">Group Members</h1> */}
-            {/* </div> */}
-            <div className="grid grid-cols-2">
-              {/* <div className="flex items-center justify-center flex-wrap bg-gray-700 p-4 rounded-lg md:w-1/4 w-full space-y-4"> */}
-              {groupInfo?.map((member, index) => (
-                // member?.group !== memberDetail?.group ?
-                <div>
-                  <img key={index} className="rounded-full border-gray-100 shadow-sm w-24 h-24" src={(member?.image && urlFor(member?.image).url())} alt="user image" />
-                  <h1 className="text-gray-50 font-semibold">{member?.group}</h1>
-                  <button className={member?.maintained === 'true' ? "px-6 py-1 border-2 border-indigo-600 rounded-full text-gray-50 font-semibold" : "px-6 py-1 border-2 border-indigo-600 bg-indigo-600 rounded-full text-gray-50 font-semibold"}>{member?.maintained === 'true' ? 'Maintained' : 'Maintain'}</button>
-                </div>
-                // :
-                // null
-              ))}
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
 
   function renderGroupInfo() {
     return (
@@ -172,7 +96,7 @@ export default function MemberDetail() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </span>
-          <span className="text-xl p-2 font-bold">{groupInfo[0]?.group === 'false' ? 'Add to a Group' : 'Group Members'}</span>
+          <span className="text-xl p-2 font-bold">{groupInfo[0]?.group === 'false' || groupInfo[0]?.group === undefined ? 'Add to a Group' : 'Group Members'}</span>
         </div>
         <div className="flex flex-wrap p-3 justify-center ml-auto mr-auto w-full md:w-1/2">
           <div className={groupInfo.length === 3 ? groupInfo?.length === 2 ? "grid grid-cols-2 gap-8" : "grid grid-cols-3 gap-8" : "flex justify-center items-center mr-auto ml-auto"}>
@@ -180,22 +104,21 @@ export default function MemberDetail() {
               <div key={member._id} className="text-center m-3">
                 <img className="h-16 w-16 rounded-full mx-auto w-full" alt="group-member" src={(member?.image && urlFor(member?.image).url())} />
                 <a href="#" className="text-main-color">{member?.personalDetails?.surName} {member?.personalDetails?.otherNames}</a>
-                <button
-                  onClick={() => {
-                    member?.maintained === 'true' ?
-                      console.log('Maintained')
-                      :
-                      console.log('Maintain')
-                  }}
-                  className={member?.group === 'false' ? "px-6 py-1 border-2 border-indigo-600 rounded-full text-gray-500 font-semibold" : "px-6 py-1 border-2 border-indigo-600 bg-indigo-600 rounded-full text-gray-50 font-semibold"}>{member?.group === 'false' ? 'Add' : 'Lookup'}</button>
               </div>
             ))}
           </div>
           {/* </div> */}
         </div>
-        <div>
-          {groupInfo[0]?.group === 'false' ?
-            null
+        <button
+          onClick={() => {
+            navigate("/group/create-group")
+          }}
+          className={groupInfo[0]?.group === 'false' || groupInfo[0]?.group === undefined ? "flex justify-center ml-auto mr-auto px-6 py-1 border-2 border-indigo-600 rounded-full text-gray-500 font-semibold" : "flex justify-center ml-auto mr-auto px-6 py-1 border-2 border-indigo-600 bg-indigo-600 rounded-full text-gray-50 font-semibold"}>{groupInfo[0]?.group === 'false' || groupInfo[0]?.group === undefined ? 'Create a Group' : `Lookup ${groupInfo[0]?.group}`}</button>
+        <div className="mt-5">
+          {groupInfo[0]?.group === 'false' || groupInfo[0]?.group === undefined ?
+            <div className="flex flex-wrap justify-center items-center mr-auto ml-auto mb-4">
+              <h1 className="font-bold text-xl text-gray-500">Not in any group</h1>
+            </div>
             :
             <>
               <div className="flex flex-wrap justify-center items-center mr-auto ml-auto mb-4">
@@ -240,9 +163,11 @@ export default function MemberDetail() {
     return (
       <>
         <div>
-          <div className="image overflow-hidden">
-            <img className="h-64 w-64 p-3 mx-auto" src={(memberDetail?.image && urlFor(memberDetail?.image).url())} alt="member-profile-pic" />
-          </div>
+          {title === 'info' && (
+            <div className="image overflow-hidden">
+              <img className="h-64 w-64 p-3 mx-auto" src={(memberDetail?.image && urlFor(memberDetail?.image).url())} alt="member-profile-pic" />
+            </div>
+          )}
           <div className="flex flex-wrap justify-center items-center mr-auto ml-auto mb-4">
             <h1 className="font-bold text-xl text-gray-500">{memberDetail?.personalDetails.surName} {memberDetail?.personalDetails.otherNames}</h1>
           </div>
@@ -553,7 +478,7 @@ export default function MemberDetail() {
           } </div>
         {
           loanStatus?.map((loan) => (
-            <div className="bg-gray-400 p-8 mb-7 rounded-lg">
+            <div className="bg-gray-400 ml-auto mr-auto p-2 mb-7 rounded-lg">
               <div>
                 <div className="ml-auto mr-auto mb-3">
                   <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
@@ -567,13 +492,13 @@ export default function MemberDetail() {
                       <span className="tracking-wide text-l text-gray-700 font-bold">
                         Approval Status
                       </span>
-                      <span className="ml-auto">{loan?.approved === 'true' ? 'Approved' : 'Approve'}</span>
+                      <span className="ml-auto">{loan?.approved === 'true' ? 'Approved' : 'Pending Approval'}</span>
                     </li>
                     <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                       <span className="tracking-wide text-l text-gray-700 font-bold">
                         Disbursal Status
                       </span>
-                      <span className="ml-auto">{loan?.disbursed === 'true' ? 'Disbursed' : 'Disburse'}</span>
+                      <span className="ml-auto">{loan?.disbursed === 'true' ? 'Disbursed' : 'Pending Disbursal'}</span>
                     </li>
                     <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                       <span className="tracking-wide text-l text-gray-700 font-bold">
@@ -591,7 +516,7 @@ export default function MemberDetail() {
                 </div>
               </div>
               <div className="flex flex-wrap">
-                <div className="w-1/3 p-2">
+                <div className="w-1/2 p-2">
                   <div className="w-full md:w-1/2 mr-auto ml-auto">
                     <button
                       type="button"
@@ -603,27 +528,15 @@ export default function MemberDetail() {
                     </button>
                   </div>
                 </div>
-                <div className="w-1/3 p-2">
+                <div className="w-1/2 p-2">
                   <div className="w-full md:w-1/2 mr-auto ml-auto">
                     <button
                       type="button"
-                      // onClick={handleProductCreate}
+                      onClick={() => { navigate(`/loan/preview/${loan?.loanId}`) }}
                       // onMouseEnter={handleProductSave}
                       className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     >
-                      Update
-                    </button>
-                  </div>
-                </div>
-                <div className="w-1/3 p-2">
-                  <div className="w-full md:w-1/2 mr-auto ml-auto">
-                    <button
-                      type="button"
-                      // onClick={handleProductCreate}
-                      // onMouseEnter={handleProductSave}
-                      className="bg-red-500 w-full hover:bg-red-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >
-                      Delete
+                      More Details ...
                     </button>
                   </div>
                 </div>
@@ -706,8 +619,7 @@ export default function MemberDetail() {
 
   return (
     <>
-      {renderBriefInfo()}
-      <div className="flex justify-center items-center mt-5 border-t-2 border-gray-800 p-5 rounded-lg">
+      <div className="flex justify-center items-center mt-5 p-5 rounded-lg">
         <div className="flex border-b border-gray-200 dark:border-gray-700">
           <button
             onMouseEnter={() => {
@@ -738,7 +650,6 @@ export default function MemberDetail() {
               setTitle('group')
             }}
             className={title === 'group' ? isActiveStyle : isNotActiveStyle}
-          // className="flex items-center h-10 px-2 py-2 -mb-px text-center text-gray-700 bg-transparent border-b-2 border-transparent sm:px-4 -px-1 dark:text-white whitespace-nowrap cursor-base focus:outline-none hover:border-gray-400"
           >
             <svg className="h-5 fill-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -767,6 +678,7 @@ export default function MemberDetail() {
           </button>
         </div>
       </div>
+      {renderBriefInfo()}
       {page}
     </>
   )

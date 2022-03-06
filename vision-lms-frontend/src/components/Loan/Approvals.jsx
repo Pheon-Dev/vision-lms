@@ -16,44 +16,44 @@ export default function Approvals() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const mquery = '*[_type == "maintenance"]';
     const aquery = '*[_type == "approve"]';
 
     client.fetch(mquery).then((data) => {
       setSubmittedList(data);
-      setLoading(false);
+      // setLoading(false);
     });
 
     client.fetch(aquery).then((data) => {
       setApprovedList(data);
-      setLoading(false);
+      // setLoading(false);
     });
 
     return (() => console.log('unsubscribing'));
 
   }, []);
 
-  const approvals = 'Approval';
-  const approved = 'Approved';
+  // const approvals = 'Approval';
+  // const approved = 'Approved';
 
-  if (loading) {
-    return (
-      <Spinner message={`Fetching all data pending ${approvals} and ${approved} data ...`} />
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Spinner message={`Fetching all data pending ${approvals} and ${approved} data ...`} />
+  //   );
+  // }
 
-  if (submittedList?.length === 0) {
-    return (
-      <div className="text-xl font-bold text-center items-center">Fetching data pending {approvals} ...</div>
-    )
-  }
+  // if (submittedList?.length === 0) {
+  //   return (
+  //     <div className="text-xl font-bold text-center items-center">Fetching data pending {approvals} ...</div>
+  //   )
+  // }
 
-  if (approvedList?.length === 0) {
-    return (
-      <div className="text-xl font-bold text-center items-center">Loading {approved} data ...</div>
-    )
-  }
+  // if (approvedList?.length === 0) {
+  //   return (
+  //     <div className="text-xl font-bold text-center items-center">Loading {approved} data ...</div>
+  //   )
+  // }
 
 
   function renderSubmittedLoans() {

@@ -42,7 +42,7 @@ export default function Navbar({ searchTerm, setSearchTerm }) {
   }
   function Search() {
     return (
-      <div className="search flex ml-auto mr-auto justify-center w-3/5">
+      <div className="search flex ml-auto mr-auto justify-center w-3/5 focus:outline-none">
         {/* <IoMdSearch fontSize={21} className="ml-1" /> */}
         <input
           type="text"
@@ -51,7 +51,7 @@ export default function Navbar({ searchTerm, setSearchTerm }) {
           value={searchTerm}
           onFocus={() => navigate('/search')}
           // className="p-2 w-full bg-gray-300 rounded-md outline-none"
-          className="search-input"
+          className="search-input border-0 focus:outline-none"
         />
         <FaSearch size="18" className='text-secondary my-auto' />
       </div>
