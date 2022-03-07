@@ -14,6 +14,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'approve',
+      title: 'Approve',
+      type: 'string',
+    },
+    {
       name: 'minimumRange',
       title: 'Minimum Range',
       type: 'string',

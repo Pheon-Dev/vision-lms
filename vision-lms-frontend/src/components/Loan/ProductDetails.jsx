@@ -6,6 +6,7 @@ import { client } from "../../client";
 export default function ProductDetails() {
   const { productId } = useParams();
   const [productDetails, setProductDetails] = useState("");
+  const [approve, setApprove] = useState("true");
   const navigate = useNavigate();
 
   const fetchProductDetails = () => {
@@ -21,6 +22,24 @@ export default function ProductDetails() {
   useEffect(() => {
     fetchProductDetails();
   }, [productId]);
+
+  const handleProductApproval = () => {
+    if (
+      approve
+    ) {
+      client
+        .patch(productId)
+        .set({
+          approve: 'true',
+        })
+        .commit()
+        .then((update) => {
+          alert('Product Approved Successfully!')
+          console.log(update);
+          navigate("/loan/products")
+        });
+    }
+  }
 
   function renderProductDetails() {
     return (
@@ -109,43 +128,45 @@ export default function ProductDetails() {
   function renderActions() {
     return (
       <>
-        <div className="flex flex-wrap">
-          <div className="w-1/3 p-2">
+        <div className="flex justify-center ml-auto mr-auto">
+          <div className="w-full md:w-1/2 p-2">
             <div className="w-full md:w-1/2 mr-auto ml-auto">
-              <button
-                type="button"
-                // onClick={handleProductCreate}
-                // onMouseEnter={handleProductSave}
-                className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Approve
-              </button>
+              {productDetails && productDetails[0]?.approve === 'false' ?
+                <button
+                  type="button"
+                  onClick={handleProductApproval}
+                  // onMouseEnter={handleProductSave}
+                  className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  Approve
+                </button>
+                : null}
             </div>
           </div>
-          <div className="w-1/3 p-2">
-            <div className="w-full md:w-1/2 mr-auto ml-auto">
-              <button
-                type="button"
-                // onClick={handleProductCreate}
-                // onMouseEnter={handleProductSave}
-                className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Update
-              </button>
-            </div>
-          </div>
-          <div className="w-1/3 p-2">
-            <div className="w-full md:w-1/2 mr-auto ml-auto">
-              <button
-                type="button"
-                // onClick={handleProductCreate}
-                // onMouseEnter={handleProductSave}
-                className="bg-red-500 w-full hover:bg-red-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+          {/* <div className="w-1/3 p-2"> */}
+          {/*   <div className="w-full md:w-1/2 mr-auto ml-auto"> */}
+          {/*     <button */}
+          {/*       type="button" */}
+          {/*       // onClick={handleProductCreate} */}
+          {/*       // onMouseEnter={handleProductSave} */}
+          {/*       className="bg-blue-500 w-full hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+          {/*     > */}
+          {/*       Update */}
+          {/*     </button> */}
+          {/*   </div> */}
+          {/* </div> */}
+          {/* <div className="w-1/3 p-2"> */}
+          {/*   <div className="w-full md:w-1/2 mr-auto ml-auto"> */}
+          {/*     <button */}
+          {/*       type="button" */}
+          {/*       // onClick={handleProductCreate} */}
+          {/*       // onMouseEnter={handleProductSave} */}
+          {/*       className="bg-red-500 w-full hover:bg-red-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" */}
+          {/*     > */}
+          {/*       Delete */}
+          {/*     </button> */}
+          {/*   </div> */}
+          {/* </div> */}
         </div>
       </>
     )

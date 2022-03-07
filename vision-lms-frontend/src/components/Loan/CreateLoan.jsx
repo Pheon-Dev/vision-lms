@@ -164,7 +164,64 @@ export default function CreateLoan() {
   //   )
   // }
 
-  console.log(productDetails)
+  function sundays(year, month) {
+
+    var day, counter, date;
+
+    day = 1;
+    counter = 0;
+    date = new Date(year, month, day);
+    while (date.getMonth() === month) {
+      if (date.getDay() === 0) { // Sun=0, Mon=1, Tue=2, etc.
+        counter += 1;
+      }
+      day += 1;
+      date = new Date(year, month, day);
+    }
+    return counter;
+  }
+
+  // console.log(sundays(2022, 2));
+
+  function sundaysInMonth(m, y) {
+    var days = new Date(y, m, 0).getDate();
+    var sundays = [(8 - (new Date(m + '/01/' + y).getDay())) % 7];
+    for (var i = sundays[0] + 7; i < days; i += 7) {
+      sundays.push(i);
+    }
+    return sundays;
+  }
+
+  const date = new Date();
+
+  // console.log(sundaysInMonth(date.getMonth(), Date().split(' ')[3])); //=> [ 7,14,21,28 ]
+
+  // date.setDate(date.getDate() + loan_tenure);
+  // console.log(sundaysInMonth(2, 2022).length); //=> 4
+  // console.log(date.getDate());
+
+  // let count = 0;
+  // const d = new Date();
+  // while (count < 10) {
+  //   d.setDate(d.getDate() + loan_tenure);
+  //   console.log(d.getDate());
+  //   count += 1
+  //   return count
+  // }
+
+  const loan_tenure = 7;
+
+  function sundaysInTenure(tenure) {
+    var sundays;
+    const date = new Date();
+    for (var i = 0; i < tenure + 1; i += 1) {
+      date.setDate(date.getDate() + i);
+      sundays = date.getDate();
+    }
+    return sundays
+  }
+
+  console.log(sundaysInTenure(loan_tenure))
 
   const handleLoanSave = () => {
     setMaintained('true');

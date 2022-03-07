@@ -19,6 +19,7 @@ export default function NewProduct() {
   const [repaymentCycle, setRepaymentCycle] = useState('');
   const [processingFee, setProcessingFee] = useState('');
   const [gracePeriod, setGracePeriod] = useState(0);
+  const [approve, setApprove] = useState('false');
 
   const navigate = useNavigate();
   const [code, setCode] = useState();
@@ -168,6 +169,7 @@ export default function NewProduct() {
   ];
 
   const handleProductSave = () => {
+    setApprove('false');
     // setProductCode(`${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`)
     setProductCode(`${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) : 'P' + (Number(code?.length) + 1) : 'P0' + (Number(code?.length) + 1) : 'P00' + (Number(code?.length) + 1))}`)
 
@@ -188,6 +190,7 @@ export default function NewProduct() {
       && processingFee
       && gracePeriod
       && product
+      && approve
     ) {
       const doc = {
         _type: 'newProduct',
@@ -205,6 +208,7 @@ export default function NewProduct() {
         , processingFee
         , gracePeriod
         , product
+        , approve
       };
       console.log(doc)
     } else {
@@ -232,6 +236,7 @@ export default function NewProduct() {
       && processingFee
       && gracePeriod
       && product
+      && approve
     ) {
       const doc = {
         _type: 'newProduct',
@@ -241,6 +246,7 @@ export default function NewProduct() {
         , maximumRange
         , interestRate
         , interestFrequency
+        , approve
         , penalty
         , penaltyTypeChoice
         , penaltyPaymentChoice
