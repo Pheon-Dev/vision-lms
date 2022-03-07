@@ -96,6 +96,24 @@ export default function CreateLoan() {
 
   }, [productType, id, sname, oname, names, gid, goname, gsname]);
 
+  function renderSundays(tenure) {
+    var day = '';
+    var sundays = 0;
+    var counter = 0;
+    while (counter < tenure + 1) {
+      const date = new Date();
+      date.setDate(date.getDate() + counter);
+      day = date.getDay();
+      if (day === 0) {
+        sundays += 1
+      }
+      counter++;
+    }
+    return sundays;
+  }
+
+  // console.log('sundays', renderSundays(Number(loanTenure)))
+
   // console.log(guarantor)
   function renderDailyInterestAmount(rate, principal, tenure) {
     return roundOff(((rate * principal) / 3000) * tenure);
@@ -112,7 +130,7 @@ export default function CreateLoan() {
   // Note Sundays
   function renderDailyInstallmentsAmount(rate, principal, tenure) {
     let principalAmount = ((rate * principal) / 3000 * tenure);
-    return roundOff((Number(principalAmount) + Number(principal)) / tenure); // - sundays
+    return roundOff((Number(principalAmount) + Number(principal)) / (Number(tenure) - Number(renderSundays(Number(tenure))))); // - sundays
   }
 
   function renderWeeklyInstallmentsAmount(rate, principal, tenure) {
@@ -209,19 +227,53 @@ export default function CreateLoan() {
   //   return count
   // }
 
-  const loan_tenure = 7;
-
-  function sundaysInTenure(tenure) {
-    var sundays;
-    const date = new Date();
-    for (var i = 0; i < tenure + 1; i += 1) {
-      date.setDate(date.getDate() + i);
-      sundays = date.getDate();
+  function renderDays(tenure) {
+    var days;
+    var day = '';
+    var sundays = 0;
+    var sundates = [];
+    var counter = 0;
+    var months = 1;
+    var startDate = 0;
+    var data = [];
+    // for (var i = 0; i < tenure + 1;) {
+    //   date.setDate(date.getDate() + i);
+    //   sundays = date.getDate();
+    //   i += 1;
+    //   console.log(sundays)
+    // }
+    while (counter < tenure + 1) {
+      const date = new Date();
+      startDate = [{ start_date: date.getDate(), start_day: date.getDay() }];
+      date.setDate(date.getDate() + counter);
+      days = date.getDate();
+      day = date.getDay();
+      if (day === 0) {
+        sundays += 1
+        sundates.push([{ date: days, month: Number(date.getMonth() + 1), day: 'sunday' }])
+        // sundates.push(days + ' ' + Number(date.getMonth() + 1))
+        // console.log('date', days, 'sunday')
+      }
+      // console.log('date', days, day)
+      if (days === 1) {
+        months += 1
+      }
+      // console.log('months', months, date.getMonth())
+      counter++;
     }
-    return sundays
+    var endDate = [{ end_date: days, end_day: day }]
+    // console.log('start date', startDate)
+    // console.log('total months', months)
+    // console.log('sundays', sundays)
+    // console.log('tenure', counter - 1)
+    // console.log('end date', endDate)
+    data = [{ tenure: counter - 1, start_date_data: startDate, end_date_data: endDate, total_months: months, total_sundays: sundays, sunday_dates: sundates }]
+    return data;
+    // return sundays;
   }
 
-  console.log(sundaysInTenure(loan_tenure))
+  // console.log('data', renderDays(Number(loanTenure)))
+
 
   const handleLoanSave = () => {
     setMaintained('true');
@@ -823,6 +875,9 @@ export default function CreateLoan() {
               </div>
             </div>
           </>
+          <pre>
+            {JSON.stringify(renderSundays(Number(loanTenure)), undefined, 2)}
+          </pre>
         </>
       }
     </>
