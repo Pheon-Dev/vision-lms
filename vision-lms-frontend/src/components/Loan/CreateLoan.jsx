@@ -429,7 +429,6 @@ export default function CreateLoan() {
             {!guarantorDetails && (
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                id="principalAmount"
                 type="text"
                 placeholder="Guarantor Names ..."
                 value={guarantorName}
@@ -456,7 +455,7 @@ export default function CreateLoan() {
             {!guarantorDetails && (
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                type="number"
+                type="tel"
                 placeholder="Phone Number ..."
                 value={guarantorPhone}
                 onChange={(e) => setGuarantorPhone(e.target.value)}
