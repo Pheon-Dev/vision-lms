@@ -79,6 +79,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'payoff',
+      title: 'Payoff Status',
+      type: 'string',
+    },
+    {
       name: 'maintained',
       title: 'Maintainance Status',
       type: 'string',

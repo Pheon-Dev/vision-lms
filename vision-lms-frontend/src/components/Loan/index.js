@@ -4,6 +4,7 @@ export { default as LoansFeed } from './LoansFeed';
 export { default as Disbursements } from './Disbursements';
 export { default as Disburse } from './Disburse';
 export { default as Payments } from './Payments';
+export { default as PaymentDetail } from './PaymentDetail';
 export { default as Maintenance } from './Maintenance';
 export { default as MaintenanceDetail } from './MaintenanceDetail';
 export { default as NewProduct } from './NewProduct';

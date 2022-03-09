@@ -1,4 +1,4 @@
-import { Approvals, Pending, Disbursements, Disburse, ProductDetails, MaintenanceDetail, Approve, LoansFeed, Payments, Maintenance, CreateLoan, Products, Preview, NewProduct, Submissions } from '../components/Loan';
+import { Approvals, Pending, Disbursements, PaymentDetail, Disburse, ProductDetails, MaintenanceDetail, Approve, LoansFeed, Payments, Maintenance, CreateLoan, Products, Preview, NewProduct, Submissions } from '../components/Loan';
 import React, { useState } from "react";
 import { Routes, Route } from 'react-router-dom';
 
@@ -24,6 +24,7 @@ export default function Loans({ user }) {
           <Route path="/disbursements" element={<Disbursements searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
           <Route path="/disbursements/:loanId" element={<Disburse searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
           <Route path="/payments" element={<Payments searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
+          <Route path="/payments/:paymentId" element={<PaymentDetail searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
           <Route path="/pending" element={<Pending searchTerm={searchTerm} setSearchTerm={searchTerm} />} />
         </Routes>
       </div>

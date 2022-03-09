@@ -44,10 +44,6 @@ const loans = [
   //   name: 'Preview Loans',
   //   url: '/loan',
   // },
-  // {
-  //   name: 'Pending',
-  //   url: '/loan/pending',
-  // },
   {
     name: 'Pending Approval',
     url: '/loan/approvals',
@@ -55,6 +51,10 @@ const loans = [
   {
     name: 'Pending Disbursal',
     url: '/loan/disbursements',
+  },
+  {
+    name: 'Payments',
+    url: '/loan/payments',
   },
   {
     name: 'All Loans',
@@ -72,7 +72,7 @@ const reports = [
   // },
   {
     name: 'Schedules',
-    url: '/report/schedule-report/'
+    url: '/report/schedule-report'
   },
   // {
   //   name: 'Yearly',

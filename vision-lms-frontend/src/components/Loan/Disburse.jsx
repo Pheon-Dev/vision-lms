@@ -9,6 +9,7 @@ export default function Disburse() {
   const { loanId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [toggle, setToggle] = useState(false)
 
   const [loanDetails, setLoanDetails] = useState("");
   const [loanAccNumber, setLoanAccNumber] = useState("");
@@ -30,20 +31,20 @@ export default function Disburse() {
 
   const [loanOfficerName, setLoanOfficerName] = useState("");
   const [loanOfficerPhoneNumber, setLoanOfficerPhoneNumber] = useState("");
-  const [interestDue, setInterestDue] = useState(0);
-  const [installmentsDue, setInstallmentsDue] = useState(0);
-  const [arrearsDue, setArrearsDue] = useState(0);
-  const [daysInArrears, setDaysInArrears] = useState(0);
-  const [disbursedAmount, setDisbursedAmount] = useState(0);
+  const [interestDue, setInterestDue] = useState("");
+  const [installmentsDue, setInstallmentsDue] = useState("");
+  const [arrearsDue, setArrearsDue] = useState("");
+  const [daysInArrears, setDaysInArrears] = useState("");
+  const [disbursedAmount, setDisbursedAmount] = useState("");
+  const [outstandingAmount, setOutstandingAmount] = useState("");
+  const [outstandingBalance, setOutstandingBalance] = useState("");
+  const [outstandingPenalty, setOutstandingPenalty] = useState("");
+  const [penaltyDue, setPenaltyDue] = useState("");
+  const [principalPaid, setPrincipalPaid] = useState("");
+  const [amountPaid, setAmountPaid] = useState("");
+  const [interestPaid, setInterestPaid] = useState("");
+  const [penaltyPaid, setPenaltyPaid] = useState("");
   const [disbursementDate, setDisbursementDate] = useState("");
-  const [outstandingAmount, setOutstandingAmount] = useState(0);
-  const [outstandingBalance, setOutstandingBalance] = useState(0);
-  const [outstandingPenalty, setOutstandingPenalty] = useState(0);
-  const [penaltyDue, setPenaltyDue] = useState(0);
-  const [principalPaid, setPrincipalPaid] = useState(0);
-  const [amountPaid, setAmountPaid] = useState(0);
-  const [interestPaid, setInterestPaid] = useState(0);
-  const [penaltyPaid, setPenaltyPaid] = useState(0);
   const [installmentDate, setInstallmentsDate] = useState("");
   const [referenceNumber, setReferenceNumber] = useState("");
   const [mpesaReferenceCode, setMpesaReferenceCode] = useState("");
@@ -51,6 +52,7 @@ export default function Disburse() {
   const [approved, setApproved] = useState('false');
   const [maintained, setMaintained] = useState('true');
   const [disbursed, setDisbursed] = useState('false');
+  const [payoff, setPayoff] = useState('false');
 
   const fetchLoanDetails = () => {
     setLoading(true)
@@ -106,22 +108,11 @@ export default function Disburse() {
     setPenaltyAmount(loanDetails[0]?.penaltyAmount);
     setLoanAccNumber(loanDetails[0]?.loanAccNumber);
     setRepaymentCycle(loanDetails[0]?.repaymentCycle);
-    setInterestDue(0);
-    setInstallmentsDue(0);
-    setArrearsDue(0);
-    setDaysInArrears(0);
-    setDisbursedAmount(0);
-    setDisbursementDate("");
-    setOutstandingAmount(0);
-    setOutstandingBalance(0);
-    setOutstandingPenalty(0);
-    setPenaltyDue(0);
-    setPrincipalPaid(0);
-    setAmountPaid(0);
-    setInterestPaid(0);
-    setPenaltyPaid(0);
-    setInstallmentsDate("");
-    setReferenceNumber("");
+    setDisbursedAmount(loanDetails[0]?.principalAmount);
+    setDisbursementDate((Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString());
+    setOutstandingAmount((Number(loanDetails[0]?.principalAmount) + Number(loanDetails[0]?.interestAmount)).toString());
+    setInstallmentsDate((Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Number(Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString());
+    setReferenceNumber(`01-${loanDetails[0]?.loanAccNumber}`);
     setMpesaReferenceCode("");
     console.log(
       loanId
@@ -137,6 +128,7 @@ export default function Disburse() {
       , maintained
       , approved
       , disbursed
+      , payoff
       , memberId
       , memberIdNumber
       , memberEmail
@@ -171,6 +163,7 @@ export default function Disburse() {
       && memberNames
       && principalAmount
       && loanTenure
+      && payoff
       && interestAmount
       && installmentAmount
       && processingFeeAmount
@@ -186,23 +179,23 @@ export default function Disburse() {
       && repaymentCycle
       && loanOfficerName
       && loanOfficerPhoneNumber
-      && interestDue
-      && installmentsDue
-      && arrearsDue
-      && daysInArrears
+      || interestDue
+      || installmentsDue
+      || arrearsDue
+      || daysInArrears
       && disbursedAmount
       && disbursementDate
       && outstandingAmount
-      && outstandingBalance
-      && outstandingPenalty
-      && penaltyDue
-      && principalPaid
-      && amountPaid
-      && interestPaid
-      && penaltyPaid
-      && installmentDate
+      || outstandingBalance
+      || outstandingPenalty
+      || penaltyDue
+      || principalPaid
+      || amountPaid
+      || interestPaid
+      || penaltyPaid
+      || installmentDate
       && referenceNumber
-      && mpesaReferenceCode
+      || mpesaReferenceCode
     ) {
       client
         .patch(loanId)
@@ -241,6 +234,7 @@ export default function Disburse() {
         , referenceNumber
         , loanOfficerName
         , loanOfficerPhoneNumber
+        , payoff
       };
       client.create(doc).then(() => {
         console.log(doc)
@@ -259,6 +253,7 @@ export default function Disburse() {
         , memberPhoneNumber
         , maintained
         , approved
+        , payoff
         , disbursed
         , memberId
         , memberIdNumber
@@ -288,10 +283,12 @@ export default function Disburse() {
       client.create(doc1).then(() => {
         alert('Success')
         console.log(doc1)
-        navigate('/loan')
+        navigate('/loan/')
       });
     }
   }
+
+  const toggleClass = "transform translate-x-6"
 
   function renderLoaninfo() {
     return (
@@ -489,6 +486,25 @@ export default function Disburse() {
     )
   }
 
+  function renderPayoffButton() {
+    return (
+      //   Switch Container
+      <div
+        className={`md:w-14 md:h-7 w-12 h-6 flex items-center ${!toggle ? 'bg-gray-400' : 'bg-green-500'} rounded-full p-1 cursor-pointer`}
+        onClick={() => {
+          setToggle(!toggle);
+          setPayoff(!toggle ? 'true' : 'false');
+        }}
+      >
+        {/* Switch */}
+        <div
+          className={`${!toggle ? 'bg-green-100' : 'bg-red-100'} md:w-6 md:h-6 h-5 w-5 rounded-full shadow-md ease-in-out duration-500` + (toggle ? null : toggleClass)}
+        >
+        </div>
+      </div>
+    );
+  }
+
   function renderInitialInfo() {
     return (
       <>
@@ -505,7 +521,7 @@ export default function Disburse() {
               <span>
                 Reference Number
               </span>
-              <span className="ml-auto">DC-R001-{loanDetails[0]?.loanAccNumber}</span>
+              <span className="ml-auto">DC-01-{loanDetails[0]?.loanAccNumber}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -525,9 +541,33 @@ export default function Disburse() {
               </span>
               <span className="ml-auto">{Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Number(Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]}</span>
             </li>
+            <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+              <span>
+                Payoff
+              </span>
+              <span className="ml-auto">
+                {renderPayoffButton()}
+              </span>
+            </li>
           </ul>
         </div>
         <br />
+      </>
+    )
+  }
+
+  function renderPayoff() {
+    return (
+      <>
+        <div className="ml-auto mr-auto mb-3">
+          <div className="flex justify-center items-center px-4 py-4">
+            <div className="mt-3">
+              <span className="font-bold text-red-400 text-xl mr-2">
+                Payoff Details coming soon!
+              </span>
+            </div>
+          </div>
+        </div>
       </>
     )
   }
@@ -536,6 +576,7 @@ export default function Disburse() {
     <>
       {renderLoaninfo()}
       {renderInitialInfo()}
+      {toggle ? renderPayoff() : null}
       {renderLoanOfficer()}
       <div className="flex justify-center mt-5">
         <div className="w-full md:w-1/3 mr-auto ml-auto">
