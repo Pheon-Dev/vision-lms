@@ -29,6 +29,7 @@ export default function Approve() {
   const [installmentAmount, setInstallmentAmount] = useState("");
   const [processingFeeAmount, setProcessingFeeAmount] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
+  const [repaymentCycle, setRepaymentCycle] = useState("");
 
   const [approved, setApproved] = useState('false');
   const [maintained, setMaintained] = useState('true');
@@ -85,6 +86,7 @@ export default function Approve() {
     setProcessingFeeAmount(loanDetails[0]?.processingFee);
     setPenaltyAmount(loanDetails[0]?.penaltyAmount);
     setLoanAccNumber(loanDetails[0]?.loanAccNumber);
+    setRepaymentCycle(loanDetails[0]?.repaymentCycle);
     console.log(
       loanId
       , productType
@@ -103,6 +105,7 @@ export default function Approve() {
       , memberIdNumber
       , memberEmail
       , loanAccNumber
+      , repaymentCycle
     )
   }
 
@@ -125,6 +128,7 @@ export default function Approve() {
       && memberIdNumber
       && memberEmail
       && loanAccNumber
+      && repaymentCycle
     ) {
       client
         .patch(loanId)
@@ -156,6 +160,7 @@ export default function Approve() {
         , memberIdNumber
         , memberEmail
         , loanAccNumber
+        , repaymentCycle
       };
       client.create(doc).then(() => {
         alert('Success')

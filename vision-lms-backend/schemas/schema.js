@@ -12,7 +12,7 @@ import newProduct from './newProduct'
 import maintenance from './maintenance'
 import collateral from './collateral'
 import guarantor from './guarantor'
-// import preview from './preview'
+import payments from './payments'
 import approve from './approve'
 import disburse from './disburse'
 import groups from './groups'
@@ -31,11 +31,11 @@ export default createSchema({
     // groupMembers,
     newProduct,
     maintenance,
-    // preview,
     approve,
     disburse,
     collateral,
     guarantor,
+    payments,
     // comment,
     // postedBy,
     // save,

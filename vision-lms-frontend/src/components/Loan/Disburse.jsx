@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { MdDownloadForOffline } from 'react-icons/md';
-import { AiFillDelete } from "react-icons/ai"
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import { useParams, useNavigate } from 'react-router-dom';
 
-import { client, urlFor } from '../../client';
-import { memberDetailMoreMemberQuery, productDetailQuery, searchQuery, loanDetailQuery, memberDetailQuery } from '../../utils/data';
+import { client } from '../../client';
+import { productDetailQuery } from '../../utils/data';
 import { Spinner } from '../Components'
 
 export default function Disburse() {
@@ -29,11 +26,30 @@ export default function Disburse() {
   const [installmentAmount, setInstallmentAmount] = useState("");
   const [processingFeeAmount, setProcessingFeeAmount] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
+  const [repaymentCycle, setRepaymentCycle] = useState("");
+
+  const [loanOfficer, setLoanOfficer] = useState("");
+  const [interestDue, setInterestDue] = useState(0);
+  const [installmentsDue, setInstallmentsDue] = useState(0);
+  const [arrearsDue, setArrearsDue] = useState(0);
+  const [daysInArrears, setDaysInArrears] = useState(0);
+  const [disbursedAmount, setDisbursedAmount] = useState(0);
+  const [disbursementDate, setDisbursementDate] = useState("");
+  const [outstandingAmount, setOutstandingAmount] = useState(0);
+  const [outstandingBalance, setOutstandingBalance] = useState(0);
+  const [outstandingPenalty, setOutstandingPenalty] = useState(0);
+  const [penaltyDue, setPenaltyDue] = useState(0);
+  const [principalPaid, setPrincipalPaid] = useState(0);
+  const [amountPaid, setAmountPaid] = useState(0);
+  const [interestPaid, setInterestPaid] = useState(0);
+  const [penaltyPaid, setPenaltyPaid] = useState(0);
+  const [installmentDate, setInstallmentsDate] = useState("");
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [mpesaReferenceCode, setMpesaReferenceCode] = useState("");
 
   const [approved, setApproved] = useState('false');
   const [maintained, setMaintained] = useState('true');
   const [disbursed, setDisbursed] = useState('false');
-  const [disbursedList, setDisbursedList] = useState();
 
   const fetchLoanDetails = () => {
     setLoading(true)
@@ -88,6 +104,25 @@ export default function Disburse() {
     setProcessingFeeAmount(loanDetails[0]?.processingFeeAmount);
     setPenaltyAmount(loanDetails[0]?.penaltyAmount);
     setLoanAccNumber(loanDetails[0]?.loanAccNumber);
+    setRepaymentCycle(loanDetails[0]?.repaymentCycle);
+    setLoanOfficer("");
+    setInterestDue(0);
+    setInstallmentsDue(0);
+    setArrearsDue(0);
+    setDaysInArrears(0);
+    setDisbursedAmount(0);
+    setDisbursementDate("");
+    setOutstandingAmount(0);
+    setOutstandingBalance(0);
+    setOutstandingPenalty(0);
+    setPenaltyDue(0);
+    setPrincipalPaid(0);
+    setAmountPaid(0);
+    setInterestPaid(0);
+    setPenaltyPaid(0);
+    setInstallmentsDate("");
+    setReferenceNumber("");
+    setMpesaReferenceCode("");
     console.log(
       loanId
       , productType
@@ -106,6 +141,25 @@ export default function Disburse() {
       , memberIdNumber
       , memberEmail
       , loanAccNumber
+      , repaymentCycle
+      , loanOfficer
+      , interestDue
+      , installmentsDue
+      , arrearsDue
+      , daysInArrears
+      , disbursedAmount
+      , disbursementDate
+      , outstandingAmount
+      , outstandingBalance
+      , outstandingPenalty
+      , penaltyDue
+      , principalPaid
+      , amountPaid
+      , interestPaid
+      , penaltyPaid
+      , installmentDate
+      , referenceNumber
+      , mpesaReferenceCode
     )
   }
 
@@ -128,6 +182,25 @@ export default function Disburse() {
       && memberIdNumber
       && memberEmail
       && loanAccNumber
+      && repaymentCycle
+      && loanOfficer
+      && interestDue
+      && installmentsDue
+      && arrearsDue
+      && daysInArrears
+      && disbursedAmount
+      && disbursementDate
+      && outstandingAmount
+      && outstandingBalance
+      && outstandingPenalty
+      && penaltyDue
+      && principalPaid
+      && amountPaid
+      && interestPaid
+      && penaltyPaid
+      && installmentDate
+      && referenceNumber
+      && mpesaReferenceCode
     ) {
       client
         .patch(loanId)
@@ -159,10 +232,53 @@ export default function Disburse() {
         , memberIdNumber
         , memberEmail
         , loanAccNumber
+        , repaymentCycle
       };
       client.create(doc).then(() => {
-        alert('Success')
         console.log(doc)
+      });
+      const doc1 = {
+        _type: 'payments',
+        loanId
+        , productType
+        , memberNames
+        , principalAmount
+        , loanTenure
+        , interestAmount
+        , installmentAmount
+        , penaltyAmount
+        , processingFeeAmount
+        , memberPhoneNumber
+        , maintained
+        , approved
+        , disbursed
+        , memberId
+        , memberIdNumber
+        , memberEmail
+        , loanAccNumber
+        , repaymentCycle
+        , loanOfficer
+        , interestDue
+        , installmentsDue
+        , arrearsDue
+        , daysInArrears
+        , disbursedAmount
+        , disbursementDate
+        , outstandingAmount
+        , outstandingBalance
+        , outstandingPenalty
+        , penaltyDue
+        , principalPaid
+        , amountPaid
+        , interestPaid
+        , penaltyPaid
+        , installmentDate
+        , referenceNumber
+        , mpesaReferenceCode
+      };
+      client.create(doc1).then(() => {
+        alert('Success')
+        console.log(doc1)
         navigate('/loan')
       });
     }

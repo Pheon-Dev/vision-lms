@@ -109,7 +109,7 @@ export default function LoansFeed() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {submittedList?.map((member) => (
+                  {submittedList ? submittedList?.map((member) => (
                     member.maintained !== 'false' && member.approved === 'false' && member.disbursed === 'false' ?
                       <tr
                         onClick={() => {
@@ -141,7 +141,7 @@ export default function LoansFeed() {
                       :
                       null
                   ))
-                  }
+                    : null}
                 </tbody>
               </table>
             </div>
@@ -172,7 +172,7 @@ export default function LoansFeed() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {approvedList?.map((member) => (
+                  {approvedList ? approvedList?.map((member) => (
                     member.maintained !== 'true' && member.approved !== 'false' && member.disbursed === 'false' ?
                       <tr
                         onClick={() => {
@@ -204,7 +204,7 @@ export default function LoansFeed() {
                       :
                       null
                   ))
-                  }
+                    : null}
                 </tbody>
               </table>
             </div>
@@ -235,7 +235,7 @@ export default function LoansFeed() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {disbursedList?.map((member) => (
+                  {disbursedList ? disbursedList?.map((member) => (
                     member.maintained !== 'false' && member.approved === 'true' && member.disbursed !== 'false' ?
                       <tr
                         onClick={() => member.memberIdentity ? navigate(`/member/member-detail/${member.memberIdentity}`) : navigate(`/member/member-detail/${member.memberId}`)}
@@ -265,7 +265,7 @@ export default function LoansFeed() {
                       :
                       null
                   ))
-                  }
+                    : null}
                 </tbody>
               </table>
             </div>

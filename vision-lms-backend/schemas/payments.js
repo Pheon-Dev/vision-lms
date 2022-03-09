@@ -1,6 +1,6 @@
 export default {
-  name: 'approve',
-  title: 'Approve',
+  name: 'payments',
+  title: 'Payments',
   type: 'document',
   fields: [
     {
@@ -14,18 +14,28 @@ export default {
       type: 'string',
     },
     {
-      name: 'repaymentCycle',
-      title: 'Repayment Cycle',
-      type: 'string',
-    },
-    {
       name: 'loanId',
       title: 'Loan ID',
       type: 'string',
     },
     {
+      name: 'repaymentCycle',
+      title: 'Repayment Cycle',
+      type: 'string',
+    },
+    {
       name: 'productType',
       title: 'Product Type',
+      type: 'string',
+    },
+    {
+      name: 'principalAmount',
+      title: 'Principal Amount',
+      type: 'string',
+    },
+    {
+      name: 'loanTenure',
+      title: 'Loan Tenure',
       type: 'string',
     },
     {
@@ -46,16 +56,6 @@ export default {
     {
       name: 'memberEmail',
       title: 'Email Address',
-      type: 'string',
-    },
-    {
-      name: 'principalAmount',
-      title: 'Principal Amount',
-      type: 'string',
-    },
-    {
-      name: 'loanTenure',
-      title: 'Loan Tenure',
       type: 'string',
     },
     {
@@ -95,6 +95,8 @@ export default {
     },
   ],
 };
+
+
 
 
 

@@ -234,7 +234,7 @@ export default function CreateLoan() {
     var sundates = [];
     var counter = 0;
     var months = 1;
-    var startDate = 0;
+    var startDate = 1;
     var data = [];
     // for (var i = 0; i < tenure + 1;) {
     //   date.setDate(date.getDate() + i);
@@ -876,7 +876,7 @@ export default function CreateLoan() {
             </div>
           </>
           <pre>
-            {JSON.stringify(renderSundays(Number(loanTenure)), undefined, 2)}
+            {JSON.stringify(renderDays(Number(loanTenure)), undefined, 2)}
           </pre>
         </>
       }

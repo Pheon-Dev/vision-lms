@@ -41,10 +41,6 @@ const loans = [
     url: '/loan/create-loan',
   },
   // {
-  //   name: 'Maintain Loan',
-  //   url: '/loan/maintenance',
-  // },
-  // {
   //   name: 'Preview Loans',
   //   url: '/loan',
   // },
@@ -60,24 +56,24 @@ const loans = [
     name: 'Pending Disbursal',
     url: '/loan/disbursements',
   },
-]
-const reports = [
   {
     name: 'All Loans',
     url: '/loan/',
   },
+]
+const reports = [
   {
-    name: 'General',
-    url: '/report/general-report'
+    name: 'PAR Report',
+    url: '/report/par-report'
   },
   // {
-  //   name: 'Monthly',
-  //   url: '/report/monthly-report'
+  //   name: 'Statements',
+  //   url: '/report/statements'
   // },
-  // {
-  //   name: 'Quarterly',
-  //   url: '/report/qurterly-report'
-  // },
+  {
+    name: 'Schedules',
+    url: '/report/schedule-report/'
+  },
   // {
   //   name: 'Yearly',
   //   url: '/report/yearly-report'

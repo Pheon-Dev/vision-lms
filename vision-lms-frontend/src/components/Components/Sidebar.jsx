@@ -77,6 +77,15 @@ export default function Sidebar({ closeToggle, user }) {
         </div>
         <div>
           <Divider />
+          <Link to="/loan/disbursements">
+            <SideBarIcon icon={<GiPayMoney size="28" />} text="Disbursements" />
+          </Link>
+          <Link to="/loan/payments">
+            <SideBarIcon icon={<GiReceiveMoney size="28" />} text="Payments" />
+          </Link>
+        </div>
+        <div>
+          <Divider />
           {/* <Link to="/"> */}
           {/*   <SideBarIcon icon={<BsGear size="28" />} text="Settings" /> */}
           {/* </Link> */}
