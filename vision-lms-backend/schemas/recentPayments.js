@@ -4,38 +4,8 @@ export default {
   type: 'document',
   fields: [
     {
-      name: 'loanTenure',
-      title: 'Loan Tenure',
-      type: 'string',
-    },
-    {
-      name: 'interestAmount',
-      title: 'Interest Amount',
-      type: 'string',
-    },
-    {
-      name: 'installmentAmount',
-      title: 'Installment Amount',
-      type: 'string',
-    },
-    {
-      name: 'penaltyAmount',
-      title: 'Penalty Amount',
-      type: 'string',
-    },
-    {
-      name: 'arrearsDue',
-      title: 'Arrears Due',
-      type: 'string',
-    },
-    {
-      name: 'daysInArrears',
-      title: 'Days in Arrears',
-      type: 'string',
-    },
-    {
-      name: 'outstandingAmount',
-      title: 'Outstanding Amount',
+      name: 'arrears',
+      title: 'Arrears',
       type: 'string',
     },
     {
@@ -46,11 +16,6 @@ export default {
     {
       name: 'outstandingPenalty',
       title: 'Outstanding Penalty',
-      type: 'string',
-    },
-    {
-      name: 'penaltyDue',
-      title: 'Penalty Due',
       type: 'string',
     },
     {

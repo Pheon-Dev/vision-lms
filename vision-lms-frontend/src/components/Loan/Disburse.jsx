@@ -33,7 +33,7 @@ export default function Disburse() {
   const [loanOfficerPhoneNumber, setLoanOfficerPhoneNumber] = useState("");
   const [interestDue, setInterestDue] = useState("");
   const [installmentsDue, setInstallmentsDue] = useState("");
-  const [arrearsDue, setArrearsDue] = useState("");
+  const [arrears, setArrears] = useState("");
   const [daysInArrears, setDaysInArrears] = useState("");
   const [disbursedAmount, setDisbursedAmount] = useState("");
   const [outstandingAmount, setOutstandingAmount] = useState("");
@@ -45,7 +45,7 @@ export default function Disburse() {
   const [interestPaid, setInterestPaid] = useState("");
   const [penaltyPaid, setPenaltyPaid] = useState("");
   const [disbursementDate, setDisbursementDate] = useState("");
-  const [installmentDate, setInstallmentsDate] = useState("");
+  const [installmentDate, setInstallmentDate] = useState("");
   const [referenceNumber, setReferenceNumber] = useState("");
   const [mpesaReferenceCode, setMpesaReferenceCode] = useState("");
 
@@ -91,6 +91,7 @@ export default function Disburse() {
     )
   }
 
+
   const handleLoanSave = () => {
     setMaintained('true');
     setApproved('true');
@@ -109,9 +110,11 @@ export default function Disburse() {
     setLoanAccNumber(loanDetails[0]?.loanAccNumber);
     setRepaymentCycle(loanDetails[0]?.repaymentCycle);
     setDisbursedAmount(loanDetails[0]?.principalAmount);
-    setDisbursementDate((Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString());
     setOutstandingAmount((Number(loanDetails[0]?.principalAmount) + Number(loanDetails[0]?.interestAmount)).toString());
-    setInstallmentsDate((Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Number(Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString());
+  setDisbursementDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString())
+  setInstallmentDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + (Number(date.getDate()) + 7) + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + (Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString())
+    // To be confirmed
+    // setInstallmentDate((Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Number(Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString());
     setReferenceNumber(`01-${loanDetails[0]?.loanAccNumber}`);
     setMpesaReferenceCode("");
     console.log(
@@ -138,7 +141,7 @@ export default function Disburse() {
       , loanOfficerPhoneNumber
       , interestDue
       , installmentsDue
-      , arrearsDue
+      , arrears
       , daysInArrears
       , disbursedAmount
       , disbursementDate
@@ -181,7 +184,7 @@ export default function Disburse() {
       && loanOfficerPhoneNumber
       || interestDue
       || installmentsDue
-      || arrearsDue
+      || arrears
       || daysInArrears
       && disbursedAmount
       && disbursementDate
@@ -251,10 +254,7 @@ export default function Disburse() {
         , penaltyAmount
         , processingFeeAmount
         , memberPhoneNumber
-        , maintained
-        , approved
         , payoff
-        , disbursed
         , memberId
         , memberIdNumber
         , memberEmail
@@ -264,7 +264,7 @@ export default function Disburse() {
         , loanOfficerPhoneNumber
         , interestDue
         , installmentsDue
-        , arrearsDue
+        , arrears
         , daysInArrears
         , disbursedAmount
         , disbursementDate

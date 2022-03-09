@@ -11,9 +11,17 @@ export default function PaymentDetail() {
   const [productDetails, setProductDetails] = useState("");
   const [productType, setProductType] = useState("");
   const [loadLoan, setLoadLoan] = useState(false);
+  const [addingPayment, setAddingPayment] = useState(false);
+
   const [amountPaid, setAmountPaid] = useState('');
   const [mpesaReferenceCode, setMpesaReferenceCode] = useState('');
-  const [addingPayment, setAddingPayment] = useState(false);
+  const [arrears, setArrears] = useState('');
+  const [outstandingBalance, setOutstandingBalance] = useState("");
+  const [outstandingPenalty, setOutstandingPenalty] = useState("");
+  const [principalPaid, setPrincipalPaid] = useState("");
+  const [interestPaid, setInterestPaid] = useState("");
+  const [penaltyPaid, setPenaltyPaid] = useState("");
+  const [installmentDate, setInstallmentDate] = useState("");
 
   const fetchCustomerDetails = () => {
     const query = `*[_type == "payments" && _id == '${paymentId}']`;
@@ -35,15 +43,48 @@ export default function PaymentDetail() {
     return (() => console.log('unsubscribing'));
   }, [paymentId, productType]);
 
+  const date = new Date();
+
+  // console.log((Date().split(' ')[3] + '-' + date.getMonth() + '-' + (Number(date.getDate()) + 7) + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + (Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString())
 
   const addPayment = () => {
-    if (amountPaid && mpesaReferenceCode) {
+    setArrears((Number(customerDetails[0]?.principalAmount) - Number(customerDetails[0]?.interestAmount)).toString());
+    setOutstandingBalance((Number(customerDetails[0]?.principalAmount) - Number(amountPaid)).toString());
+    setOutstandingPenalty("00");
+    setPrincipalPaid("00");
+    setInterestPaid("00");
+    setPenaltyPaid("00");
+    setInstallmentDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString())
+    if (
+      amountPaid
+      && mpesaReferenceCode
+      && arrears
+      && outstandingBalance
+      && outstandingPenalty
+      && principalPaid
+      && interestPaid
+      && penaltyPaid
+      && installmentDate
+    ) {
       setAddingPayment(true);
       console.log('adding')
       client
         .patch(paymentId)
         .setIfMissing({ recentPayments: [] })
-        .insert('after', 'recentPayments[-1]', [{ amountPaid, mpesaReferenceCode, _key: uuidv4() }])
+        .insert('after', 'recentPayments[-1]', [
+          {
+            amountPaid
+            , mpesaReferenceCode
+            , arrears
+            , outstandingBalance
+            , outstandingPenalty
+            , principalPaid
+            , interestPaid
+            , penaltyPaid
+            , installmentDate
+            , _key: uuidv4()
+          }
+        ])
         .commit()
         .then(() => {
           fetchCustomerDetails();
@@ -220,39 +261,60 @@ export default function PaymentDetail() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-200 border-b-2 border-gray-300">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Installment Date</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount Paid</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penalty</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">M-PESA Code</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penalty Paid</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Paid</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Principal Paid</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Outstanding Penalty</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrears</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Outstanding Balance</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {customerDetails ? customerDetails?.recentPayments?.map((payment) => (
+                  {customerDetails ? customerDetails[0]?.recentPayments?.map((payment) => (
                     <tr
-                      onClick={() => {
-                        navigate(`/loan/approvals/${payment._id}`);
-                      }}
+                      // onClick={() => {
+                      //   navigate(`/loan/approvals/${payment._id}`);
+                      // }}
                       key={payment._id}
                       className="hover:bg-gray-300 cursor-pointer"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="ml-0">
-                            <div className="text-sm font-medium text-gray-900">{payment.memberNames}</div>
-                            <div className="text-sm text-gray-500">{payment.memberPhoneNumber}</div>
+                            <div className="text-sm font-medium text-gray-900">{payment.installmentDate.split('|')[1]}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">KSHs. {payment.principalAmount}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{payment.productType}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-indigo-600">
-                          Approve
+                        <div className="flex items-center">
+                          <div className="ml-0">
+                            <div className="text-sm font-medium text-gray-900">{payment.amountPaid}</div>
+                          </div>
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{payment.mpesaReferenceCode}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{payment.penaltyPaid}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{payment.interestPaid}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{payment.principalPaid}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{payment.outstandingPenalty}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{payment.arrears}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{payment.outstandingBalance}</div>
                       </td>
                     </tr>
                   ))
@@ -301,7 +363,7 @@ export default function PaymentDetail() {
                   <span className="text-red-500 italic">*</span>
                 </label>
                 <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 uppercase border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                   type="string"
                   placeholder="M-PESA Code ..."
                   value={mpesaReferenceCode}

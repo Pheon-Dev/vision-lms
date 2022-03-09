@@ -79,21 +79,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'maintained',
-      title: 'Maintainance Status',
-      type: 'string',
-    },
-    {
-      name: 'approved',
-      title: 'Approval Status',
-      type: 'string',
-    },
-    {
-      name: 'disbursed',
-      title: 'Disbursal Status',
-      type: 'string',
-    },
-    {
       name: 'loanOfficerName',
       title: 'Loan Officer Name',
       type: 'string',
@@ -116,6 +101,11 @@ export default {
     {
       name: 'installmentDate',
       title: 'Installement Date',
+      type: 'string',
+    },
+    {
+      name: 'payoff',
+      title: 'Payoff',
       type: 'string',
     },
     {

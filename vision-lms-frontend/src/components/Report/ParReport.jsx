@@ -7,13 +7,15 @@ export default function ParReport() {
   const [members, setMembers] = useState("");
 
   const fetchLoanDetails = () => {
-    const mquery = `*[_type == "disburse"]`;
+    const mquery = `*[_type == "payments"]`;
 
     client.fetch(mquery).then((data) => {
       setMembers(data);
     });
 
   }
+
+  console.log(members)
 
   useEffect(() => {
     fetchLoanDetails();
@@ -48,7 +50,8 @@ export default function ParReport() {
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Name</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Group Name</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Officer Name</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Code</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loan Tenure</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Installment Amount</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disbursed Amount</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disbursement Date</th>
@@ -77,7 +80,7 @@ export default function ParReport() {
                             <path d="M4.16669 10V10.0067" stroke="#52525B" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"></path>
                             <path d="M4.16669 15V15.0067" stroke="#52525B" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"></path>
                           </svg>
-                          <p className="text-sm leading-none text-gray-600 ml-2">{member?.loanAccNumber}</p>
+                          <p className="text-sm leading-none text-gray-600 ml-2">DC-{member?.referenceNumber}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -93,10 +96,13 @@ export default function ParReport() {
                         <div className="text-sm text-gray-900">no group</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">no officer</div>
+                        <div className="text-sm text-gray-900">{member.loanOfficerName}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{member?.loanAccNumber.split('-')[0]}</div>
+                        <div className="text-sm text-gray-900">{member?.loanTenure} {member.repaymentCycle}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">KSHs. {member?.installmentAmount}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{member?.productType}</div>
@@ -108,13 +114,13 @@ export default function ParReport() {
                         <div className="text-sm font-medium text-gray-900">{member?._updatedAt.split('-')[0]}/{member?._updatedAt.split('-')[1]}/{member?._updatedAt.split('-')[2].split('T')[0]}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">KSHs. {member?.principalAmount}</div>
+                        <div className="text-sm text-gray-900">KSHs. {(Number(member?.principalAmount) + Number(member?.interestAmount)) - Number(member?.recentPayments[0]?.amountPaid)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">KSHs. {member?.principalAmount}</div>
+                        <div className="text-sm text-gray-900">KSHs. {Number(member?.principalAmount) + Number(member?.interestAmount)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{member?.loanTenure} {member?.repaymentCycle}</div>
+                        <div className="text-sm text-gray-900">0 days</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-indigo-600">
