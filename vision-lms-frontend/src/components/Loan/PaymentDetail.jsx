@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { client } from '../../client';
 import { productDetailQuery } from '../../utils/data';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function PaymentDetail() {
   const { paymentId } = useParams();
@@ -10,6 +11,9 @@ export default function PaymentDetail() {
   const [productDetails, setProductDetails] = useState("");
   const [productType, setProductType] = useState("");
   const [loadLoan, setLoadLoan] = useState(false);
+  const [amountPaid, setAmountPaid] = useState('');
+  const [mpesaReferenceCode, setMpesaReferenceCode] = useState('');
+  const [addingPayment, setAddingPayment] = useState(false);
 
   const fetchCustomerDetails = () => {
     const query = `*[_type == "payments" && _id == '${paymentId}']`;
@@ -30,6 +34,26 @@ export default function PaymentDetail() {
     fetchCustomerDetails();
     return (() => console.log('unsubscribing'));
   }, [paymentId, productType]);
+
+
+  const addPayment = () => {
+    if (amountPaid && mpesaReferenceCode) {
+      setAddingPayment(true);
+      console.log('adding')
+      client
+        .patch(paymentId)
+        .setIfMissing({ recentPayments: [] })
+        .insert('after', 'recentPayments[-1]', [{ amountPaid, mpesaReferenceCode, _key: uuidv4() }])
+        .commit()
+        .then(() => {
+          fetchCustomerDetails();
+          setAmountPaid('');
+          setMpesaReferenceCode('');
+          setAddingPayment(false);
+          alert('Payment Added')
+        });
+    };
+  };
 
   function renderLoanDetails() {
     return (
@@ -183,9 +207,128 @@ export default function PaymentDetail() {
     )
   }
 
+  function renderRecentPayments() {
+    return (
+      <div className="flex flex-col mt-5">
+        <div className="font-bold flex justify-center w-full text-xl">
+          <span className="text-gray-700 ml-auto mr-auto">Loans Pending Approval</span>
+        </div>
+        <br />
+        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block min-w-full sm:px-8">
+            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-200 border-b-2 border-gray-300">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount Paid</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penalty</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrears</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {customerDetails ? customerDetails?.recentPayments?.map((payment) => (
+                    <tr
+                      onClick={() => {
+                        navigate(`/loan/approvals/${payment._id}`);
+                      }}
+                      key={payment._id}
+                      className="hover:bg-gray-300 cursor-pointer"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="ml-0">
+                            <div className="text-sm font-medium text-gray-900">{payment.memberNames}</div>
+                            <div className="text-sm text-gray-500">{payment.memberPhoneNumber}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">KSHs. {payment.principalAmount}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{payment.productType}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-indigo-600">
+                          Approve
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                    :
+                    null
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  function renderLoanPayments() {
+    return (
+      <>
+        <div
+        >
+          <div className="ml-auto mr-auto mb-3">
+            <div className="flex justify-center items-center px-4 py-4">
+              <div className="mt-0">
+                <span className="font-bold text-xl mr-2">
+                  Loan Payments Form
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
+              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                  Amount Paid (KShs)
+                  <span className="text-red-500 italic">*</span>
+                </label>
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  type="number"
+                  placeholder="Paid Amount ..."
+                  value={amountPaid}
+                  onChange={(e) => setAmountPaid(e.target.value)}
+                />
+              </div>
+              <div className="w-full md:w-1/2 px-3">
+                <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+                  M-PESA Code
+                  <span className="text-red-500 italic">*</span>
+                </label>
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  type="string"
+                  placeholder="M-PESA Code ..."
+                  value={mpesaReferenceCode}
+                  onChange={(e) => setMpesaReferenceCode(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap mt-6 gap-3">
+              <button
+                type="button"
+                className="bg-cyan-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
+                onClick={addPayment}
+              >
+                {addingPayment ? 'Adding ...' : 'Add'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       {renderCustomerDetails()}
+      {renderLoanPayments()}
+      {renderRecentPayments()}
       {loadLoan ? null :
         <>
           <div className="flex justify-center mt-5">

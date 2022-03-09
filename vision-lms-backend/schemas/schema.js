@@ -7,7 +7,7 @@ import user from './user'
 import member from './member'
 // import comment from './comment'
 // import postedBy from './postedBy'
-// import save from './save'
+import recentPayments from './recentPayments'
 import newProduct from './newProduct'
 import maintenance from './maintenance'
 import collateral from './collateral'
@@ -36,8 +36,8 @@ export default createSchema({
     collateral,
     guarantor,
     payments,
+    recentPayments,
     // comment,
     // postedBy,
-    // save,
   ]),
 })

@@ -193,11 +193,11 @@ export default {
       title: 'MPESA Reference Code',
       type: 'string',
     },
+    {
+      name: 'recentPayments',
+      title: 'Recent Payments',
+      type: 'array',
+      of: [{ type: 'recentPayments' }]
+    },
   ],
 };
-
-
-
-
-
-
