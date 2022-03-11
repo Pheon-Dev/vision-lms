@@ -36,39 +36,40 @@ export default function Approve() {
   const [disbursed, setDisbursed] = useState('false');
 
   const fetchLoanDetails = () => {
-    setLoading(true)
     const query = `*[_type == "maintenance" && _id == '${loanId}']`;
     const productQuery = productDetailQuery(productType);
+    let subscription = true;
 
-    client.fetch(query).then((data) => {
-      setLoanDetails(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setLoanDetails(data);
+      });
 
-    if (productQuery) {
       client.fetch(productQuery).then((data) => {
         setProductDetails(data);
       });
     }
-    setLoading(false)
+
+    return () => subscription = false;
+
   }
 
   useEffect(() => {
     fetchLoanDetails();
-    return (() => console.log('unsubscribing'));
   }, [loanId, productType]);
 
-  const ideaName = memberNames || 'all';
-  if (loading) {
-    return (
-      <Spinner message={`Fetching ${ideaName} data ...`} />
-    );
-  }
+  // const ideaName = memberNames || 'all';
+  // if (loading) {
+  //   return (
+  //     <Spinner message={`Fetching ${ideaName} data ...`} />
+  //   );
+  // }
 
-  if (loanDetails?.length === 0) {
-    return (
-      <Spinner message={`Fetching ${ideaName} data ...`} />
-    )
-  }
+  // if (loanDetails?.length === 0) {
+  //   return (
+  //     <Spinner message={`Fetching ${ideaName} data ...`} />
+  //   )
+  // }
 
   const handleLoanSave = () => {
     setMaintained('true');

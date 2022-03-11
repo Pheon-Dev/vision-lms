@@ -19,18 +19,22 @@ export default function Disbursement() {
     // setLoading(true);
     const dquery = '*[_type == "disburse"]';
     const aquery = '*[_type == "approve"]';
+    let subscription = true;
 
-    client.fetch(dquery).then((data) => {
-      setDisbursedList(data);
-      // setLoading(false);
-    });
+    if (subscription) {
+      client.fetch(dquery).then((data) => {
+        setDisbursedList(data);
+        // setLoading(false);
+      });
 
-    client.fetch(aquery).then((data) => {
-      setApprovedList(data);
-      // setLoading(false);
-    });
+      client.fetch(aquery).then((data) => {
+        setApprovedList(data);
+        // setLoading(false);
+      });
 
-    return (() => console.log('unsubscribing'));
+    }
+
+    return () => subscription = false;
 
   }, []);
 

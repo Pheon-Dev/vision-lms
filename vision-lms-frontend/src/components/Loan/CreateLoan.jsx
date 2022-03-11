@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AiFillDelete, AiOutlineCloudUpload } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import { client, urlFor } from '../../client';
 import { productDetailQuery } from '../../utils/data';
@@ -472,8 +473,8 @@ export default function CreateLoan() {
                 >...</option>
                 {
                   guarantorsList && (
-                    guarantorsList?.map((member, index) => (
-                      <option key={index}>{member?.memberNumber + ' ' + member?.personalDetails?.surName + ' ' + member?.personalDetails?.otherNames}</option>
+                    guarantorsList?.map((member) => (
+                      <option key={member?._id}>{member?.memberNumber + ' ' + member?.personalDetails?.surName + ' ' + member?.personalDetails?.otherNames}</option>
                     )
                     ))
                 }
@@ -605,7 +606,7 @@ export default function CreateLoan() {
             </div>
           </div>
           {collateralList.map((singleItem, index) => (
-            <div key={index.toString()} >
+            <div key={uuidv4()} >
               <div className="flex flex-wrap w-full mb-2">
                 <span className="font-bold flex justify-center w-1/6 text-gray-700 p-2 mt-1">{index + 1}.</span>
                 <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
@@ -800,8 +801,8 @@ export default function CreateLoan() {
                       >Select a Member ...</option>
                       {
                         membersList && (
-                          membersList?.map((member, index) => (
-                            <option key={index}>{member.memberNumber + ' ' + member.personalDetails.surName + ' ' + member.personalDetails.otherNames}</option>
+                          membersList?.map((member) => (
+                            <option key={member?._id}>{member.memberNumber + ' ' + member.personalDetails.surName + ' ' + member.personalDetails.otherNames}</option>
                           )
                           ))
                       }
@@ -817,11 +818,11 @@ export default function CreateLoan() {
                       <option
                         className="text-gray-500"
                       >Select a Product ...</option>
-                      {productList && (
-                        productList?.map((item, index) => (
-                          <option key={index}>{item.productName}</option>
-                        )
-                        ))}
+                      {productList ?
+                        productList?.map((item) => (
+                          <option key={item?.productCode.toString()}>{item.productName}</option>
+                        ))
+                        : null}
                     </select>
                   </div>
                 </div>
@@ -859,7 +860,7 @@ export default function CreateLoan() {
               </div>
               {productDetails && productDetails?.map((item, index) => (
                 <>
-                  <span key={item._id} className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
+                  <span key={item?._id} className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
                   <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(item.maximumRange) ? `Maximum Principal Amount is KSHs. ${item.maximumRange}` : null}</span>
                   <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) < Number(item.minimumRange) ? `Minimum Principal Amount is KSHs. ${item.minimumRange}` : null}</span>
                   <div key={index.toString()} className="flex flex-wrap">

@@ -36,8 +36,13 @@ export default function Dashboard() {
   // }, []);
 
   useEffect(() => {
-    scrollRef.current.scrollTo(0, 0);
-    return (() => console.log('unsubscribing'));
+    let subscription = true;
+
+    if (subscription) {
+      scrollRef.current.scrollTo(0, 0);
+    }
+
+    return () => subscription = false;
   });
 
   return (

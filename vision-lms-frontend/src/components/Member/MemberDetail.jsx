@@ -23,13 +23,13 @@ export default function MemberDetail() {
   const navigate = useNavigate();
 
   const fetchMemberDetails = () => {
-    // let mquery = memberDetailQuery(memberId);
+    let subscription = true;
     let query = `*[_type == "member" && _id == '${memberId}']`;
     let mquery = `*[_type == "member" && group == '${groupId}']`;
     let gquery = `*[_type == "groups" && groupName == '${groupId}']`;
     let squery = `*[_type == "approve" && memberId == '${memberId}']`;
 
-    if (query) {
+    if (subscription) {
       client.fetch(query).then((data) => {
         setMemberDetail(data[0]);
         // console.log(data);
@@ -40,24 +40,24 @@ export default function MemberDetail() {
           });
         }
       });
+
+      client.fetch(mquery).then((data) => {
+        setGroupInfo(data)
+      });
+
+      client.fetch(gquery).then((data) => {
+        setGroupDetails(data)
+      });
+
+      client.fetch(squery).then((data) => {
+        setLoanStatus(data)
+      });
     }
-
-    client.fetch(mquery).then((data) => {
-      setGroupInfo(data)
-    });
-
-    client.fetch(gquery).then((data) => {
-      setGroupDetails(data)
-    });
-
-    client.fetch(squery).then((data) => {
-      setLoanStatus(data)
-    });
+    return () => subscription = false;
   };
 
   useEffect(() => {
     fetchMemberDetails();
-    return (() => console.log('unsubscribing'));
   }, [memberId, groupId]);
 
   // console.log(loanStatus)

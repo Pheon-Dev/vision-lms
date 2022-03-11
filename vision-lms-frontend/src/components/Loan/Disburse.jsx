@@ -55,41 +55,42 @@ export default function Disburse() {
   const [payoff, setPayoff] = useState('false');
 
   const fetchLoanDetails = () => {
-    setLoading(true)
     const query = `*[_type == "approve" && _id == '${loanId}']`;
     const productQuery = productDetailQuery(productType);
+    let subscription = true;
 
-    client.fetch(query).then((data) => {
-      setLoanDetails(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setLoanDetails(data);
+      });
 
-    if (productQuery) {
       client.fetch(productQuery).then((data) => {
         setProductDetails(data);
       });
     }
-    setLoading(false)
+
+    return () => subscription = false;
+
   }
 
   useEffect(() => {
     fetchLoanDetails();
-    return (() => console.log('unsubscribing'));
   }, [loanId, productType]);
 
   // console.log(loanDetails)
 
-  const ideaName = memberNames || 'all';
-  if (loading) {
-    return (
-      <Spinner message={`Fetching ${ideaName} data ...`} />
-    );
-  }
+  // const ideaName = memberNames || 'all';
+  // if (loading) {
+  //   return (
+  //     <Spinner message={`Fetching ${ideaName} data ...`} />
+  //   );
+  // }
 
-  if (loanDetails?.length === 0) {
-    return (
-      <Spinner message={`Fetching ${ideaName} data ...`} />
-    )
-  }
+  // if (loanDetails?.length === 0) {
+  //   return (
+  //     <Spinner message={`Fetching ${ideaName} data ...`} />
+  //   )
+  // }
 
 
   const handleLoanSave = () => {
@@ -111,8 +112,8 @@ export default function Disburse() {
     setRepaymentCycle(loanDetails[0]?.repaymentCycle);
     setDisbursedAmount(loanDetails[0]?.principalAmount);
     setOutstandingAmount((Number(loanDetails[0]?.principalAmount) + Number(loanDetails[0]?.interestAmount)).toString());
-  setDisbursementDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString())
-  setInstallmentDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + (Number(date.getDate()) + 7) + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + (Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString())
+    setDisbursementDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString())
+    setInstallmentDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + (Number(date.getDate()) + 7) + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + (Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString())
     // To be confirmed
     // setInstallmentDate((Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Number(Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString());
     setReferenceNumber(`01-${loanDetails[0]?.loanAccNumber}`);

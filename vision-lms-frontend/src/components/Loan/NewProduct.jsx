@@ -26,12 +26,15 @@ export default function NewProduct() {
 
   useEffect(() => {
     const query = '*[_type == "newProduct"]';
+    let subscription = true;
 
-    client.fetch(query).then((data) => {
-      setCode(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setCode(data);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
 
   }, []);
 

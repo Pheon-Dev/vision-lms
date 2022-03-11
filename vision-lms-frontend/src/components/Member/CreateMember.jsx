@@ -67,14 +67,16 @@ export default function CreateMember() {
   const [code, setCode] = useState();
 
   useEffect(() => {
+    let subscription = true;
     const query = '*[_type == "member"]';
 
-    client.fetch(query).then((data) => {
-      setCode(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setCode(data);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
-
+    return () => subscription = false;
   }, []);
 
   const genderSelector = [

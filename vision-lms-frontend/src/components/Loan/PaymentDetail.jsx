@@ -24,23 +24,25 @@ export default function PaymentDetail() {
   const [installmentDate, setInstallmentDate] = useState("");
 
   const fetchCustomerDetails = () => {
+    let subscription = true;
     const query = `*[_type == "payments" && _id == '${paymentId}']`;
     const productQuery = productDetailQuery(productType);
 
-    if (productQuery) {
+    if (subscription) {
       client.fetch(productQuery).then((data) => {
         setProductDetails(data);
       });
+
+      client.fetch(query).then((data) => {
+        setCustomerDetails(data);
+      });
     }
 
-    client.fetch(query).then((data) => {
-      setCustomerDetails(data);
-    });
+    return () => subscription = false;
   }
 
   useEffect(() => {
     fetchCustomerDetails();
-    return (() => console.log('unsubscribing'));
   }, [paymentId, productType]);
 
   const date = new Date();
@@ -278,7 +280,7 @@ export default function PaymentDetail() {
                       // onClick={() => {
                       //   navigate(`/loan/approvals/${payment._id}`);
                       // }}
-                      key={payment._id}
+                      key={payment?._id}
                       className="hover:bg-gray-300 cursor-pointer"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">

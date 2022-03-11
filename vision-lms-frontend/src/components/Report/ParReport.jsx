@@ -8,18 +8,19 @@ export default function ParReport() {
 
   const fetchLoanDetails = () => {
     const mquery = `*[_type == "payments"]`;
+    let subscription = true;
 
-    client.fetch(mquery).then((data) => {
-      setMembers(data);
-    });
+    if (subscription) {
+      client.fetch(mquery).then((data) => {
+        setMembers(data);
+      });
+    }
 
+    return () => subscription = false;
   }
-
-  console.log(members)
 
   useEffect(() => {
     fetchLoanDetails();
-    return console.log('unsubscribing')
   }, []);
 
   function renderPARTable() {

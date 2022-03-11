@@ -20,21 +20,23 @@ export default function Preview() {
   const fetchLoanDetails = () => {
     const query = `*[_type == "approve" && loanId == '${loanId}']`;
     const pquery = `*[_type == "newProduct" && _id == '${productId}']`;
+    let subscription = true;
 
-    client.fetch(pquery).then((data) => {
-      setProductDetails(data);
-    });
+    if (subscription) {
+      client.fetch(pquery).then((data) => {
+        setProductDetails(data);
+      });
 
-    if (query) {
       client.fetch(query).then((data) => {
         setLoanDetails(data);
       });
     }
+
+    return () => subscription = false;
   }
 
   useEffect(() => {
     fetchLoanDetails();
-    return console.log('unsubscribing')
   }, [loanId, productId]);
 
   function renderActions() {

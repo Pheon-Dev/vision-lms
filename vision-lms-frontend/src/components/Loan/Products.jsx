@@ -14,24 +14,25 @@ export default function Products() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true)
     const query = '*[_type == "newProduct"]';
+    let subscription = true;
 
-    client.fetch(query).then((data) => {
-      setProductList(data);
-      setLoading(false)
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setProductList(data);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
 
   }, []);
 
-  const prod = 'Products' || 'all';
-  if (productList?.length === 0) {
-    return (
-      <Spinner message={`Loading all ${prod} ...`} />
-    )
-  }
+  // const prod = 'Products' || 'all';
+  // if (productList?.length === 0) {
+  //   return (
+  //     <Spinner message={`Loading all ${prod} ...`} />
+  //   )
+  // }
 
   return (
     <>

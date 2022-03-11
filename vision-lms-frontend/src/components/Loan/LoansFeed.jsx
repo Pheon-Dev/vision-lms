@@ -25,27 +25,29 @@ export default function LoansFeed() {
   const [disbursedList, setDisbursedList] = useState();
 
   useEffect(() => {
-    // setLoading(true)
+    let subscription = true;
     const mquery = '*[_type == "maintenance"]';
     const dquery = '*[_type == "disburse"]';
     const aquery = '*[_type == "approve"]';
 
-    client.fetch(mquery).then((data) => {
-      setSubmittedList(data);
-      // setLoading(false)
-    });
+    if (subscription) {
+      client.fetch(mquery).then((data) => {
+        setSubmittedList(data);
+        // setLoading(false)
+      });
 
-    client.fetch(dquery).then((data) => {
-      setDisbursedList(data);
-      // setLoading(false)
-    });
+      client.fetch(dquery).then((data) => {
+        setDisbursedList(data);
+        // setLoading(false)
+      });
 
-    client.fetch(aquery).then((data) => {
-      setApprovedList(data);
-      // setLoading(false)
-    });
+      client.fetch(aquery).then((data) => {
+        setApprovedList(data);
+        // setLoading(false)
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
 
   }, []);
 

@@ -36,31 +36,38 @@ export default function CreateGroup() {
   useEffect(() => {
     const mquery = '*[_type == "member" && group == "false"]'
     const gquery = `*[_type == "member"]`
+    let subscription = true;
 
-    client.fetch(mquery).then((data) => {
-      setMemberList(data);
-    });
+    if (subscription) {
+      client.fetch(mquery).then((data) => {
+        setMemberList(data);
+      });
 
-    client.fetch(gquery).then((data) => {
-      setGroupsList(data);
-    });
+      client.fetch(gquery).then((data) => {
+        setGroupsList(data);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
   }, [])
 
   useEffect(() => {
     const query = '*[_type == "groups"]';
     const gquery = `*[_type == "member" && group == '${groupName}']`
+    let subscription = true;
 
-    client.fetch(gquery).then((data) => {
-      setGroupList(data);
-    });
+    if (subscription) {
+      client.fetch(gquery).then((data) => {
+        setGroupList(data);
+      });
 
-    client.fetch(query).then((data) => {
-      setGroups(data);
-    });
+      client.fetch(query).then((data) => {
+        setGroups(data);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
+
   }, [groupName])
 
   // console.log(groupList)

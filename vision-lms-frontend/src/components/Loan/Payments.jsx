@@ -7,13 +7,16 @@ export default function Payments() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let subscription = true;
     const query = '*[_type == "payments"]';
 
-    client.fetch(query).then((data) => {
-      setPaymentsList(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setPaymentsList(data);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
 
   }, []);
 

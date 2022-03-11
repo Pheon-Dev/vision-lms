@@ -16,21 +16,23 @@ export default function Approvals() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // setLoading(true);
+    let subscription = true;
     const mquery = '*[_type == "maintenance"]';
     const aquery = '*[_type == "approve"]';
 
-    client.fetch(mquery).then((data) => {
-      setSubmittedList(data);
-      // setLoading(false);
-    });
+    if (subscription) {
+      client.fetch(mquery).then((data) => {
+        setSubmittedList(data);
+        // setLoading(false);
+      });
 
-    client.fetch(aquery).then((data) => {
-      setApprovedList(data);
-      // setLoading(false);
-    });
+      client.fetch(aquery).then((data) => {
+        setApprovedList(data);
+        // setLoading(false);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
 
   }, []);
 

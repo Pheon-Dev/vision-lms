@@ -15,28 +15,30 @@ export default function GeneralReport() {
   const [members, setMembers] = useState("");
 
   const fetchLoanDetails = () => {
+    let subscription = true;
     const mquery = `*[_type == "approve"]`;
     const query = `*[_type == "approve" && loanId == '${loanId}']`;
     const pquery = `*[_type == "newProduct" && _id == '${productId}']`;
 
-    client.fetch(mquery).then((data) => {
-      setMembers(data);
-    });
+    if (subscription) {
+      client.fetch(mquery).then((data) => {
+        setMembers(data);
+      });
 
-    client.fetch(pquery).then((data) => {
-      setProductDetails(data);
-    });
+      client.fetch(pquery).then((data) => {
+        setProductDetails(data);
+      });
 
-    if (query) {
       client.fetch(query).then((data) => {
         setLoanDetails(data);
       });
     }
+
+    return () => subscription = false;
   }
 
   useEffect(() => {
     fetchLoanDetails();
-    return console.log('unsubscribing')
   }, [loanId, productId]);
 
   function renderCustomerLoanStatement() {

@@ -11,12 +11,15 @@ export default function ProductDetails() {
 
   const fetchProductDetails = () => {
     const query = `*[_type == "newProduct" && _id == '${productId}']`;
+    let subscription = true;
 
-    client.fetch(query).then((data) => {
-      setProductDetails(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setProductDetails(data);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
   }
 
   useEffect(() => {

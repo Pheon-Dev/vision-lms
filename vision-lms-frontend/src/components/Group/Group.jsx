@@ -16,7 +16,7 @@ export default function Group() {
       setGroupsList(data);
     })
   }, [])
-  console.log(groupName)
+
   return (
     <>
       <div className="ml-auto mr-auto mb-3">

@@ -13,22 +13,28 @@ export default function GroupDetail() {
 
   const fetchGroupDetails = () => {
     const query = `*[_type == "groups" && _id == '${groupId}']`;
+    let subscription = true;
 
-    client.fetch(query).then((data) => {
-      setGroupDetails(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setGroupDetails(data);
+      });
+    }
 
-    return (() => console.log('unsubscribing'));
+    return () => subscription = false;
   }
 
   const fetchMembers = () => {
     const mquery = `*[_type == "member" && group == '${groupName}']`;
-    // const mquery = `*[_type == "groups"]`;
+    let subscription = true;
 
-    client.fetch(mquery).then((data) => {
-      setGroupMembers(data);
-    });
-    return (() => console.log('unsubscribing'));
+    if (subscription) {
+      client.fetch(mquery).then((data) => {
+        setGroupMembers(data);
+      });
+    }
+
+    return () => subscription = false;
   }
 
   useEffect(() => {
