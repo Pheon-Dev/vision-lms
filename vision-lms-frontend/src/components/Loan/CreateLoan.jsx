@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { AiFillDelete, AiOutlineCloudUpload } from 'react-icons/ai';
+import { MdDelete } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { client, urlFor } from '../../client';
@@ -43,6 +45,9 @@ export default function CreateLoan() {
   const [guarantorRelationship, setGuarantorRelationship] = useState('');
   const [guarantorPhone, setGuarantorPhone] = useState('');
 
+  const [addingCollaterals, setAddingCollaterals] = useState(false);
+  const [collateralList, setCollateralList] = useState([{ collateral: "", value: "", image: "" }]);
+
   const [maintained, setMaintained] = useState('');
   const [approved, setApproved] = useState('');
   const [disbursed, setDisbursed] = useState('');
@@ -57,6 +62,29 @@ export default function CreateLoan() {
   const goname = guarantorDetails.split(' ')[2] + ' ' + guarantorDetails.split(' ')[3]
   const gnames = gsname + ' ' + goname
 
+  const [imageAsset, setImageAsset] = useState();
+  const [wrongImageType, setWrongImageType] = useState(false);
+
+  const uploadImage = (e) => {
+    const selectedFile = e.target.files[0];
+    // uploading asset to sanity
+    if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff' || selectedFile.type === 'image/jpg') {
+      setWrongImageType(false);
+      setLoading(true);
+      client.assets
+        .upload('image', selectedFile, { contentType: selectedFile.type, filename: selectedFile.name })
+        .then((document) => {
+          setImageAsset(document);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log('Upload failed:', error.message);
+        });
+    } else {
+      setLoading(false);
+      setWrongImageType(true);
+    }
+  };
   useEffect(() => {
     const membersListQuery = '*[_type == "member" && maintained == "false"]';
     const memberQuery = `*[_type == "member" && memberNumber match '${id}' || personalDetails.surName match '${sname}' || personalDetails.otherNames match '${oname}']`;
@@ -273,6 +301,36 @@ export default function CreateLoan() {
   }
 
   // console.log('data', renderDays(Number(loanTenure)))
+  const handleCollateralChange = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...collateralList];
+    list[index][name] = value;
+    setCollateralList(list);
+  };
+
+  const handleCollateralAdd = () => {
+    setCollateralList([...collateralList, { collateral: "", value: "" }]);
+  };
+
+  const handleCollateralDelete = (index) => {
+    const list = [...collateralList];
+    list.splice(index, 1);
+    setCollateralList(list);
+  };
+
+  const handleCollateralSave = () => {
+    if (collateralList) {
+      const doc = {
+        collateralList,
+      };
+      // client.create(doc).then(() => {
+      //   navigate('/');
+      // });
+      // console.log(doc)
+    }
+    // navigate("/create-group")
+  };
+
 
 
   const handleLoanSave = () => {
@@ -516,8 +574,128 @@ export default function CreateLoan() {
       <>
         <div className="w-full flex justify-center mr-auto ml-auto px-3 mb-6 md:mb-0">
           <label className="block uppercase tracking-wide text-gray-700 text-xl font-bold mb-2">
-            Collaterals
+            Collateral List
           </label>
+        </div>
+        <div className="flex flex-col justify-center w-full flex-wrap -mx-3 mt-9">
+          <div className="flex w-full mb-6 mr-auto ml-auto flex-wrap -mx-3">
+            <div className="flex justify-center w-1/6 px-3 md:mb-0">
+              <label className="block tracking-wide text-xs">
+                <span className="uppercase text-gray-700 font-bold text-md">Nọ</span>
+                {/* <span className="text-red-500 italic">*</span> */}
+              </label>
+            </div>
+            <div className="w-full md:w-1/3 px-3 md:mb-0">
+              <label className="block tracking-wide text-xs">
+                <span className="uppercase text-gray-700 font-bold text-md">Collateral Items</span>
+                {/* <span className="text-red-500 italic">*</span> */}
+              </label>
+            </div>
+            <div className="w-full md:w-1/3 px-3">
+              <label className="block tracking-wide text-xs">
+                <span className="uppercase text-gray-700 font-bold text-md">Value (KSHs)</span>
+                {/* <span className="text-red-500 italic">*</span> */}
+              </label>
+            </div>
+            <div className="w-full md:w-1/6 px-3">
+              <label className="block tracking-wide text-xs">
+                <span className="uppercase text-gray-700 font-bold text-md">Image</span>
+                {/* <span className="text-red-500 italic">*</span> */}
+              </label>
+            </div>
+          </div>
+          {collateralList.map((singleItem, index) => (
+            <div key={index.toString()} >
+              <div className="flex flex-wrap w-full mb-2">
+                <span className="font-bold flex justify-center w-1/6 text-gray-700 p-2 mt-1">{index + 1}.</span>
+                <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    id="collateralName"
+                    type="text"
+                    name="collateral"
+                    placeholder="Item Name ..."
+                    value={singleItem.collateral}
+                    onChange={(e) => handleCollateralChange(e, index)}
+                    required
+                  />
+                </div>
+                <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
+                  <input
+                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    id="idNumber"
+                    type="number"
+                    name="value"
+                    placeholder="Value ..."
+                    value={singleItem.value}
+                    onChange={(e) => handleCollateralChange(e, index)}
+                    required
+                  />
+                </div>
+                <div className="flex w-full flex-wrap items-center justify-start md:w-1/6 px-3">
+                  {loading && (
+                    <Spinner />
+                  )}
+                  {
+                    wrongImageType && (
+                      <p>It&apos;s wrong file type.</p>
+                    )
+                  }
+                  {!imageAsset ? (
+                    // eslint-disable-next-line jsx-a11y/label-has-associated-control
+                    <label className="mt-3">
+                      <p className="font-bold text-2xl">
+                        <AiOutlineCloudUpload />
+                      </p>
+                      <input
+                        type="file"
+                        name="upload-image"
+                        onChange={uploadImage}
+                        className="w-0 h-0"
+                      />
+                    </label>
+                  ) : (
+                    <div className="relative h-6 w-auto">
+                      <img
+                        src={imageAsset?.url}
+                        alt="uploaded-pic"
+                        className="h-4 w-4"
+                      />
+                      <button
+                        type="button"
+                        className="absolute bottom-3 right-3 p-3 rounded-lg-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
+                        onClick={() => setImageAsset(null)}
+                      >
+                        <MdDelete />
+                      </button>
+                    </div>
+                  )}
+                  {collateralList.length !== 1 && (
+                    <span className="w-full md:w-1/6">
+                      <button
+                        onClick={() => handleCollateralDelete(index)}
+                        type="button"
+                        className="text-red-400 hover:text-red-600 pl-5 mb-4 font-bold"
+                      >
+                        <AiFillDelete />
+                      </button>
+                    </span>
+                  )}
+                </div>
+              </div>
+              {collateralList.length - 1 === index && collateralList.length < 10 && (
+                <div className="flex justify-center items-center">
+                  <button
+                    onClick={handleCollateralAdd}
+                    type="button"
+                    className="bg-blue-500 m-2 w-1/3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    Add a Item +
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </>
     )
