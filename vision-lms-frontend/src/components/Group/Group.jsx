@@ -10,11 +10,17 @@ export default function Group() {
   const [groupName, setGroupName] = useState("");
 
   useEffect(() => {
+    let subscription = true;
     const gquery = '*[_type == "groups"]'
 
-    client.fetch(gquery).then((data) => {
-      setGroupsList(data);
-    })
+    if (subscription) {
+
+      client.fetch(gquery).then((data) => {
+        setGroupsList(data);
+      })
+    }
+
+    return () => subscription = false;
   }, [])
 
   return (

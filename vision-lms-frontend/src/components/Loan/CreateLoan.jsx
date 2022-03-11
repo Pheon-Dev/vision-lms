@@ -87,6 +87,7 @@ export default function CreateLoan() {
     }
   };
   useEffect(() => {
+    let subscription = true;
     const membersListQuery = '*[_type == "member" && maintained == "false"]';
     const memberQuery = `*[_type == "member" && memberNumber match '${id}' || personalDetails.surName match '${sname}' || personalDetails.otherNames match '${oname}']`;
     const productListQuery = '*[_type == "newProduct"]';
@@ -95,33 +96,33 @@ export default function CreateLoan() {
     // const productTypeQuery = productDetailQuery(productType);
     const productTypeQuery = `*[_type == "newProduct" && productName == "${productType}"]`;
 
-    client.fetch(membersListQuery).then((data) => {
-      // setLoading(true);
-      setMembersList(data);
-      // setLoading(false);
-    });
+    if (subscription) {
+      client.fetch(membersListQuery).then((data) => {
+        setMembersList(data);
+      });
 
-    client.fetch(guarantorsListQuery).then((data) => {
-      setGuarantorsList(data);
-    });
+      client.fetch(guarantorsListQuery).then((data) => {
+        setGuarantorsList(data);
+      });
 
-    client.fetch(guarantorQuery).then((data) => {
-      setGuarantor(data);
-    });
+      client.fetch(guarantorQuery).then((data) => {
+        setGuarantor(data);
+      });
 
-    client.fetch(memberQuery).then((data) => {
-      setMemberDetail(data);
-    });
+      client.fetch(memberQuery).then((data) => {
+        setMemberDetail(data);
+      });
 
-    client.fetch(productListQuery).then((data) => {
-      setProductList(data);
-    });
+      client.fetch(productListQuery).then((data) => {
+        setProductList(data);
+      });
 
-    if (productTypeQuery) {
       client.fetch(productTypeQuery).then((data) => {
         setProductDetails(data);
       });
     }
+
+    return () => subscription = false;
 
   }, [productType, id, sname, oname, names, gid, goname, gsname]);
 
@@ -141,9 +142,6 @@ export default function CreateLoan() {
     return sundays;
   }
 
-  // console.log('sundays', renderSundays(Number(loanTenure)))
-
-  // console.log(guarantor)
   function renderDailyInterestAmount(rate, principal, tenure) {
     return roundOff(((rate * principal) / 3000) * tenure);
   }
@@ -820,7 +818,7 @@ export default function CreateLoan() {
                       >Select a Product ...</option>
                       {productList ?
                         productList?.map((item) => (
-                          <option key={item?.productCode.toString()}>{item.productName}</option>
+                          <option key={item._id}>{item.productName}</option>
                         ))
                         : null}
                     </select>
@@ -858,19 +856,19 @@ export default function CreateLoan() {
                   />
                 </div>
               </div>
-              {productDetails && productDetails?.map((item, index) => (
+              {productDetails ?
                 <>
-                  <span key={item?._id} className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(item.tenureMaximum) ? `Maximum Tenure is ${item.tenureMaximum} ${item.tenureMaximumChoice}` : null}</span>
-                  <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(item.maximumRange) ? `Maximum Principal Amount is KSHs. ${item.maximumRange}` : null}</span>
-                  <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) < Number(item.minimumRange) ? `Minimum Principal Amount is KSHs. ${item.minimumRange}` : null}</span>
-                  <div key={index.toString()} className="flex flex-wrap">
+                  <span key={productDetails[0]?.productCode} className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(productDetails[0]?.tenureMaximum) ? `Maximum Tenure is ${productDetails[0]?.tenureMaximum} ${productDetails[0]?.tenureMaximumChoice}` : null}</span>
+                  <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(productDetails[0]?.maximumRange) ? `Maximum Principal Amount is KSHs. ${productDetails[0]?.maximumRange}` : null}</span>
+                  <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) < Number(productDetails[0]?.minimumRange) ? `Minimum Principal Amount is KSHs. ${productDetails[0]?.minimumRange}` : null}</span>
+                  <div key={productDetails[0]?.productName} className="flex flex-wrap">
                     <ul className="bg-gray-100 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                         <span className="tracking-wide text-l text-gray-700 font-bold">
                           Product Type
                         </span>
                         <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          {item.productName}
+                          {productDetails[0]?.productName}
                         </span>
                       </li>
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -878,7 +876,7 @@ export default function CreateLoan() {
                           Loan A/C Number
                         </span>
                         <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          DC-{item.productCode}-{memberDetail[0]?.memberNumber}
+                          DC-{productDetails[0]?.productCode}-{memberDetail[0]?.memberNumber}
                         </span>
                       </li>
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -886,7 +884,7 @@ export default function CreateLoan() {
                           Interest Rate
                         </span>
                         <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          {item?.interestRate} %
+                          {productDetails[0]?.interestRate} %
                         </span>
                       </li>
                       <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
@@ -894,18 +892,18 @@ export default function CreateLoan() {
                           Interest Amount
                         </span>
                         {
-                          item?.repaymentCycle === 'weekly' ?
+                          productDetails[0]?.repaymentCycle === 'weekly' ?
                             <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                              KSHs. {renderWeeklyInterestAmount(item?.interestRate, principalAmount, loanTenure)}
+                              KSHs. {renderWeeklyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
                             </span>
                             :
-                            item?.repaymentCycle === 'monthly' ?
+                            productDetails[0]?.repaymentCycle === 'monthly' ?
                               <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                                KSHs. {renderMonthlyInterestAmount(item?.interestRate, principalAmount, loanTenure)}
+                                KSHs. {renderMonthlyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
                               </span>
                               :
                               <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                                KSHs. {renderDailyInterestAmount(item?.interestRate, principalAmount, loanTenure)}
+                                KSHs. {renderDailyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
                               </span>
                         }
                       </li>
@@ -914,18 +912,18 @@ export default function CreateLoan() {
                           Installments
                         </span>
                         {
-                          item?.repaymentCycle === 'weekly' ?
+                          productDetails[0]?.repaymentCycle === 'weekly' ?
                             <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                              KSHs. {renderWeeklyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                              KSHs. {renderWeeklyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
                             </span>
                             :
-                            item?.repaymentCycle === 'monthly' ?
+                            productDetails[0]?.repaymentCycle === 'monthly' ?
                               <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                                KSHs. {renderMonthlyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                                KSHs. {renderMonthlyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
                               </span>
                               :
                               <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                                KSHs. {renderDailyInstallmentsAmount(item?.interestRate, principalAmount, loanTenure)}
+                                KSHs. {renderDailyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
                               </span>
                         }
                       </li>
@@ -934,16 +932,16 @@ export default function CreateLoan() {
                           Repayment Cycle
                         </span>
                         <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          {item?.repaymentCycle}
+                          {productDetails[0]?.repaymentCycle}
                         </span>
                       </li>
-                      {item?.repaymentCycle === 'daily' ?
+                      {productDetails[0]?.repaymentCycle === 'daily' ?
                         <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                           <span className="tracking-wide text-l text-gray-700 font-bold">
                             Grace Period
                           </span>
                           <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {item?.gracePeriod}
+                            {productDetails[0]?.gracePeriod}
                           </span>
                         </li>
                         :
@@ -954,16 +952,16 @@ export default function CreateLoan() {
                           Processing Fee
                         </span>
                         <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          KSHs. {renderProcessingFeeAmount(item?.processingFee, principalAmount)}
+                          KSHs. {renderProcessingFeeAmount(productDetails[0]?.processingFee, principalAmount)}
                         </span>
                       </li>
-                      {item?.repaymentCycle === 'daily' ?
+                      {productDetails[0]?.repaymentCycle === 'daily' ?
                         <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                           <span className="tracking-wide text-l text-gray-700 font-bold">
                             Penalty
                           </span>
                           <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {item?.penaltyTypeChoice === 'amount' ? `KSHs. ${item?.penalty}` : `${renderPenaltyAmount(item?.penalty, item?.interestRate, principalAmount, loanTenure)} %`}
+                            {productDetails[0]?.penaltyTypeChoice === 'amount' ? `KSHs. ${productDetails[0]?.penalty}` : `${renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, principalAmount, loanTenure)} %`}
                           </span>
                         </li>
                         :
@@ -972,14 +970,15 @@ export default function CreateLoan() {
                             Penalty
                           </span>
                           <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {item?.penaltyTypeChoice === 'amount' ? `KSHs. ${item?.penalty}` : `${item?.penalty} %`}
+                            {productDetails[0]?.penaltyTypeChoice === 'amount' ? `KSHs. ${productDetails[0]?.penalty}` : `${productDetails[0]?.penalty} %`}
                           </span>
                         </li>
                       }
                     </ul>
                   </div>
                 </>
-              ))}
+                : null
+              }
 
             </>
           )}

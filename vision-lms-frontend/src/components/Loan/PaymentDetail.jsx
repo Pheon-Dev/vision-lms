@@ -49,7 +49,7 @@ export default function PaymentDetail() {
 
   // console.log((Date().split(' ')[3] + '-' + date.getMonth() + '-' + (Number(date.getDate()) + 7) + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + (Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString())
 
-  const addPayment = () => {
+  const setPayment = () => {
     setArrears((Number(customerDetails[0]?.principalAmount) - Number(customerDetails[0]?.interestAmount)).toString());
     setOutstandingBalance((Number(customerDetails[0]?.principalAmount) - Number(amountPaid)).toString());
     setOutstandingPenalty("00");
@@ -57,6 +57,20 @@ export default function PaymentDetail() {
     setInterestPaid("00");
     setPenaltyPaid("00");
     setInstallmentDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString())
+    console.log(
+      amountPaid
+      && mpesaReferenceCode
+      && arrears
+      && outstandingBalance
+      && outstandingPenalty
+      && principalPaid
+      && interestPaid
+      && penaltyPaid
+      && installmentDate
+    );
+  };
+
+  const addPayment = () => {
     if (
       amountPaid
       && mpesaReferenceCode
@@ -254,7 +268,7 @@ export default function PaymentDetail() {
     return (
       <div className="flex flex-col mt-5">
         <div className="font-bold flex justify-center w-full text-xl">
-          <span className="text-gray-700 ml-auto mr-auto">Loans Pending Approval</span>
+          <span className="text-gray-700 ml-auto mr-auto">Recent Payments Made</span>
         </div>
         <br />
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -275,12 +289,12 @@ export default function PaymentDetail() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {customerDetails ? customerDetails[0]?.recentPayments?.map((payment) => (
+                  {customerDetails ? customerDetails[0]?.recentPayments?.map((payment, index) => (
                     <tr
                       // onClick={() => {
                       //   navigate(`/loan/approvals/${payment._id}`);
                       // }}
-                      key={payment?._id}
+                      key={index}
                       className="hover:bg-gray-300 cursor-pointer"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -378,6 +392,7 @@ export default function PaymentDetail() {
                 type="button"
                 className="bg-cyan-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
                 onClick={addPayment}
+                onMouseEnter={setPayment}
               >
                 {addingPayment ? 'Adding ...' : 'Add'}
               </button>

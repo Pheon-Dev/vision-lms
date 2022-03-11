@@ -46,21 +46,20 @@ export default function MaintenanceDetail() {
   const [disbursed, setDisbursed] = useState('');
 
   useEffect(() => {
+    let subscription = true;
     const query = '*[_type == "newProduct"]';
+    const mquery = '*[_type == "maintenance"]';
 
-    client.fetch(query).then((data) => {
-      setProductList(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setProductList(data);
+      });
 
-  }, []);
-
-  useEffect(() => {
-    const query = '*[_type == "maintenance"]';
-
-    client.fetch(query).then((data) => {
-      setLoanIdentity(data);
-    });
-
+      client.fetch(mquery).then((data) => {
+        setLoanIdentity(data);
+      });
+    }
+    return () => subscription = false;
   }, []);
 
   const fetchProductDetails = () => {

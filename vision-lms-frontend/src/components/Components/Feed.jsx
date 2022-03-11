@@ -13,21 +13,25 @@ export default function Feed() {
   const { productId } = useParams();
 
   useEffect(() => {
-    if (productId) {
-      setLoading(true);
-      const query = searchQuery(productId);
-      client.fetch(query).then((data) => {
-        setMembers(data);
-        setLoading(false);
-      });
-    } else {
-      setLoading(true);
+    let subscription = true;
+    if (subscription) {
+      if (productId) {
+        setLoading(true);
+        const query = searchQuery(productId);
+        client.fetch(query).then((data) => {
+          setMembers(data);
+          setLoading(false);
+        });
+      } else {
+        setLoading(true);
 
-      client.fetch(feedQuery).then((data) => {
-        setMembers(data);
-        setLoading(false);
-      });
+        client.fetch(feedQuery).then((data) => {
+          setMembers(data);
+          setLoading(false);
+        });
+      }
     }
+    return () => subscription = false;
   }, [productId]);
 
   const ideaName = 'Members';

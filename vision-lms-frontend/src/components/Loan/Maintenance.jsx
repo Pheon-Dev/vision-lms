@@ -22,36 +22,41 @@ export default function Maintenance() {
   const [maintainedList, setMaintainedList] = useState();
 
   useEffect(() => {
-    // const query = `*[_type == "preview" && loanId == ${mainId}]`;
+    let subscription = true;
     const query = '*[_type == "preview"]';
-    // const query = '*[_type == "maintenance"]';
-    // const query = loanDetailsQuery(maintenanceId);
 
-    client.fetch(query).then((data) => {
-      setMaintainedList(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setMaintainedList(data);
+      });
+    }
+
+    return () => subscription = false;
 
   }, [mainId]);
 
-  console.log(maintainedList)
-  // console.log(mainId)
-
   useEffect(() => {
-    if (productId) {
-      setLoading(true);
-      const query = searchQuery(productId);
-      client.fetch(query).then((data) => {
-        setMembers(data);
-        setLoading(false);
-      });
-    } else {
-      setLoading(true);
+    let subscription = true;
 
-      client.fetch(feedQuery).then((data) => {
-        setMembers(data);
-        setLoading(false);
-      });
+    if (subscription) {
+      if (productId) {
+        setLoading(true);
+        const query = searchQuery(productId);
+        client.fetch(query).then((data) => {
+          setMembers(data);
+          setLoading(false);
+        });
+      } else {
+        setLoading(true);
+
+        client.fetch(feedQuery).then((data) => {
+          setMembers(data);
+          setLoading(false);
+        });
+      }
     }
+
+    return () => subscription = false;
   }, [productId]);
 
   const ideaName = productId || 'all';
@@ -70,7 +75,6 @@ export default function Maintenance() {
   let isPaidStyle = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
   let isNotPaidStyle = "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-red-800"
 
-  console.log(maintenanceId)
 
   return (
     <div className="flex flex-col mt-5">

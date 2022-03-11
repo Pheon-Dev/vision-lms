@@ -15,25 +15,20 @@ export default function Pending() {
   const navigate = useNavigate();
   useEffect(() => {
     const query = '*[_type == "preview"]';
+    const pquery = `*[_type == "preview" && memberIdentity == ${maintenanceId}]`;
+    let subscription = true;
 
-    client.fetch(query).then((data) => {
-      setMaintainedList(data);
-    });
+    if (subscription) {
+      client.fetch(query).then((data) => {
+        setMaintainedList(data);
+      });
+      client.fetch(pquery).then((data) => {
+        setPendingList(data);
+      });
+    }
 
-  }, []);
-  useEffect(() => {
-    const query = `*[_type == "preview" && memberIdentity == ${maintenanceId}]`;
-    // const query = loanDetailsQuery(maintenanceId);
-
-    client.fetch(query).then((data) => {
-      setPendingList(data);
-    });
-
+    return () => subscription = false;
   }, [maintenanceId]);
-
-  // console.log(maintainedList)
-  // console.log(maintenanceId)
-  // console.log(pendingList)
 
   function renderMaintainedLoans() {
     return (
