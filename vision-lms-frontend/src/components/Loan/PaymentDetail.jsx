@@ -22,6 +22,7 @@ export default function PaymentDetail() {
   const [principalPaid, setPrincipalPaid] = useState("");
   const [interestPaid, setInterestPaid] = useState("");
   const [penaltyPaid, setPenaltyPaid] = useState("");
+  const [nextInstallmentDate, setNextInstallmentDate] = useState("");
   const [installmentDate, setInstallmentDate] = useState("");
   const [penaltyCount, setPenaltyCount] = useState(0);
 
@@ -96,7 +97,7 @@ export default function PaymentDetail() {
     // console.log("princi paid  :", principalPaid);
     // console.log("intrst paid  :", interestPaid);
     // console.log("penlty paid  :", penaltyPaid);
-    // console.log("installment  :", installmentDate);
+    // console.log("installment  :", firstInstallmentDate);
   };
 
   const addPayment = () => {
@@ -109,7 +110,7 @@ export default function PaymentDetail() {
       && principalPaid
       && interestPaid
       && penaltyPaid
-      && installmentDate
+      && firstInstallmentDate
     ) {
       setAddingPayment(true);
       console.log('adding')
@@ -126,7 +127,7 @@ export default function PaymentDetail() {
             , principalPaid
             , interestPaid
             , penaltyPaid
-            , installmentDate
+            , firstInstallmentDate
             , _key: uuidv4()
           }
         ])
@@ -259,7 +260,7 @@ export default function PaymentDetail() {
                   <span>
                     Last Installment Date
                   </span>
-                  <span className="ml-auto">{customerDetails[0]?.recentPayments[0]?.installmentDate.split('|')[1]}</span>
+                  <span className="ml-auto">{customerDetails[0]?.recentPayments[0]?.firstInstallmentDate.split('|')[1]}</span>
                 </li>
               </ul>
             </div>
@@ -322,7 +323,7 @@ export default function PaymentDetail() {
                 <span>
                   Installment Date
                 </span>
-                <span className="ml-auto">{installmentDate.split('|')[1]}</span>
+                <span className="ml-auto">{firstInstallmentDate.split('|')[1]}</span>
               </li>
             </ul>
           </div>
@@ -424,7 +425,7 @@ export default function PaymentDetail() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="ml-0">
-                            <div className="text-sm font-medium text-gray-900">{payment.installmentDate.split('|')[1]}</div>
+                            <div className="text-sm font-medium text-gray-900">{payment.firstInstallmentDate.split('|')[1]}</div>
                           </div>
                         </div>
                       </td>

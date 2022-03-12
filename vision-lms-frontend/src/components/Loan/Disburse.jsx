@@ -45,7 +45,7 @@ export default function Disburse() {
   const [interestPaid, setInterestPaid] = useState("");
   const [penaltyPaid, setPenaltyPaid] = useState("");
   const [disbursementDate, setDisbursementDate] = useState("");
-  const [installmentDate, setInstallmentDate] = useState("");
+  const [firstInstallmentDate, setFirstInstallmentDate] = useState("");
   const [referenceNumber, setReferenceNumber] = useState("");
   const [mpesaReferenceCode, setMpesaReferenceCode] = useState("");
 
@@ -53,9 +53,11 @@ export default function Disburse() {
   const [maintained, setMaintained] = useState('true');
   const [disbursed, setDisbursed] = useState('false');
   const [payoff, setPayoff] = useState('false');
+  const [loans, setLoans] = useState('');
 
   const fetchLoanDetails = () => {
     const query = `*[_type == "approve" && _id == '${loanId}']`;
+    const lquery = `*[_type == "disburse" && memberId == '${memberId}']`;
     const productQuery = productDetailQuery(productType);
     let subscription = true;
 
@@ -67,6 +69,10 @@ export default function Disburse() {
       client.fetch(productQuery).then((data) => {
         setProductDetails(data);
       });
+
+      client.fetch(lquery).then((data) => {
+        setLoans(data);
+      });
     }
 
     return () => subscription = false;
@@ -75,9 +81,7 @@ export default function Disburse() {
 
   useEffect(() => {
     fetchLoanDetails();
-  }, [loanId, productType]);
-
-  // console.log(loanDetails)
+  }, [loanId, productType, memberId]);
 
   // const ideaName = memberNames || 'all';
   // if (loading) {
@@ -92,7 +96,35 @@ export default function Disburse() {
   //   )
   // }
 
-  const date = new Date();
+  function renderFirstDailyInstallment(installment_date, tenure) {
+    let day = installment_date.split('-')[2];
+    let month = installment_date.split('-')[1];
+    let year = installment_date.split('-')[0];
+    const date = new Date(year, month, day);
+    date.setDate(date.getDate() + Number(tenure))
+    let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
+    return result.toString();
+  }
+
+  function renderFirstWeeklyInstallment(installment_date, tenure) {
+    let day = installment_date.split('-')[2];
+    let month = installment_date.split('-')[1];
+    let year = installment_date.split('-')[0];
+    const date = new Date(year, month, day);
+    date.setDate(date.getDate() + (Number(tenure) * 7))
+    let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
+    return result.toString();
+  }
+
+  function renderFirstMonthlyInstallment(installment_date, tenure) {
+    let day = installment_date.split('-')[2];
+    let month = installment_date.split('-')[1];
+    let year = installment_date.split('-')[0];
+    const date = new Date(year, month, day);
+    date.setDate(date.getDate() + (Number(tenure) * 30))
+    let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
+    return result.toString();
+  }
 
   const handleLoanSave = () => {
     setMaintained('true');
@@ -113,51 +145,57 @@ export default function Disburse() {
     setRepaymentCycle(loanDetails[0]?.repaymentCycle);
     setDisbursedAmount(loanDetails[0]?.principalAmount);
     setOutstandingAmount((Number(loanDetails[0]?.principalAmount) + Number(loanDetails[0]?.interestAmount)).toString());
-    setDisbursementDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString())
-    setInstallmentDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + (Number(date.getDate()) + 7) + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + (Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString())
-    // To be confirmed
-    // setInstallmentDate((Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Number(Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString());
-    setReferenceNumber(`01-${loanDetails[0]?.loanAccNumber}`);
+    setFirstInstallmentDate(
+      (
+        loanDetails[0]?.repaymentCycle === 'days' ?
+          renderFirstDailyInstallment(disbursementDate, loanDetails[0]?.loanTenure)
+          :
+          loanDetails[0]?.repaymentCycle === 'weeks' ?
+            renderFirstWeeklyInstallment(disbursementDate, loanDetails[0]?.loanTenure)
+            :
+            renderFirstMonthlyInstallment(disbursementDate, loanDetails[0]?.loanTenure)
+      ));
+    setReferenceNumber((`${loans?.length > 9 ? Number(loans?.length) + 1 : '0' + (Number(loans?.length) + 1)}-${loanDetails[0]?.loanAccNumber}`).toString());
     setMpesaReferenceCode("");
     console.log(
       loanId
-      , productType
-      , memberNames
-      , principalAmount
-      , loanTenure
-      , interestAmount
-      , installmentAmount
-      , penaltyAmount
-      , processingFeeAmount
-      , memberPhoneNumber
-      , maintained
-      , approved
-      , disbursed
-      , payoff
-      , memberId
-      , memberIdNumber
-      , memberEmail
-      , loanAccNumber
-      , repaymentCycle
-      , loanOfficerName
-      , loanOfficerPhoneNumber
-      , interestDue
-      , installmentsDue
-      , arrears
-      , daysInArrears
-      , disbursedAmount
-      , disbursementDate
-      , outstandingAmount
-      , outstandingBalance
-      , outstandingPenalty
-      , penaltyDue
-      , principalPaid
-      , amountPaid
-      , interestPaid
-      , penaltyPaid
-      , installmentDate
-      , referenceNumber
-      , mpesaReferenceCode
+      // , productType
+      // , memberNames
+      // , principalAmount
+      // , loanTenure
+      // , interestAmount
+      // , installmentAmount
+      // , penaltyAmount
+      // , processingFeeAmount
+      // , memberPhoneNumber
+      // , maintained
+      // , approved
+      // , disbursed
+      // , payoff
+      // , memberId
+      // , memberIdNumber
+      // , memberEmail
+      // , loanAccNumber
+      // , repaymentCycle
+      // , loanOfficerName
+      // , loanOfficerPhoneNumber
+      // , interestDue
+      // , installmentsDue
+      // , arrears
+      // , daysInArrears
+      // , disbursedAmount
+      // , disbursementDate
+      // , outstandingAmount
+      // , outstandingBalance
+      // , outstandingPenalty
+      // , penaltyDue
+      // , principalPaid
+      // , amountPaid
+      // , interestPaid
+      // , penaltyPaid
+      , firstInstallmentDate
+      // , referenceNumber
+      // , mpesaReferenceCode
     )
   }
 
@@ -198,7 +236,7 @@ export default function Disburse() {
       || amountPaid
       || interestPaid
       || penaltyPaid
-      || installmentDate
+      || firstInstallmentDate
       && referenceNumber
       || mpesaReferenceCode
     ) {
@@ -235,7 +273,7 @@ export default function Disburse() {
         , repaymentCycle
         , disbursedAmount
         , disbursementDate
-        , installmentDate
+        , firstInstallmentDate
         , referenceNumber
         , loanOfficerName
         , loanOfficerPhoneNumber
@@ -278,7 +316,7 @@ export default function Disburse() {
         , amountPaid
         , interestPaid
         , penaltyPaid
-        , installmentDate
+        , firstInstallmentDate
         , referenceNumber
         , mpesaReferenceCode
       };
@@ -519,7 +557,7 @@ export default function Disburse() {
               <span>
                 Reference Number
               </span>
-              <span className="ml-auto">DC-01-{loanDetails[0]?.loanAccNumber}</span>
+              <span className="ml-auto">DC-{`${loans?.length > 9 ? Number(loans?.length) + 1 : '0' + (Number(loans?.length) + 1)}-${loanDetails[0]?.loanAccNumber}`}</span>
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -531,13 +569,27 @@ export default function Disburse() {
               <span>
                 Disbursement Date
               </span>
-              <span className="ml-auto">{Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]}</span>
+              <input
+                className="ml-auto rounded-lg"
+                type="date"
+                value={disbursementDate}
+                onChange={(e) => setDisbursementDate(e.target.value)}
+              />
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
-                Installment Date
+                First Installment Date
               </span>
-              <span className="ml-auto">{Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Number(Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]}</span>
+              {
+                loanDetails[0]?.repaymentCycle === 'days' ?
+                  <span className="ml-auto">{renderFirstDailyInstallment(disbursementDate, loanDetails[0]?.loanTenure)}</span>
+                  :
+                  loanDetails[0]?.repaymentCycle === 'weeks' ?
+                    <span className="ml-auto">{renderFirstWeeklyInstallment(disbursementDate, loanDetails[0]?.loanTenure)}</span>
+                    :
+                    <span className="ml-auto">{renderFirstMonthlyInstallment(disbursementDate, loanDetails[0]?.loanTenure)}</span>
+              }
+              {/* <span className="ml-auto">{renderFirstDailyInstallment(disbursementDate, loanDetails[0]?.loanTenure)}</span> */}
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
@@ -574,6 +626,7 @@ export default function Disburse() {
     <div
       onMouseEnter={() => {
         setProductType(loanDetails[0]?.productType)
+        setMemberId(loanDetails[0]?.memberId)
       }}
     >
       {renderLoaninfo()}

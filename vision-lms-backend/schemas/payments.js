@@ -64,8 +64,8 @@ export default {
       type: 'string',
     },
     {
-      name: 'installmentDate',
-      title: 'Installment Date',
+      name: 'firstInstallmentDate',
+      title: 'First Installment Date',
       type: 'string',
     },
     {
