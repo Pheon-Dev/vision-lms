@@ -96,32 +96,35 @@ export default function Disburse() {
   //   )
   // }
 
-  function renderFirstDailyInstallment(installment_date, tenure) {
+  function renderFirstDailyInstallment(installment_date) {
     let day = installment_date.split('-')[2];
     let month = installment_date.split('-')[1];
     let year = installment_date.split('-')[0];
     const date = new Date(year, month, day);
-    date.setDate(date.getDate() + Number(tenure))
+    // date.setDate(date.getDate() + (Number(tenure) + 1))
+    date.setDate(date.getDate() + 2)
     let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
     return result.toString();
   }
 
-  function renderFirstWeeklyInstallment(installment_date, tenure) {
+  function renderFirstWeeklyInstallment(installment_date) {
     let day = installment_date.split('-')[2];
     let month = installment_date.split('-')[1];
     let year = installment_date.split('-')[0];
     const date = new Date(year, month, day);
-    date.setDate(date.getDate() + (Number(tenure) * 7))
+    // date.setDate(date.getDate() + (Number(tenure) * 7))
+    date.setDate(date.getDate() + 7)
     let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
     return result.toString();
   }
 
-  function renderFirstMonthlyInstallment(installment_date, tenure) {
+  function renderFirstMonthlyInstallment(installment_date) {
     let day = installment_date.split('-')[2];
     let month = installment_date.split('-')[1];
     let year = installment_date.split('-')[0];
     const date = new Date(year, month, day);
-    date.setDate(date.getDate() + (Number(tenure) * 30))
+    // date.setDate(date.getDate() + (Number(tenure) * 30))
+    date.setDate(date.getDate() + 30)
     let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
     return result.toString();
   }
@@ -148,12 +151,12 @@ export default function Disburse() {
     setFirstInstallmentDate(
       (
         loanDetails[0]?.repaymentCycle === 'days' ?
-          renderFirstDailyInstallment(disbursementDate, loanDetails[0]?.loanTenure)
+          renderFirstDailyInstallment(disbursementDate)
           :
           loanDetails[0]?.repaymentCycle === 'weeks' ?
-            renderFirstWeeklyInstallment(disbursementDate, loanDetails[0]?.loanTenure)
+            renderFirstWeeklyInstallment(disbursementDate)
             :
-            renderFirstMonthlyInstallment(disbursementDate, loanDetails[0]?.loanTenure)
+            renderFirstMonthlyInstallment(disbursementDate)
       ));
     setReferenceNumber((`${loans?.length > 9 ? Number(loans?.length) + 1 : '0' + (Number(loans?.length) + 1)}-${loanDetails[0]?.loanAccNumber}`).toString());
     setMpesaReferenceCode("");
@@ -582,14 +585,13 @@ export default function Disburse() {
               </span>
               {
                 loanDetails[0]?.repaymentCycle === 'days' ?
-                  <span className="ml-auto">{renderFirstDailyInstallment(disbursementDate, loanDetails[0]?.loanTenure)}</span>
+                  <span className="ml-auto">{renderFirstDailyInstallment(disbursementDate)}</span>
                   :
                   loanDetails[0]?.repaymentCycle === 'weeks' ?
-                    <span className="ml-auto">{renderFirstWeeklyInstallment(disbursementDate, loanDetails[0]?.loanTenure)}</span>
+                    <span className="ml-auto">{renderFirstWeeklyInstallment(disbursementDate)}</span>
                     :
-                    <span className="ml-auto">{renderFirstMonthlyInstallment(disbursementDate, loanDetails[0]?.loanTenure)}</span>
+                    <span className="ml-auto">{renderFirstMonthlyInstallment(disbursementDate)}</span>
               }
-              {/* <span className="ml-auto">{renderFirstDailyInstallment(disbursementDate, loanDetails[0]?.loanTenure)}</span> */}
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
