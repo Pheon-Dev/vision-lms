@@ -81,7 +81,6 @@ export default function Payments() {
     )
   }
 
-  console.log(paymentsList)
   return (
     <>
       {renderPaymentsList()}

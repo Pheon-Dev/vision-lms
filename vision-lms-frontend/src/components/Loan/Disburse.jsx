@@ -92,6 +92,7 @@ export default function Disburse() {
   //   )
   // }
 
+  const date = new Date();
 
   const handleLoanSave = () => {
     setMaintained('true');
@@ -284,7 +285,7 @@ export default function Disburse() {
       client.create(doc1).then(() => {
         alert('Success')
         console.log(doc1)
-        navigate('/loan/')
+        navigate('/loan/payments')
       });
     }
   }
@@ -294,11 +295,7 @@ export default function Disburse() {
   function renderLoaninfo() {
     return (
       <>
-        <div
-          onMouseEnter={() => {
-            setProductType(loanDetails[0].productType)
-          }}
-        >
+        <div>
           <div className="font-bold mt-5 flex justify-center w-full text-3xl">
             <span className="text-gray-500">Disburse </span>
             <span className="text-gray-700 ml-3">{loanDetails[0]?.memberNames}</span>
@@ -574,7 +571,11 @@ export default function Disburse() {
   }
 
   return (
-    <>
+    <div
+      onMouseEnter={() => {
+        setProductType(loanDetails[0]?.productType)
+      }}
+    >
       {renderLoaninfo()}
       {renderInitialInfo()}
       {toggle ? renderPayoff() : null}
@@ -591,7 +592,7 @@ export default function Disburse() {
           </button>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

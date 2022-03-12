@@ -12,6 +12,7 @@ export default function PaymentDetail() {
   const [productType, setProductType] = useState("");
   const [loadLoan, setLoadLoan] = useState(false);
   const [addingPayment, setAddingPayment] = useState(false);
+  const [review, setReview] = useState(false);
 
   const [amountPaid, setAmountPaid] = useState('');
   const [mpesaReferenceCode, setMpesaReferenceCode] = useState('');
@@ -26,10 +27,10 @@ export default function PaymentDetail() {
   const fetchCustomerDetails = () => {
     let subscription = true;
     const query = `*[_type == "payments" && _id == '${paymentId}']`;
-    const productQuery = productDetailQuery(productType);
+    const pquery = `*[_type == "products" && _id == '${productType}']`;
 
     if (subscription) {
-      client.fetch(productQuery).then((data) => {
+      client.fetch(pquery).then((data) => {
         setProductDetails(data);
       });
 
@@ -45,29 +46,50 @@ export default function PaymentDetail() {
     fetchCustomerDetails();
   }, [paymentId, productType]);
 
-  const date = new Date();
+  function renderPaymentCalculations(installment, interest, paid_amount, tenure) {
+    let res_arrears = (
+      Number(installment) - (
+        Number(interest) + Number(paid_amount)
+      )).toString();
 
-  // console.log((Date().split(' ')[3] + '-' + date.getMonth() + '-' + (Number(date.getDate()) + 7) + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + (Number(Date().split(' ')[2]) + 7) + ' ' + Date().split(' ')[3]).toString())
+    let res_interest = (
+      Number(paid_amount) - (Number(interest) / Number(tenure))
+    ).toString();
+
+    const date = new Date();
+    let res_date = (
+      Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()
+    ).toString() + ' | ' + (
+      Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]
+    ).toString();
+
+    let res_os_balance = (0).toString();
+    let res_os_penalty = (0).toString();
+    let res_penalty = (1).toString();
+    let res_principal = (Number(paid_amount) - Number(interest)).toString();
+
+    setArrears(res_arrears);
+    setInterestPaid(res_interest);
+    setInstallmentDate(res_date);
+    setOutstandingBalance(res_os_balance);
+    setOutstandingPenalty(res_os_penalty);
+    setPrincipalPaid(res_principal);
+    setPenaltyPaid(res_penalty);
+  };
 
   const setPayment = () => {
-    setArrears((Number(customerDetails[0]?.principalAmount) - Number(customerDetails[0]?.interestAmount)).toString());
-    setOutstandingBalance((Number(customerDetails[0]?.principalAmount) - Number(amountPaid)).toString());
-    setOutstandingPenalty("00");
-    setPrincipalPaid("00");
-    setInterestPaid("00");
-    setPenaltyPaid("00");
-    setInstallmentDate((Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()).toString() + ' | ' + (Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]).toString())
-    console.log(
-      amountPaid
-      && mpesaReferenceCode
-      && arrears
-      && outstandingBalance
-      && outstandingPenalty
-      && principalPaid
-      && interestPaid
-      && penaltyPaid
-      && installmentDate
-    );
+    renderPaymentCalculations(customerDetails[0]?.installmentAmount, customerDetails[0]?.interestAmount, amountPaid, customerDetails[0]?.loanTenure)
+    // console.log("·······················");
+    // console.log("amount paid  :", amountPaid);
+    // console.log("arrears owe  :", arrears);
+    // console.log("m-pesa code  :", mpesaReferenceCode);
+    // console.log("inst amount  :", customerDetails[0]?.installmentAmount);
+    // console.log("o/s balance  :", outstandingBalance);
+    // console.log("amnt penlty  :", outstandingPenalty);
+    // console.log("princi paid  :", principalPaid);
+    // console.log("intrst paid  :", interestPaid);
+    // console.log("penlty paid  :", penaltyPaid);
+    // console.log("installment  :", installmentDate);
   };
 
   const addPayment = () => {
@@ -107,6 +129,7 @@ export default function PaymentDetail() {
           setAmountPaid('');
           setMpesaReferenceCode('');
           setAddingPayment(false);
+          setReview(false);
           alert('Payment Added')
         });
     };
@@ -210,6 +233,98 @@ export default function PaymentDetail() {
     )
   }
 
+  function renderReview() {
+    return (
+      <>
+        <div
+        >
+          <div className="ml-auto mr-auto mb-3">
+            <div className="flex justify-center items-center px-4 py-4">
+              <div className="mt-3">
+                <span className="font-bold text-xl mr-2">
+                  Review Details
+                </span>
+              </div>
+            </div>
+            <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Amount Paid
+                </span>
+                <span className="ml-auto">KSHs. {amountPaid}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Arrears
+                </span>
+                <span className="ml-auto">KSHs. {arrears}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Installment Amount
+                </span>
+                <span className="ml-auto">KSHs. {customerDetails[0]?.installmentAmount}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  O/S Balance
+                </span>
+                <span className="ml-auto">KSHs. {outstandingBalance}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Principal Paid
+                </span>
+                <span className="ml-auto">KSHs. {principalPaid}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Interest Paid
+                </span>
+                <span className="ml-auto">KSHs. {interestPaid}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Penalty Paid
+                </span>
+                <span className="ml-auto">KSHs. {penaltyPaid}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Penalty Amount
+                </span>
+                <span className="ml-auto">KSHs. {customerDetails[0]?.penaltyAmount}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  M-PESA Code
+                </span>
+                <span className="ml-auto uppercase">{mpesaReferenceCode}</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Installment Date
+                </span>
+                <span className="ml-auto">{installmentDate.split('|')[1]}</span>
+              </li>
+            </ul>
+          </div>
+          <div className="flex flex-wrap justify-center mt-6 gap-3">
+            <button
+              type="button"
+              className="bg-cyan-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
+              onClick={() => { setPayment(); addPayment(); }}
+              onMouseEnter={() => { setPayment(); }}
+            >
+              {addingPayment ? 'Adding ...' : 'Add Payment'}
+            </button>
+          </div>
+          <br />
+        </div>
+      </>
+    )
+  }
+
   function renderCustomerDetails() {
     return (
       <>
@@ -218,11 +333,6 @@ export default function PaymentDetail() {
             setProductType(customerDetails[0].productType)
           }}
         >
-          <div className="font-bold mt-5 flex justify-center w-full text-3xl">
-            <span className="text-gray-500">Payments for </span>
-            <span className="text-gray-700 ml-3">{customerDetails[0]?.memberNames}</span>
-          </div>
-          <br />
           <div className="ml-auto mr-auto mb-3">
             <div className="flex justify-center items-center px-4 py-4">
               <div className="mt-3">
@@ -289,6 +399,48 @@ export default function PaymentDetail() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
+                  <tr
+                    // onClick={() => {
+                    //   navigate(`/loan/approvals/${payment._id}`);
+                    // }}
+                    className="hover:bg-gray-300 cursor-pointer"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="ml-0">
+                          <div className="text-sm font-medium text-gray-900">{customerDetails[0]?.installmentDate.split('|')[1]}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="ml-0">
+                          <div className="text-sm font-medium text-gray-900">...</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">...</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">...</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">-{customerDetails[0]?.interestAmount}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">-{customerDetails[0]?.principalAmount}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">...</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">...</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{customerDetails[0]?.outstandingAmount}</div>
+                    </td>
+                  </tr>
                   {customerDetails ? customerDetails[0]?.recentPayments?.map((payment, index) => (
                     <tr
                       // onClick={() => {
@@ -312,7 +464,7 @@ export default function PaymentDetail() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{payment.mpesaReferenceCode}</div>
+                        <div className="text-sm uppercase font-medium text-gray-900">{payment.mpesaReferenceCode}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{payment.penaltyPaid}</div>
@@ -351,14 +503,12 @@ export default function PaymentDetail() {
       <>
         <div
         >
+          <div className="font-bold mt-5 flex justify-center w-full text-2xl">
+            <span className="text-gray-500">Payments for </span>
+            <span className="text-gray-700 ml-3">{customerDetails[0]?.memberNames}</span>
+          </div>
+          <br />
           <div className="ml-auto mr-auto mb-3">
-            <div className="flex justify-center items-center px-4 py-4">
-              <div className="mt-0">
-                <span className="font-bold text-xl mr-2">
-                  Loan Payments Form
-                </span>
-              </div>
-            </div>
             <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                 <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
@@ -370,7 +520,11 @@ export default function PaymentDetail() {
                   type="number"
                   placeholder="Paid Amount ..."
                   value={amountPaid}
-                  onChange={(e) => setAmountPaid(e.target.value)}
+                  onChange={(e) => {
+                    setReview(true);
+                    setAmountPaid(e.target.value);
+                    renderPaymentCalculations(customerDetails[0]?.installmentAmount, customerDetails[0]?.interestAmount, amountPaid, customerDetails[0]?.loanTenure)
+                  }}
                 />
               </div>
               <div className="w-full md:w-1/2 px-3">
@@ -387,16 +541,6 @@ export default function PaymentDetail() {
                 />
               </div>
             </div>
-            <div className="flex flex-wrap mt-6 gap-3">
-              <button
-                type="button"
-                className="bg-cyan-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
-                onClick={addPayment}
-                onMouseEnter={setPayment}
-              >
-                {addingPayment ? 'Adding ...' : 'Add'}
-              </button>
-            </div>
           </div>
         </div>
       </>
@@ -405,8 +549,8 @@ export default function PaymentDetail() {
 
   return (
     <>
-      {renderCustomerDetails()}
       {renderLoanPayments()}
+      {review ? renderReview() : renderCustomerDetails()}
       {renderRecentPayments()}
       {loadLoan ? null :
         <>
@@ -444,6 +588,7 @@ export default function PaymentDetail() {
           </div>
         </>
       }
+      <pre>{JSON.stringify(productDetails, undefined, 2)}</pre>
       <pre>{JSON.stringify(customerDetails, undefined, 2)}</pre>
     </>
   )
