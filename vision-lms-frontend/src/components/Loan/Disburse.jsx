@@ -148,15 +148,28 @@ export default function Disburse() {
     setRepaymentCycle(loanDetails[0]?.repaymentCycle);
     setDisbursedAmount(loanDetails[0]?.principalAmount);
     setOutstandingAmount((Number(loanDetails[0]?.principalAmount) + Number(loanDetails[0]?.interestAmount)).toString());
+    setOutstandingPenalty('false')
     setFirstInstallmentDate(
       (
         loanDetails[0]?.repaymentCycle === 'days' ?
-          renderFirstDailyInstallment(disbursementDate)
+          renderFirstDailyInstallment(disbursementDate).split('-')[0]
+          + '-' +
+          renderFirstDailyInstallment(disbursementDate).split('-')[1]
+          + '-' +
+          renderFirstDailyInstallment(disbursementDate).split('-')[2]
           :
           loanDetails[0]?.repaymentCycle === 'weeks' ?
-            renderFirstWeeklyInstallment(disbursementDate)
+            renderFirstWeeklyInstallment(disbursementDate).split('-')[0]
+            + '-' +
+            renderFirstWeeklyInstallment(disbursementDate).split('-')[1]
+            + '-' +
+            renderFirstWeeklyInstallment(disbursementDate).split('-')[2]
             :
-            renderFirstMonthlyInstallment(disbursementDate)
+            renderFirstMonthlyInstallment(disbursementDate).split('-')[0]
+            + '-' +
+            renderFirstMonthlyInstallment(disbursementDate).split('-')[1]
+            + '-' +
+            renderFirstMonthlyInstallment(disbursementDate).split('-')[2]
       ));
     setReferenceNumber((`${loans?.length > 9 ? Number(loans?.length) + 1 : '0' + (Number(loans?.length) + 1)}-${loanDetails[0]?.loanAccNumber}`).toString());
     setMpesaReferenceCode("");
@@ -190,7 +203,7 @@ export default function Disburse() {
       // , disbursementDate
       // , outstandingAmount
       // , outstandingBalance
-      // , outstandingPenalty
+      , outstandingPenalty
       // , penaltyDue
       // , principalPaid
       // , amountPaid
@@ -305,23 +318,14 @@ export default function Disburse() {
         , repaymentCycle
         , loanOfficerName
         , loanOfficerPhoneNumber
-        , interestDue
-        , installmentsDue
         , arrears
         , daysInArrears
         , disbursedAmount
         , disbursementDate
         , outstandingAmount
-        , outstandingBalance
         , outstandingPenalty
-        , penaltyDue
-        , principalPaid
-        , amountPaid
-        , interestPaid
-        , penaltyPaid
         , firstInstallmentDate
         , referenceNumber
-        , mpesaReferenceCode
       };
       client.create(doc1).then(() => {
         alert('Success')

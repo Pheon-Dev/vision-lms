@@ -113,6 +113,21 @@ export default {
       title: 'Reference Number',
       type: 'string',
     },
+    {
+      name: 'maintained',
+      title: 'Maintainance Status',
+      type: 'string',
+    },
+    {
+      name: 'approved',
+      title: 'Approval Status',
+      type: 'string',
+    },
+    {
+      name: 'disbursed',
+      title: 'Disbursal Status',
+      type: 'string',
+    },
   ],
 };
 

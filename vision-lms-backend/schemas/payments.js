@@ -119,6 +119,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'outstandingPenalty',
+      title: 'Outstanding Penalty',
+      type: 'string',
+    },
+    {
       name: 'outstandingAmount',
       title: 'Outstanding Amount',
       type: 'string',

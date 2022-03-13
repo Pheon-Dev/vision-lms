@@ -4,6 +4,16 @@ export default {
   type: 'document',
   fields: [
     {
+      name: 'installmentDate',
+      title: 'Installement Date',
+      type: 'string',
+    },
+    {
+      name: 'amountPaid',
+      title: 'Amount Paid',
+      type: 'string',
+    },
+    {
       name: 'arrears',
       title: 'Arrears',
       type: 'string',
@@ -24,11 +34,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'amountPaid',
-      title: 'Amount Paid',
-      type: 'string',
-    },
-    {
       name: 'interestPaid',
       title: 'Interest Paid',
       type: 'string',
@@ -39,8 +44,8 @@ export default {
       type: 'string',
     },
     {
-      name: 'installmentDate',
-      title: 'Installement Date',
+      name: 'nextInstallmentDate',
+      title: 'Next Installement Date',
       type: 'string',
     },
     {

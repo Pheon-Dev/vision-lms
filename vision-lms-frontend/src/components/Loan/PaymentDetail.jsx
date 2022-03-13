@@ -24,6 +24,7 @@ export default function PaymentDetail() {
   const [penaltyPaid, setPenaltyPaid] = useState("");
   const [nextInstallmentDate, setNextInstallmentDate] = useState("");
   const [installmentDate, setInstallmentDate] = useState("");
+  const [currentInstallmentDate, setCurrentInstallmentDate] = useState("");
   const [penaltyCount, setPenaltyCount] = useState(0);
 
   const fetchCustomerDetails = () => {
@@ -48,49 +49,6 @@ export default function PaymentDetail() {
     fetchCustomerDetails();
   }, [paymentId, productType]);
 
-  function renderPaymentCalculation(installment, interest, paid_amount, tenure, penalty, principal_amount) {
-    const p_installment = installment;
-    const p_interest = interest;
-    const p_paid_amount = paid_amount;
-    const p_tenure = tenure;
-    const p_penalty = penalty;
-    const p_principal = principal_amount;
-
-    let res_arrears = (
-      Number(p_installment - p_paid_amount)
-      // + Number(penaltyPaid === '0' ? 0 : penalty)
-    ).toString();
-
-    let res_interest = (
-      // Number(paid_amount)
-      // - (
-      Number(interest)
-      / Number(tenure)
-      // )
-    ).toString();
-
-    const date = new Date();
-    let res_date = (
-      Date().split(' ')[3] + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getDay()
-    ).toString() + ' | ' + (
-      Date().split(' ')[0] + ' ' + Date().split(' ')[1] + ' ' + Date().split(' ')[2] + ' ' + Date().split(' ')[3]
-    ).toString();
-
-    let res_os_balance = ((Number(principal_amount) + (Number(interest) / Number(tenure))) - Number(paid_amount)).toString();
-    // let res_os_balance = ((Number(principal_amount) + Number(penalty ? penalty : 0) + (Number(interest) / Number(tenure))) - Number(paid_amount)).toString();
-    let res_os_penalty = (0).toString();
-    let res_penalty = (penalty).toString();
-    let res_principal = (Number(paid_amount) - (Number(interest) / Number(tenure))).toString();
-
-    setArrears((customerDetails[0]?.installmentAmount - amountPaid).toString());
-    setInterestPaid(res_interest);
-    setInstallmentDate(res_date);
-    setOutstandingBalance(res_os_balance);
-    setOutstandingPenalty(res_os_penalty);
-    setPrincipalPaid(res_principal);
-    setPenaltyPaid(res_penalty);
-  };
-
   function renderArrears(installment, amount) {
     let result = (installment - amount);
     return result.toString();
@@ -112,68 +70,118 @@ export default function PaymentDetail() {
     return result.toString();
   }
 
-  // function renderFirstDailyInstallment(installment_date) {
-  // }
-  function renderInstallmentDate() {
-    let today = new Date();
-    let date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    date.setDate(date.getDate())
-    let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
-    return result.toString();
-  }
-
-  function renderDailyNextInstallmentDate() {
-    let today = new Date();
-    let date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  function renderDailyNextInstallmentDate(installment_date) {
+    let day = installment_date.split('-')[0];
+    let month = installment_date.split('-')[1];
+    let year = installment_date.split('-')[2];
+    const date = new Date(year, month, day);
     date.setDate(date.getDate() + 1)
     let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
     return result.toString();
   }
 
-  function renderWeeklyNextInstallmentDate() {
-    let today = new Date();
-    let date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  function renderWeeklyNextInstallmentDate(installment_date) {
+    let day = installment_date.split('-')[0];
+    let month = installment_date.split('-')[1];
+    let year = installment_date.split('-')[2];
+    const date = new Date(year, month, day);
+    // let today = new Date();
+    // let date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     date.setDate(date.getDate() + 7)
     let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
     return result.toString();
   }
 
-  function renderMonthlyNextInstallmentDate() {
-    let today = new Date();
-    let date = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  function renderMonthlyNextInstallmentDate(installment_date) {
+    let day = installment_date.split('-')[0];
+    let month = installment_date.split('-')[1];
+    let year = installment_date.split('-')[2];
+    const date = new Date(year, month, day);
     date.setDate(date.getDate() + 30)
     let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
     return result.toString();
   }
 
+  function renderPenaltyPaid(penalty) {
+    let result = penalty;
+    return result;
+  }
+
+  function renderDailyPenaltyPaid(penalty) {
+    let result = penalty;
+    return result;
+  }
+
+  function renderOutstandingPenalty(outstanding, penalty, i_date) {
+    let day = i_date.split('-')[2];
+    let month = i_date.split('-')[1];
+    let year = i_date.split('-')[0];
+    const date = new Date(year, month, day);
+    // date.setDate(date.getDate() + (Number(tenure) * 30))
+    date.setDate(date.getDate() + 30)
+    let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
+
+    return result.toString();
+  }
+
   const setPayment = () => {
+    setInstallmentDate((currentInstallmentDate).split('-')[2] + '-' + (currentInstallmentDate).split('-')[1] + '-' + (currentInstallmentDate).split('-')[0])
     setArrears(renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid)))
     setOutstandingBalance((renderOutstandingBalance(Number(customerDetails[0]?.principalAmount), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid))));
     setInterestPaid((renderInterestPaid(Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure))));
     setPrincipalPaid((renderPrincipalPaid(Number(customerDetails[0]?.loanTenure), Number(customerDetails[0]?.interestAmount), Number(amountPaid))));
-    setInstallmentDate(renderInstallmentDate());
+    // setInstallmentDate(renderInstallmentDate());
     setNextInstallmentDate(
       customerDetails[0]?.repaymentCycle === 'days' ?
-        renderDailyNextInstallmentDate()
+        (
+          customerDetails[0]?.outstandingPenalty === "false" ?
+            renderDailyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
+            :
+            renderDailyNextInstallmentDate(installmentDate)
+        )
         :
         customerDetails[0]?.repaymentCycle === 'weeks' ?
-          renderWeeklyNextInstallmentDate()
+          (
+            customerDetails[0]?.outstandingPenalty === "false" ?
+              renderWeeklyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
+              :
+              renderWeeklyNextInstallmentDate(installmentDate)
+          )
           :
-          renderMonthlyNextInstallmentDate()
+          (
+            customerDetails[0]?.outstandingPenalty === "false" ?
+              renderMonthlyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
+              :
+              renderMonthlyNextInstallmentDate(installmentDate)
+          )
     );
-    // renderPaymentCalculations(customerDetails[0]?.installmentAmount, customerDetails[0]?.interestAmount, amountPaid, customerDetails[0]?.loanTenure, customerDetails[0]?.penaltyAmount, customerDetails[0]?.principalAmount)
-    // console.log("·······················");
+    setPenaltyPaid(
+      customerDetails[0]?.repaymentCycle === 'days' ?
+        renderDailyPenaltyPaid(Number(customerDetails[0]?.penaltyAmount).toString())
+        :
+        renderPenaltyPaid(Number(customerDetails[0]?.penaltyAmount).toString())
+    );
+    setOutstandingPenalty(
+      customerDetails[0]?.outstandingPenalty === "false" ?
+        '0'
+        :
+        customerDetails[0]?.outstandingPenalty === "0" ?
+          '0'
+          :
+          renderOutstandingPenalty(Number(customerDetails[0]?.outstandingPenalty), Number(customerDetails[0]?.penaltyAmount), installmentDate)
+    );
+    console.log("·······················");
     // console.log("amount paid  :", amountPaid);
-    console.log("arrears owe  :", arrears);
-    console.log("m-pesa code  :", mpesaReferenceCode);
-    console.log("inst amount  :", customerDetails[0]?.installmentAmount);
-    console.log("o/s balance  :", outstandingBalance);
-    // console.log("amnt penlty  :", outstandingPenalty);
-    console.log("princi paid  :", principalPaid);
+    // console.log("arrears owe  :", arrears);
+    // console.log("m-pesa code  :", mpesaReferenceCode);
+    // console.log("inst amount  :", customerDetails[0]?.installmentAmount);
+    // console.log("o/s balance  :", outstandingBalance);
+    // console.log("princi paid  :", principalPaid);
     // console.log("intrst paid  :", interestPaid);
+    // console.log("amnt penlty  :", outstandingPenalty);
     // console.log("penlty paid  :", penaltyPaid);
     console.log("instmt date  :", installmentDate);
-    console.log("nxt instlmt  :", nextInstallmentDate);
+    // console.log("nxt instlmt  :", nextInstallmentDate);
   };
 
   const addPayment = () => {
@@ -186,10 +194,19 @@ export default function PaymentDetail() {
       && principalPaid
       && interestPaid
       && penaltyPaid
+      && installmentDate
       && nextInstallmentDate
     ) {
       setAddingPayment(true);
-      console.log('adding')
+      client
+        .patch(paymentId)
+        .set({
+          outstandingPenalty: '0',
+        })
+        .commit()
+        .then((update) => {
+          console.log(update);
+        });
       client
         .patch(paymentId)
         .setIfMissing({ recentPayments: [] })
@@ -203,6 +220,7 @@ export default function PaymentDetail() {
             , principalPaid
             , interestPaid
             , penaltyPaid
+            , installmentDate
             , nextInstallmentDate
             , _key: uuidv4()
           }
@@ -212,6 +230,14 @@ export default function PaymentDetail() {
           fetchCustomerDetails();
           setAmountPaid('');
           setMpesaReferenceCode('');
+          setOutstandingBalance('');
+          setOutstandingPenalty('');
+          setPrincipalPaid('');
+          setInterestPaid('');
+          setPenaltyPaid('');
+          setInstallmentDate('');
+          setNextInstallmentDate('');
+          setCurrentInstallmentDate('');
           setAddingPayment(false);
           setReview(false);
           alert('Payment Added')
@@ -344,9 +370,65 @@ export default function PaymentDetail() {
                   </span>
                   <span className="ml-auto">{customerDetails[0]?.firstInstallmentDate}</span>
                 </li>
+                {/* { */}
+                {/*   customerDetails[0]?.outstandingPenalty === 'false' ? */}
+                {/*     null */}
+                {/*     : */}
+                {/*     <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
+                {/*       <span> */}
+                {/*         Previous Installment Date */}
+                {/*       </span> */}
+                {/*       <span className="ml-auto"> */}
+                {/*         {customerDetails[0]?.recentPayments[1]?.installmentDate} */}
+                {/*       </span> */}
+                {/*     </li> */}
+                {/* } */}
+                {/* <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
+                {/*   <span> */}
+                {/*     Next Installment Date */}
+                {/*   </span> */}
+                {/*   { */}
+                {/*     customerDetails[0]?.repaymentCycle === 'days' ? */}
+                {/*       <span className="ml-auto"> */}
+                {/*         { */}
+                {/*           customerDetails[0]?.outstandingPenalty === "false" ? */}
+                {/*             renderDailyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate) */}
+                {/*             : */}
+                {/*             renderDailyNextInstallmentDate(customerDetails[0]?.recentPayments[0]?.installmentDate) */}
+                {/*         } */}
+                {/*       </span> */}
+                {/*       : */}
+                {/*       customerDetails[0]?.repaymentCycle === 'weeks' ? */}
+                {/*         <span className="ml-auto">{ */}
+                {/*           customerDetails[0]?.outstandingPenalty === "false" ? */}
+                {/*             renderWeeklyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate) */}
+                {/*             : */}
+                {/*             renderWeeklyNextInstallmentDate(customerDetails[0]?.recentPayments[0]?.installmentDate) */}
+                {/*         }</span> */}
+                {/*         : */}
+                {/*         <span className="ml-auto">{ */}
+                {/*           customerDetails[0]?.outstandingPenalty === "false" ? */}
+                {/*             renderMonthlyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate) */}
+                {/*             : */}
+                {/*             renderMonthlyNextInstallmentDate(customerDetails[0]?.recentPayments[0]?.installmentDate) */}
+                {/*         }</span> */}
+                {/*   } */}
+                {/* </li> */}
               </ul>
             </div>
             <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
+                  Current Installment Date
+                </span>
+                <input
+                  className="ml-auto rounded-lg"
+                  type="date"
+                  value={currentInstallmentDate}
+                  onChange={(e) => setCurrentInstallmentDate(e.target.value)}
+                />
+                {/* <span className="ml-auto">{renderInstallmentDate()}</span> */}
+              </li>
               <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                 <span>
                   Amount Paid
@@ -385,9 +467,28 @@ export default function PaymentDetail() {
               </li>
               <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                 <span>
+                  Outstanding Penalty
+                </span>
+                <span className="ml-auto">KSHs. {
+                  customerDetails[0]?.outstandingPenalty === "false" ?
+                    0
+                    :
+                    customerDetails[0]?.outstandingPenalty === "0" ?
+                      0
+                      :
+                      renderOutstandingPenalty(Number(customerDetails[0]?.outstandingPenalty), Number(customerDetails[0]?.penaltyAmount), installmentDate)
+                }</span>
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
                   Penalty Paid
                 </span>
-                <span className="ml-auto">KSHs. {penaltyPaid}</span>
+                {
+                  customerDetails[0]?.repaymentCycle === 'days' ?
+                    <span className="ml-auto">KSHs. {renderDailyPenaltyPaid(customerDetails[0]?.penaltyAmount)}</span>
+                    :
+                    <span className="ml-auto">KSHs. {renderPenaltyPaid(customerDetails[0]?.penaltyAmount)}</span>
+                }
               </li>
               <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                 <span>
@@ -400,26 +501,6 @@ export default function PaymentDetail() {
                   M-PESA Code
                 </span>
                 <span className="ml-auto uppercase">{mpesaReferenceCode}</span>
-              </li>
-              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                <span>
-                  Installment Date
-                </span>
-                <span className="ml-auto">{renderInstallmentDate()}</span>
-              </li>
-              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                <span>
-                  Next Installment Date
-                </span>
-                {
-                  customerDetails[0]?.repaymentCycle === 'days' ?
-                    <span className="ml-auto">{renderDailyNextInstallmentDate()}</span>
-                    :
-                    customerDetails[0]?.repaymentCycle === 'weeks' ?
-                      <span className="ml-auto">{renderWeeklyNextInstallmentDate()}</span>
-                      :
-                      <span className="ml-auto">{renderMonthlyNextInstallmentDate()}</span>
-                }
               </li>
             </ul>
           </div>
@@ -521,7 +602,7 @@ export default function PaymentDetail() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="ml-0">
-                            <div className="text-sm font-medium text-gray-900">{payment.firstInstallmentDate}</div>
+                            <div className="text-sm font-medium text-gray-900">{payment.installmentDate}</div>
                           </div>
                         </div>
                       </td>
@@ -545,7 +626,11 @@ export default function PaymentDetail() {
                         <div className="text-sm text-gray-900">{payment.principalPaid}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{payment.outstandingPenalty}</div>
+                        <div className="text-sm text-gray-900">{
+                          payment.outstandingPenalty === 'false' ?
+                            0 :
+                            payment.outstandingPenalty
+                        }</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{payment.arrears}</div>

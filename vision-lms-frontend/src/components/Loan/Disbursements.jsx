@@ -9,7 +9,6 @@ import { products, memberDetailMoreMemberQuery, memberDetailQuery, loanFeedQuery
 import { Spinner, Layout } from '../Components';
 
 export default function Disbursement() {
-  const { loanId } = useParams();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [approvedList, setApprovedList] = useState();
