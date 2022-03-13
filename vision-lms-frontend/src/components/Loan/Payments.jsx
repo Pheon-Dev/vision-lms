@@ -45,7 +45,7 @@ export default function Payments() {
                       onClick={() => {
                         navigate(`/loan/payments/${member._id}`);
                       }}
-                      key={member._id}
+                      key={member?._id}
                       className="hover:bg-gray-300 cursor-pointer"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
