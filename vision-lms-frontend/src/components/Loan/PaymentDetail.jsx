@@ -50,14 +50,14 @@ export default function PaymentDetail() {
     fetchCustomerDetails();
   }, [paymentId, productType]);
 
-  function renderArrears(installment, amount) {
-    let result = (installment - amount);
+  function renderArrears(installment, amount, os_penalty) {
+    let result = ((installment + os_penalty) - amount);
     return result.toString();
 
   }
 
-  function renderOutstandingBalance(principal, interest, tenure, amount) {
-    let result = (principal + (interest / tenure) - amount);
+  function renderOutstandingBalance(principal, interest, tenure, amount, penalty) {
+    let result = ((principal + (interest / tenure) + penalty) - amount);
     return result.toString();
   }
 
@@ -68,6 +68,16 @@ export default function PaymentDetail() {
 
   function renderPrincipalPaid(tenure, interest, amount) {
     let result = amount - (interest / tenure);
+    return result.toString();
+  }
+
+  function renderFirstInstallmentDate(installment_date) {
+    let day = installment_date.split('-')[0];
+    let month = installment_date.split('-')[1];
+    let year = installment_date.split('-')[2];
+    const date = new Date(year, month, day);
+    date.setDate(date.getDate())
+    let result = date.getDate() + '-' + Number(date.getMonth() + 1) + '-' + date.getFullYear();
     return result.toString();
   }
 
@@ -105,7 +115,7 @@ export default function PaymentDetail() {
 
   function renderDailyPenalty(penalty, os_penalty, installment, amount) {
     let result = 0;
-    if (amount < installment) {
+    if (amount < (installment + 1)) {
       result = penalty + os_penalty;
     } else {
       result = os_penalty;
@@ -115,28 +125,47 @@ export default function PaymentDetail() {
 
   function renderPenalty(penalty, os_penalty, installment, amount) {
     let result = 0;
-    if (amount < installment) {
-      result = penalty + os_penalty;
+    let check = 0;
+    if (amount < (installment + 1)) {
+      result = penalty;
     } else {
-      result = os_penalty;
+      check = amount - installment;
+      // result = check;
+      if (check < os_penalty) {
+        result = penalty
+      } else {
+        result = 0
+      }
     }
     return result.toString();
   }
 
-  function renderPenaltyPaid(interest, tenure, penalty, os_penalty, installment, amount) {
+  function renderPenaltyPaid(penalty, os_penalty, installment, amount) {
     let result = 0;
-    let check = 0;
-    if (amount < installment) {
-      check = amount - ((interest / tenure) + installment + os_penalty + penalty);
+    let check_1 = 0;
+    let check_2 = 0;
+    if (amount < (installment + 1)) {
+      result = 0;
+      // check_1 = amount - ((interest / tenure) + installment);
+      // if (check_1 < 1) {
+      //   result = 0;
+      // } else {
+      //   if (check_1 > os_penalty) {
+      //     result = os_penalty;
+      //   } else {
+      //     result = os_penalty - check_1;
+      //   }
+      // }
     } else {
-      check = amount - ((interest / tenure) + installment + os_penalty + 0);
+      check_2 = amount - installment;
+      if (check_2 > os_penalty) {
+        result = os_penalty;
+      } else {
+        check_1 = os_penalty - check_2;
+        result = os_penalty - check_1;
+      }
     }
 
-    if (check < 0) {
-      result = 0;
-    } else {
-      result = check;
-    }
 
     return result.toString();
   }
@@ -144,13 +173,13 @@ export default function PaymentDetail() {
   function renderDailyPenaltyPaid(interest, tenure, penalty, os_penalty, installment, amount) {
     let result = 0;
     let check = 0;
-    if (amount < installment) {
+    if (amount < (installment + 1)) {
       check = amount - ((interest / tenure) + installment + os_penalty + penalty);
     } else {
       check = amount - ((interest / tenure) + installment + os_penalty + 0);
     }
 
-    if (check < 0) {
+    if (check < 1) {
       result = 0;
     } else {
       result = check;
@@ -159,30 +188,79 @@ export default function PaymentDetail() {
     return result.toString();
   }
 
-  function renderOutstandingPenalty(penalty, os_penalty) {
+  function renderOutstandingDailyPenalty(penalty, os_penalty, installment, amount) {
     let result = 0;
-    if (os_penalty === 0) {
-      result = os_penalty;
-    } else {
+    let check_1 = 0;
+    let check_2 = 0;
+
+    if (amount < (installment + 1)) {
       result = penalty + os_penalty;
+    } else {
+      check_1 = amount - ((interest / tenure) + installment);
+      if (check_1 > 0) {
+        check_2 = check_1 - os_penalty;
+      }
+      if (check_2 < 1) {
+        result = check_2 * -1;
+      } else {
+        result = 0;
+      }
+    }
+    return result.toString();
+  }
+
+  function renderOutstandingPenalty(penalty, os_penalty, installment, amount) {
+    let result = 0;
+    let check_1 = 0;
+    let check_2 = 0;
+
+    if (amount < (installment + 1)) {
+      result = penalty + os_penalty;
+    } else {
+      check_1 = amount - installment;
+      if (check_1 > os_penalty) {
+        result = 0;
+      } else {
+        check_2 = os_penalty - check_1;
+        result = os_penalty + check_2;
+      }
+      // if (check_2 < 1) {
+      //   result = check_2 * -1;
+      // } else {
+      //   result = 0;
+      // }
     }
     return result.toString();
   }
 
   const setPayment = () => {
-    setInstallmentDate((currentInstallmentDate).split('-')[2] + '-' + (currentInstallmentDate).split('-')[1] + '-' + (currentInstallmentDate).split('-')[0])
-    setArrears(renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid)))
-    setOutstandingBalance((renderOutstandingBalance(Number(customerDetails[0]?.principalAmount), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid))));
+    setInstallmentDate((currentInstallmentDate).split('-')[2] + '-' + (currentInstallmentDate).split('-')[1] + '-' + (currentInstallmentDate).split('-')[0]);
+
+    setArrears(
+      customerDetails[0]?.outstandingPenalty === 'false' ?
+        renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid), 0)
+        :
+        renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty))
+    );
+
+    setOutstandingBalance(
+      customerDetails[0]?.outstandingPenalty === "false" ?
+        renderOutstandingBalance(Number(customerDetails[0]?.principalAmount), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid), 0)
+        :
+        renderOutstandingBalance(Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingBalance), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty))
+    );
+
     setInterestPaid((renderInterestPaid(Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure))));
+
     setPrincipalPaid((renderPrincipalPaid(Number(customerDetails[0]?.loanTenure), Number(customerDetails[0]?.interestAmount), Number(amountPaid))));
-    // setInstallmentDate(renderInstallmentDate());
+
     setNextInstallmentDate(
       customerDetails[0]?.repaymentCycle === 'days' ?
         (
           customerDetails[0]?.outstandingPenalty === "false" ?
             renderDailyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
             :
-            renderDailyNextInstallmentDate(installmentDate)
+            renderDailyNextInstallmentDate(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.installmentDate)
         )
         :
         customerDetails[0]?.repaymentCycle === 'weeks' ?
@@ -190,59 +268,67 @@ export default function PaymentDetail() {
             customerDetails[0]?.outstandingPenalty === "false" ?
               renderWeeklyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
               :
-              renderWeeklyNextInstallmentDate(installmentDate)
+              renderWeeklyNextInstallmentDate(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.installmentDate)
           )
           :
           (
             customerDetails[0]?.outstandingPenalty === "false" ?
               renderMonthlyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
               :
-              renderMonthlyNextInstallmentDate(installmentDate)
+              renderMonthlyNextInstallmentDate(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.installmentDate)
           )
     );
+
     setPenalty(
       customerDetails[0]?.repaymentCycle === 'days' ?
         (
           customerDetails[0]?.outstandingPenalty === 'false' ?
             '0'
             :
-            renderDailyPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
+            renderDailyPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
         )
         :
         (
           customerDetails[0]?.outstandingPenalty === 'false' ?
             '0'
             :
-            renderPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
+            renderPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
         )
     );
+
     setPenaltyPaid(
       customerDetails[0]?.repaymentCycle === 'days' ?
-        renderDailyPenaltyPaid(Number(customerDetails[0]?.penaltyAmount).toString())
+        customerDetails[0]?.outstandingPenalty === 'false' ?
+          '0'
+          :
+          renderDailyPenaltyPaid(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
         :
-        renderPenaltyPaid(Number(customerDetails[0]?.penaltyAmount).toString())
+        customerDetails[0]?.outstandingPenalty === 'false' ?
+          '0'
+          :
+          renderPenaltyPaid(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
     );
     setOutstandingPenalty(
       customerDetails[0]?.outstandingPenalty === "false" ?
         '0'
         :
-        customerDetails[0]?.outstandingPenalty === "0" ?
-          '0'
-          :
-          renderOutstandingPenalty(Number(customerDetails[0]?.outstandingPenalty), Number(customerDetails[0]?.penaltyAmount), installmentDate)
+        renderOutstandingPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
     );
     console.log("·······················");
-    // console.log("amount paid  :", amountPaid);
-    // console.log("arrears owe  :", arrears);
-    // console.log("m-pesa code  :", mpesaReferenceCode);
-    // console.log("inst amount  :", customerDetails[0]?.installmentAmount);
-    // console.log("o/s balance  :", outstandingBalance);
-    // console.log("princi paid  :", principalPaid);
-    // console.log("intrst paid  :", interestPaid);
-    // console.log("amnt penlty  :", outstandingPenalty);
-    // console.log("penlty paid  :", penaltyPaid);
+    console.log("·······················");
     console.log("instmt date  :", installmentDate);
-    // console.log("nxt instlmt  :", nextInstallmentDate);
+    console.log("nxt instlmt  :", nextInstallmentDate);
+    console.log("·······················");
+    console.log("amount paid  :", amountPaid);
+    console.log("arrears owe  :", arrears);
+    console.log("inst amount  :", customerDetails[0]?.installmentAmount);
+    console.log("o/s balance  :", outstandingBalance);
+    console.log("princi paid  :", principalPaid);
+    console.log("intrst paid  :", interestPaid);
+    console.log("penalty due  :", penalty);
+    console.log("amnt penlty  :", outstandingPenalty);
+    console.log("penlty paid  :", penaltyPaid);
+    console.log("m-pesa code  :", mpesaReferenceCode);
   };
 
   const addPayment = () => {
@@ -255,6 +341,7 @@ export default function PaymentDetail() {
       && principalPaid
       && interestPaid
       && penaltyPaid
+      && penalty
       && installmentDate
       && nextInstallmentDate
     ) {
@@ -281,6 +368,7 @@ export default function PaymentDetail() {
             , principalPaid
             , interestPaid
             , penaltyPaid
+            , penalty
             , installmentDate
             , nextInstallmentDate
             , _key: uuidv4()
@@ -296,6 +384,7 @@ export default function PaymentDetail() {
           setPrincipalPaid('');
           setInterestPaid('');
           setPenaltyPaid('');
+          setPenalty('');
           setInstallmentDate('');
           setNextInstallmentDate('');
           setCurrentInstallmentDate('');
@@ -439,7 +528,7 @@ export default function PaymentDetail() {
                   <span>
                     First Installment Date
                   </span>
-                  <span className="ml-auto">{customerDetails[0]?.firstInstallmentDate}</span>
+                  <span className="ml-auto">{renderFirstInstallmentDate(customerDetails[0]?.firstInstallmentDate)}</span>
                 </li>
                 {
                   customerDetails[0]?.outstandingPenalty === 'false' ?
@@ -510,7 +599,14 @@ export default function PaymentDetail() {
                 <span>
                   Arrears
                 </span>
-                <span className="ml-auto">KSHs. {renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid))}</span>
+                <span className="ml-auto">KSHs.
+                  {
+                    customerDetails[0]?.outstandingPenalty === 'false' ?
+                      renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid), 0)
+                      :
+                      renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty))
+                  }
+                </span>
               </li>
               <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                 <span>
@@ -525,9 +621,9 @@ export default function PaymentDetail() {
                 <span className="ml-auto">
                   KSHs. {
                     customerDetails[0]?.outstandingPenalty === "false" ?
-                      renderOutstandingBalance(Number(customerDetails[0]?.principalAmount), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid))
+                      renderOutstandingBalance(Number(customerDetails[0]?.principalAmount), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid), 0)
                       :
-                      renderOutstandingBalance(Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingBalance), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid))
+                      renderOutstandingBalance(Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingBalance), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty))
                   }
                 </span>
               </li>
@@ -554,7 +650,8 @@ export default function PaymentDetail() {
                         customerDetails[0]?.outstandingPenalty === 'false' ?
                           '0'
                           :
-                          renderDailyPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
+                          renderDailyPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
+                        // renderDailyPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
                       }
                     </span>
                     :
@@ -563,7 +660,8 @@ export default function PaymentDetail() {
                         customerDetails[0]?.outstandingPenalty === 'false' ?
                           '0'
                           :
-                          renderPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
+                          renderPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
+                        // renderPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
                       }
                     </span>
                 }
@@ -577,7 +675,7 @@ export default function PaymentDetail() {
                     customerDetails[0]?.outstandingPenalty === "false" ?
                       0
                       :
-                      renderOutstandingPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty))
+                      renderOutstandingPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
                   }
                 </span>
               </li>
@@ -592,7 +690,7 @@ export default function PaymentDetail() {
                         customerDetails[0]?.outstandingPenalty === 'false' ?
                           '0'
                           :
-                          renderDailyPenaltyPaid(Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
+                          renderDailyPenaltyPaid(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
                       }
                     </span>
                     :
@@ -601,7 +699,7 @@ export default function PaymentDetail() {
                         customerDetails[0]?.outstandingPenalty === 'false' ?
                           '0'
                           :
-                          renderPenaltyPaid(Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
+                          renderPenaltyPaid(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
                       }
                     </span>
                 }
@@ -737,22 +835,77 @@ export default function PaymentDetail() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{
-                          payment.outstandingPenalty === 'false' ?
-                            0 :
-                            payment.outstandingPenalty
+                          payment.outstandingPenalty
                         }</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{payment.arrears}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{payment.outstandingBalance}</div>
+                        <div className="text-sm text-gray-900">{
+                          payment.outstandingBalance
+                        }</div>
                       </td>
                     </tr>
                   ))
                     :
                     null
                   }
+                  <tr
+                    className="hover:bg-gray-300 cursor-pointer"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="ml-0">
+                          {/* <div className="text-sm font-medium text-gray-900">{customerDetails[0]?.recentPayments[customerDetails[0]?.recentPayments.length - 1]?.installmentDate}</div> */}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="ml-0">
+                          {/* <div className="text-sm font-medium text-gray-900">{customerDetails[0]?.recentPayments[customerDetails[0]?.recentPayments.length - 1]?.amountPaid}</div> */}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {/* <div className="text-sm uppercase font-medium text-gray-900">{customerDetails[0]?.recentPayments[customerDetails[0]?.recentPayments.length - 1]?.mpesaReferenceCode}</div> */}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {/* <div className="text-sm text-gray-900">{customerDetails[0]?.recentPayments[customerDetails[0]?.recentPayments.length - 1]?.penaltyPaid}</div> */}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {/* <div className="text-sm text-gray-900">{customerDetails[0]?.recentPayments[customerDetails[0]?.recentPayments.length - 1]?.interestPaid}</div> */}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {/* <div className="text-sm text-gray-900">{customerDetails[0]?.recentPayments[customerDetails[0]?.recentPayments.length - 1]?.principalPaid}</div> */}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{
+                        customerDetails[0]?.outstandingPenalty === "false" ?
+                          0
+                          :
+                          renderOutstandingPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
+                      }</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{
+                        customerDetails[0]?.outstandingPenalty === 'false' ?
+                          renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid), 0)
+                          :
+                          renderArrears(Number(customerDetails[0]?.installmentAmount), Number(amountPaid), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty))
+                      }</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{
+                        customerDetails[0]?.outstandingPenalty === "false" ?
+                          renderOutstandingBalance(Number(customerDetails[0]?.principalAmount), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid), 0)
+                          :
+                          renderOutstandingBalance(Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingBalance), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty))
+                      }
+                      </div>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
