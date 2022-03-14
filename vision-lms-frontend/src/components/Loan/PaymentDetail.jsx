@@ -19,9 +19,10 @@ export default function PaymentDetail() {
   const [arrears, setArrears] = useState('');
   const [outstandingBalance, setOutstandingBalance] = useState("");
   const [outstandingPenalty, setOutstandingPenalty] = useState("");
+  const [penaltyPaid, setPenaltyPaid] = useState("");
+  const [penalty, setPenalty] = useState("");
   const [principalPaid, setPrincipalPaid] = useState("");
   const [interestPaid, setInterestPaid] = useState("");
-  const [penaltyPaid, setPenaltyPaid] = useState("");
   const [nextInstallmentDate, setNextInstallmentDate] = useState("");
   const [installmentDate, setInstallmentDate] = useState("");
   const [currentInstallmentDate, setCurrentInstallmentDate] = useState("");
@@ -102,25 +103,69 @@ export default function PaymentDetail() {
     return result.toString();
   }
 
-  function renderPenaltyPaid(penalty) {
-    let result = penalty;
-    return result;
+  function renderDailyPenalty(penalty, os_penalty, installment, amount) {
+    let result = 0;
+    if (amount < installment) {
+      result = penalty + os_penalty;
+    } else {
+      result = os_penalty;
+    }
+    return result.toString();
   }
 
-  function renderDailyPenaltyPaid(penalty) {
-    let result = penalty;
-    return result;
+  function renderPenalty(penalty, os_penalty, installment, amount) {
+    let result = 0;
+    if (amount < installment) {
+      result = penalty + os_penalty;
+    } else {
+      result = os_penalty;
+    }
+    return result.toString();
   }
 
-  function renderOutstandingPenalty(outstanding, penalty, i_date) {
-    let day = i_date.split('-')[2];
-    let month = i_date.split('-')[1];
-    let year = i_date.split('-')[0];
-    const date = new Date(year, month, day);
-    // date.setDate(date.getDate() + (Number(tenure) * 30))
-    date.setDate(date.getDate() + 30)
-    let result = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear();
+  function renderPenaltyPaid(interest, tenure, penalty, os_penalty, installment, amount) {
+    let result = 0;
+    let check = 0;
+    if (amount < installment) {
+      check = amount - ((interest / tenure) + installment + os_penalty + penalty);
+    } else {
+      check = amount - ((interest / tenure) + installment + os_penalty + 0);
+    }
 
+    if (check < 0) {
+      result = 0;
+    } else {
+      result = check;
+    }
+
+    return result.toString();
+  }
+
+  function renderDailyPenaltyPaid(interest, tenure, penalty, os_penalty, installment, amount) {
+    let result = 0;
+    let check = 0;
+    if (amount < installment) {
+      check = amount - ((interest / tenure) + installment + os_penalty + penalty);
+    } else {
+      check = amount - ((interest / tenure) + installment + os_penalty + 0);
+    }
+
+    if (check < 0) {
+      result = 0;
+    } else {
+      result = check;
+    }
+
+    return result.toString();
+  }
+
+  function renderOutstandingPenalty(penalty, os_penalty) {
+    let result = 0;
+    if (os_penalty === 0) {
+      result = os_penalty;
+    } else {
+      result = penalty + os_penalty;
+    }
     return result.toString();
   }
 
@@ -154,6 +199,22 @@ export default function PaymentDetail() {
               :
               renderMonthlyNextInstallmentDate(installmentDate)
           )
+    );
+    setPenalty(
+      customerDetails[0]?.repaymentCycle === 'days' ?
+        (
+          customerDetails[0]?.outstandingPenalty === 'false' ?
+            '0'
+            :
+            renderDailyPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
+        )
+        :
+        (
+          customerDetails[0]?.outstandingPenalty === 'false' ?
+            '0'
+            :
+            renderPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
+        )
     );
     setPenaltyPaid(
       customerDetails[0]?.repaymentCycle === 'days' ?
@@ -343,6 +404,16 @@ export default function PaymentDetail() {
     )
   }
 
+  //   const data = [
+  //   {title : "One",prix:100},
+  //   {title : "Two",prix:200},
+  //   {title : "Three",prix:300}
+  // ]
+
+  // console.log((data.reduce((a,v) =>  a = a + v.prix , 0 )))
+
+  // const sum = data.map(datum => datum.prix).reduce((a, b) => a + b)
+
   function renderReview() {
     return (
       <>
@@ -370,50 +441,50 @@ export default function PaymentDetail() {
                   </span>
                   <span className="ml-auto">{customerDetails[0]?.firstInstallmentDate}</span>
                 </li>
-                {/* { */}
-                {/*   customerDetails[0]?.outstandingPenalty === 'false' ? */}
-                {/*     null */}
-                {/*     : */}
-                {/*     <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
-                {/*       <span> */}
-                {/*         Previous Installment Date */}
-                {/*       </span> */}
-                {/*       <span className="ml-auto"> */}
-                {/*         {customerDetails[0]?.recentPayments[1]?.installmentDate} */}
-                {/*       </span> */}
-                {/*     </li> */}
-                {/* } */}
-                {/* <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"> */}
-                {/*   <span> */}
-                {/*     Next Installment Date */}
-                {/*   </span> */}
-                {/*   { */}
-                {/*     customerDetails[0]?.repaymentCycle === 'days' ? */}
-                {/*       <span className="ml-auto"> */}
-                {/*         { */}
-                {/*           customerDetails[0]?.outstandingPenalty === "false" ? */}
-                {/*             renderDailyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate) */}
-                {/*             : */}
-                {/*             renderDailyNextInstallmentDate(customerDetails[0]?.recentPayments[0]?.installmentDate) */}
-                {/*         } */}
-                {/*       </span> */}
-                {/*       : */}
-                {/*       customerDetails[0]?.repaymentCycle === 'weeks' ? */}
-                {/*         <span className="ml-auto">{ */}
-                {/*           customerDetails[0]?.outstandingPenalty === "false" ? */}
-                {/*             renderWeeklyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate) */}
-                {/*             : */}
-                {/*             renderWeeklyNextInstallmentDate(customerDetails[0]?.recentPayments[0]?.installmentDate) */}
-                {/*         }</span> */}
-                {/*         : */}
-                {/*         <span className="ml-auto">{ */}
-                {/*           customerDetails[0]?.outstandingPenalty === "false" ? */}
-                {/*             renderMonthlyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate) */}
-                {/*             : */}
-                {/*             renderMonthlyNextInstallmentDate(customerDetails[0]?.recentPayments[0]?.installmentDate) */}
-                {/*         }</span> */}
-                {/*   } */}
-                {/* </li> */}
+                {
+                  customerDetails[0]?.outstandingPenalty === 'false' ?
+                    null
+                    :
+                    <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                      <span>
+                        Previous Installment Date
+                      </span>
+                      <span className="ml-auto">
+                        {customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.installmentDate}
+                      </span>
+                    </li>
+                }
+                <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                  <span>
+                    Next Installment Date
+                  </span>
+                  {
+                    customerDetails[0]?.repaymentCycle === 'days' ?
+                      <span className="ml-auto">
+                        {
+                          customerDetails[0]?.outstandingPenalty === "false" ?
+                            renderDailyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
+                            :
+                            renderDailyNextInstallmentDate(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.installmentDate)
+                        }
+                      </span>
+                      :
+                      customerDetails[0]?.repaymentCycle === 'weeks' ?
+                        <span className="ml-auto">{
+                          customerDetails[0]?.outstandingPenalty === "false" ?
+                            renderWeeklyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
+                            :
+                            renderWeeklyNextInstallmentDate(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.installmentDate)
+                        }</span>
+                        :
+                        <span className="ml-auto">{
+                          customerDetails[0]?.outstandingPenalty === "false" ?
+                            renderMonthlyNextInstallmentDate(customerDetails[0]?.firstInstallmentDate)
+                            :
+                            renderMonthlyNextInstallmentDate(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.installmentDate)
+                        }</span>
+                  }
+                </li>
               </ul>
             </div>
             <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
@@ -451,7 +522,14 @@ export default function PaymentDetail() {
                 <span>
                   O/S Balance
                 </span>
-                <span className="ml-auto">KSHs. {renderOutstandingBalance(Number(customerDetails[0]?.principalAmount), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid))}</span>
+                <span className="ml-auto">
+                  KSHs. {
+                    customerDetails[0]?.outstandingPenalty === "false" ?
+                      renderOutstandingBalance(Number(customerDetails[0]?.principalAmount), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid))
+                      :
+                      renderOutstandingBalance(Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingBalance), Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(amountPaid))
+                  }
+                </span>
               </li>
               <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                 <span>
@@ -467,17 +545,41 @@ export default function PaymentDetail() {
               </li>
               <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                 <span>
+                  Penalty
+                </span>
+                {
+                  customerDetails[0]?.repaymentCycle === 'days' ?
+                    <span className="ml-auto">KSHs.
+                      {
+                        customerDetails[0]?.outstandingPenalty === 'false' ?
+                          '0'
+                          :
+                          renderDailyPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
+                      }
+                    </span>
+                    :
+                    <span className="ml-auto">KSHs.
+                      {
+                        customerDetails[0]?.outstandingPenalty === 'false' ?
+                          '0'
+                          :
+                          renderPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.amountPaid))
+                      }
+                    </span>
+                }
+              </li>
+              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
+                <span>
                   Outstanding Penalty
                 </span>
-                <span className="ml-auto">KSHs. {
-                  customerDetails[0]?.outstandingPenalty === "false" ?
-                    0
-                    :
-                    customerDetails[0]?.outstandingPenalty === "0" ?
+                <span className="ml-auto">KSHs.
+                  {
+                    customerDetails[0]?.outstandingPenalty === "false" ?
                       0
                       :
-                      renderOutstandingPenalty(Number(customerDetails[0]?.outstandingPenalty), Number(customerDetails[0]?.penaltyAmount), installmentDate)
-                }</span>
+                      renderOutstandingPenalty(Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty))
+                  }
+                </span>
               </li>
               <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                 <span>
@@ -485,16 +587,24 @@ export default function PaymentDetail() {
                 </span>
                 {
                   customerDetails[0]?.repaymentCycle === 'days' ?
-                    <span className="ml-auto">KSHs. {renderDailyPenaltyPaid(customerDetails[0]?.penaltyAmount)}</span>
+                    <span className="ml-auto">KSHs.
+                      {
+                        customerDetails[0]?.outstandingPenalty === 'false' ?
+                          '0'
+                          :
+                          renderDailyPenaltyPaid(Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
+                      }
+                    </span>
                     :
-                    <span className="ml-auto">KSHs. {renderPenaltyPaid(customerDetails[0]?.penaltyAmount)}</span>
+                    <span className="ml-auto">KSHs.
+                      {
+                        customerDetails[0]?.outstandingPenalty === 'false' ?
+                          '0'
+                          :
+                          renderPenaltyPaid(Number(customerDetails[0]?.interestAmount), Number(customerDetails[0]?.loanTenure), Number(customerDetails[0]?.penaltyAmount), Number(customerDetails[0]?.recentPayments[customerDetails[0].recentPayments.length - 1]?.outstandingPenalty), Number(customerDetails[0]?.installmentAmount), Number(amountPaid))
+                      }
+                    </span>
                 }
-              </li>
-              <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                <span>
-                  Penalty Amount
-                </span>
-                <span className="ml-auto">KSHs. {customerDetails[0]?.penaltyAmount}</span>
               </li>
               <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
                 <span>

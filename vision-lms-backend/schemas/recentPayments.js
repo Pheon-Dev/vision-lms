@@ -24,8 +24,18 @@ export default {
       type: 'string',
     },
     {
+      name: 'penalty',
+      title: 'Penalty',
+      type: 'string',
+    },
+    {
       name: 'outstandingPenalty',
       title: 'Outstanding Penalty',
+      type: 'string',
+    },
+    {
+      name: 'penaltyPaid',
+      title: 'Penalty Paid',
       type: 'string',
     },
     {
@@ -36,11 +46,6 @@ export default {
     {
       name: 'interestPaid',
       title: 'Interest Paid',
-      type: 'string',
-    },
-    {
-      name: 'penaltyPaid',
-      title: 'Penalty Paid',
       type: 'string',
     },
     {
