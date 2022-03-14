@@ -56,14 +56,16 @@ export default function Disburse() {
   const [loans, setLoans] = useState('');
 
   const fetchLoanDetails = () => {
+    const date = new Date();
     const query = `*[_type == "approve" && _id == '${loanId}']`;
-    const lquery = `*[_type == "disburse" && memberId == '${memberId}']`;
+    const lquery = `*[_type == "payments" && memberId == '${memberId}']`;
     const productQuery = productDetailQuery(productType);
     let subscription = true;
 
     if (subscription) {
       client.fetch(query).then((data) => {
         setLoanDetails(data);
+        setDisbursementDate(date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate())
       });
 
       client.fetch(productQuery).then((data) => {
@@ -200,10 +202,10 @@ export default function Disburse() {
       // , arrears
       // , daysInArrears
       // , disbursedAmount
-      // , disbursementDate
+      , disbursementDate
       // , outstandingAmount
       // , outstandingBalance
-      , outstandingPenalty
+      // , outstandingPenalty
       // , penaltyDue
       // , principalPaid
       // , amountPaid
@@ -576,12 +578,18 @@ export default function Disburse() {
               <span>
                 Disbursement Date
               </span>
-              <input
-                className="ml-auto rounded-lg"
-                type="date"
-                value={disbursementDate}
-                onChange={(e) => setDisbursementDate(e.target.value)}
-              />
+              {
+                disbursementDate ?
+                  <span className="ml-auto">{disbursementDate.split('-')[2] + '-' + disbursementDate.split('-')[1] + '-' + disbursementDate.split('-')[0]}</span>
+                  :
+                  null
+              }
+              {/* <input */}
+              {/*   className="ml-auto rounded-lg" */}
+              {/*   type="date" */}
+              {/*   value={disbursementDate} */}
+              {/*   onChange={(e) => setDisbursementDate(e.target.value)} */}
+              {/* /> */}
             </li>
             <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
               <span>
