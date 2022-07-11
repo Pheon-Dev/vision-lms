@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
 import { FiSettings } from "react-icons/fi";
-import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import { AuthProvider } from "./contexts/AuthContext";
 // import { useLipaNaMpesa } from "./mpesa";
 import { Dashboard, Members } from "./container";
@@ -57,19 +56,19 @@ export default function App () {
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
       <div className="flex relative dark:bg-main-dark-bg">
         <div className="fixed right-8 bottom-8" style={{ zIndex: "1000" }}>
-          <TooltipComponent content="Settings" position="Top">
-            <button
-              type="button"
-              onClick={() => setThemeSettings(true)}
-              style={{
-                background: currentColour,
-                borderRadius: "50%",
-              }}
-              className="text-3xl text-white p-3 hover:drop-shadow-xl hover:bg-light-gray"
-            >
-              <FiSettings />
-            </button>
-          </TooltipComponent>
+          {/* <TooltipComponent content="Settings" position="Top"> */}
+          {/*   <button */}
+          {/*     type="button" */}
+          {/*     onClick={() => setThemeSettings(true)} */}
+          {/*     style={{ */}
+          {/*       background: currentColour, */}
+          {/*       borderRadius: "50%", */}
+          {/*     }} */}
+          {/*     className="text-3xl text-white p-3 hover:drop-shadow-xl hover:bg-light-gray" */}
+          {/*   > */}
+          {/*     <FiSettings /> */}
+          {/*   </button> */}
+          {/* </TooltipComponent> */}
         </div>
       </div>
       <AuthProvider>

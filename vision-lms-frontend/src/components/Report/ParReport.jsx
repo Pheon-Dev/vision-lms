@@ -314,6 +314,7 @@ export default function ParReport() {
     },
   ];
 
+  console.log(currentItems)
   function renderPARTable() {
     return (
       <>
@@ -383,7 +384,11 @@ export default function ParReport() {
                         : "hover:bg-red-200 bg-red-50 cursor-pointer transition-all duration-300"
                     }
                   >
+                {member?.disbursed === 'false' ?
+                    <TableData>DC-{member?.loanAccNumber}</TableData>
+                  :
                     <TableData>DC-{member?.referenceNumber}</TableData>
+                }
                     <TableData>{member?.memberNames}</TableData>
                     <TableData>no group</TableData>
                     <TableData>{member?.loanOfficerName}</TableData>
@@ -393,6 +398,15 @@ export default function ParReport() {
                     <TableData>{member?.installmentAmount}</TableData>
                     <TableData>{member?.productType}</TableData>
                     <TableData>{member?.principalAmount}</TableData>
+                {member?.disbursed === 'false' ?
+                  <>
+                    <TableData>...</TableData>
+                    <TableData>0</TableData>
+                    <TableData>0</TableData>
+                    <TableData>...</TableData>
+                  </>
+                :
+                  <>
                     <TableData>
                       {member?.disbursementDate.split("-")[0] +
                         "-" +
@@ -424,6 +438,8 @@ export default function ParReport() {
                         ? "0"
                         : member?.arrears === "true" ? '···' : renderDaysInArrears(date_today, member?.recentPayments[member?.recentPayments?.length - 1]?.faceInstallmentDate)}
                     </TableData>
+                  </>
+                }
                     <TableData>
                       {member.outstandingPenalty === "false" ? (
                         <Status
@@ -461,7 +477,15 @@ export default function ParReport() {
                               range="500"
                               state="Loan Default"
                             />
-                          ) : (
+                          ) : member?.disbursed === 'false' ?
+                            <Status
+                              level="500"
+                              colour="cyan"
+                              range="300"
+                              state="Disburse"
+                            />
+                            :
+                            (
                             <Status
                               level="500"
                               colour="red"

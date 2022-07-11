@@ -14,6 +14,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'paymentCount',
+      title: 'Payment Count',
+      type: 'string',
+    },
+    {
       name: 'loanId',
       title: 'Loan ID',
       type: 'string',
@@ -66,6 +71,11 @@ export default {
     {
       name: 'installmentAmount',
       title: 'Installment Amount',
+      type: 'string',
+    },
+    {
+      name: 'penaltyRate',
+      title: 'Penalty Rate',
       type: 'string',
     },
     {
@@ -130,8 +140,3 @@ export default {
     },
   ],
 };
-
-
-
-
-

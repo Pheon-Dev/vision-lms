@@ -4,23 +4,23 @@ export default {
   type: 'document',
   fields: [
     {
-      name: 'collateral',
+      name: 'collateralItem',
       title: 'Item',
       type: 'string',
     },
     {
-      name: 'value',
+      name: 'collateralValue',
       title: 'Value',
       type: 'string',
     },
-    {
-      name: 'image',
-      title: 'Image',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
-    },
+    // {
+    //   name: 'collateralImage',
+    //   title: 'Image',
+    //   type: 'image',
+    //   options: {
+    //     hotspot: true,
+    //   },
+    // },
   ],
 };
 

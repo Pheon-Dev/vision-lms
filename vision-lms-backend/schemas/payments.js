@@ -74,6 +74,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'penaltyRate',
+      title: 'Penalty Rate',
+      type: 'string',
+    },
+    {
       name: 'penaltyAmount',
       title: 'Penalty Amount',
       type: 'string',
@@ -99,16 +104,6 @@ export default {
       type: 'string',
     },
     {
-      name: 'arrears',
-      title: 'Arrears',
-      type: 'string',
-    },
-    {
-      name: 'daysInArrears',
-      title: 'Days in Arrears',
-      type: 'string',
-    },
-    {
       name: 'disbursedAmount',
       title: 'Disbursed Amount',
       type: 'string',
@@ -116,11 +111,6 @@ export default {
     {
       name: 'disbursementDate',
       title: 'Disbursement Date',
-      type: 'string',
-    },
-    {
-      name: 'outstandingPenalty',
-      title: 'Outstanding Penalty',
       type: 'string',
     },
     {
@@ -134,10 +124,35 @@ export default {
       type: 'string',
     },
     {
+      name: 'paymentDay',
+      title: 'Payment Day',
+      type: 'string',
+    },
+    {
+      name: 'counter',
+      title: 'Payment Counter',
+      type: 'string',
+    },
+    {
+      name: 'paymentCount',
+      title: 'Payment Count',
+      type: 'string',
+    },
+    {
+      name: 'arrears',
+      title: 'Arrears',
+      type: 'string',
+    },
+    {
+      name: 'outstandingPenalty',
+      title: 'Outstanding Penalty',
+      type: 'string',
+    },
+    {
       name: 'recentPayments',
       title: 'Recent Payments',
       type: 'array',
-      of: [{ type: 'recentPayments' }]
+      of: [{ type: 'recentPayments' }],
     },
   ],
 };
