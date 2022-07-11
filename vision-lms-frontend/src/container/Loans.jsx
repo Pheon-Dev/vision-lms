@@ -1,8 +1,6 @@
 import { Approvals, Pending, Disbursements, PaymentDetail, Disburse, ProductDetails, MaintenanceDetail, Approve, LoansFeed, Payments, Maintenance, CreateLoan, Products, Preview, NewProduct, Submissions } from '../components/Loan';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from 'react-router-dom';
-
-import { Feed, Navbar, Search } from '../components/Components';
 
 export default function Loans({ user }) {
   const [searchTerm, setSearchTerm] = useState('');

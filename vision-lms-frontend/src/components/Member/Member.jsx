@@ -5,7 +5,7 @@ import { MdDownloadForOffline } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 
-import { products, feedQuery } from '../../utils/data'
+import { feedQuery } from '../../utils/data'
 
 import { client, urlFor } from "../../client";
 

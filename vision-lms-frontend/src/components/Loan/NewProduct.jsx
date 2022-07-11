@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { client } from '../../client';
 
 export default function NewProduct() {
   const [fields, setFields] = useState();
   const [product, setProduct] = useState();
-  const [productName, setProductName] = useState("");
-  const [productCode, setProductCode] = useState("");
-  const [minimumRange, setMinimumRange] = useState("");
-  const [maximumRange, setMaximumRange] = useState("");
+  const [productName, setProductName] = useState('');
+  const [productCode, setProductCode] = useState('');
+  const [minimumRange, setMinimumRange] = useState('');
+  const [maximumRange, setMaximumRange] = useState('');
   const [interestRate, setInterestRate] = useState('');
   const [interestFrequency, setInterestFrequency] = useState('');
   const [penalty, setPenalty] = useState('');
@@ -34,14 +34,13 @@ export default function NewProduct() {
       });
     }
 
-    return () => subscription = false;
-
+    return () => (subscription = false);
   }, []);
 
   const frequencies = [
     {
-      id: "0",
-      label: "...",
+      id: '0',
+      label: '...',
       value: null,
     },
     // {
@@ -50,119 +49,109 @@ export default function NewProduct() {
     //   value: "week",
     // },
     {
-      id: "1",
-      label: "Per Month",
-      value: "month",
+      id: '1',
+      label: 'Per Month',
+      value: 'month',
     },
     {
-      id: "2",
-      label: "Per Annum",
-      value: "annum",
+      id: '2',
+      label: 'Per Annum',
+      value: 'annum',
     },
   ];
 
   const penalties = [
     {
-      id: "0",
-      label: "...",
+      id: '0',
+      label: '...',
       value: null,
     },
     {
-      id: "1",
-      label: "Percentage",
-      value: "percentage",
+      id: '1',
+      label: 'Percentage of Principal',
+      value: 'principal',
     },
     {
-      id: "2",
-      label: "Amount (KSHs)",
-      value: "amount",
+      id: '2',
+      label: 'Percentage of Installment',
+      value: 'installment',
     },
-    // {
-    //   id: "3",
-    //   label: "Monthly Loan",
-    //   value: "monthlyLoan",
-    // },
   ];
 
   const payments = [
     {
-      id: "0",
-      label: "...",
+      id: '0',
+      label: '...',
       value: null,
     },
     {
-      id: "1",
-      label: "Per Installment",
-      value: "perInstallment",
+      id: '1',
+      label: 'Each Installment',
+      value: 'eachInstallment',
     },
     {
-      id: "2",
-      label: "Last Installment",
-      value: "lastInstallment",
-    },
-    {
-      id: "3",
-      label: "% of Principal",
-      value: "percentageOfPrincipal",
+      id: '2',
+      label: 'Last Installment',
+      value: 'lastInstallment',
     },
   ];
 
   const tenures = [
     {
-      id: "0",
-      label: "...",
+      id: '0',
+      label: '...',
       value: null,
     },
     {
-      id: "1",
-      label: "Days",
-      value: "days",
+      id: '1',
+      label: 'Days',
+      value: 'days',
     },
     {
-      id: "2",
-      label: "Weeks",
-      value: "weeks",
+      id: '2',
+      label: 'Weeks',
+      value: 'weeks',
     },
     {
-      id: "3",
-      label: "Months",
-      value: "months",
+      id: '3',
+      label: 'Months',
+      value: 'months',
     },
   ];
 
   const cycles = [
     {
-      id: "0",
-      label: "...",
+      id: '0',
+      label: '...',
       value: null,
     },
     {
-      id: "1",
-      label: "Daily",
-      value: "daily",
+      id: '1',
+      label: 'Daily',
+      value: 'daily',
     },
     {
-      id: "2",
-      label: "Weekly",
-      value: "weekly",
+      id: '2',
+      label: 'Weekly',
+      value: 'weekly',
     },
     {
-      id: "3",
-      label: "Monthly",
-      value: "monthly",
+      id: '3',
+      label: 'Monthly',
+      value: 'monthly',
     },
   ];
 
   const grace = [
     {
-      id: "0",
-      label: "0",
-      value: "0",
+      id: '0',
+      label: '0',
+      value: '0',
     },
     {
-      id: "1",
-      label: "1",
-      value: "1",
+      id: '1',
+      label: '1',
+      value: '1',
     },
     // {
     //   id: "2",
@@ -174,112 +163,127 @@ export default function NewProduct() {
   const handleProductSave = () => {
     setApprove('false');
     // setProductCode(`${Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1] + Date().split(' ')[4].split(':')[2]}`)
-    setProductCode(`${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) : 'P' + (Number(code?.length) + 1) : 'P0' + (Number(code?.length) + 1) : 'P00' + (Number(code?.length) + 1))}`)
+    setProductCode(
+      `${
+        code?.length > 9
+          ? code?.length > 99
+            ? code?.length > 999
+              ? Number(code?.length) + 1
+              : 'P' + (Number(code?.length) + 1)
+            : 'P0' + (Number(code?.length) + 1)
+          : 'P00' + (Number(code?.length) + 1)
+      }`,
+    );
 
-    setGracePeriod(gracePeriod === '...' ? 0 : gracePeriod)
-    setPenaltyTypeChoice(penaltyTypeChoice === '...' ? 'null' : penaltyTypeChoice)
-    setPenaltyPaymentChoice(penaltyPaymentChoice === '...' ? 'null' : penaltyPaymentChoice)
-    if (productName
-      && productCode
-      && minimumRange
-      && maximumRange
-      && interestRate
-      && interestFrequency
-      && penalty
-      && penaltyTypeChoice
-      && penaltyPaymentChoice
-      && tenureMaximum
-      && repaymentCycle
-      && processingFee
-      && gracePeriod
-      && product
-      && approve
+    setGracePeriod(gracePeriod === '...' ? 0 : gracePeriod);
+    setPenaltyTypeChoice(
+      penaltyTypeChoice === '...' ? 'null' : penaltyTypeChoice,
+    );
+    setPenaltyPaymentChoice(
+      penaltyPaymentChoice === '...' ? 'null' : penaltyPaymentChoice,
+    );
+    if (
+      productName &&
+      productCode &&
+      minimumRange &&
+      maximumRange &&
+      interestRate &&
+      interestFrequency &&
+      penalty &&
+      penaltyTypeChoice &&
+      penaltyPaymentChoice &&
+      tenureMaximum &&
+      tenureMaximumChoice &&
+      repaymentCycle &&
+      processingFee &&
+      gracePeriod &&
+      product &&
+      approve
     ) {
       const doc = {
         _type: 'newProduct',
-        productName
-        , productCode
-        , minimumRange
-        , maximumRange
-        , interestRate
-        , interestFrequency
-        , penalty
-        , penaltyTypeChoice
-        , penaltyPaymentChoice
-        , tenureMaximum
-        , repaymentCycle
-        , processingFee
-        , gracePeriod
-        , product
-        , approve
+        productName,
+        productCode,
+        minimumRange,
+        maximumRange,
+        interestRate,
+        interestFrequency,
+        penalty,
+        penaltyTypeChoice,
+        penaltyPaymentChoice,
+        tenureMaximum,
+        tenureMaximumChoice,
+        repaymentCycle,
+        processingFee,
+        gracePeriod,
+        product,
+        approve,
       };
-      console.log(doc)
+      console.log(doc);
     } else {
       setFields(true);
-      setTimeout(
-        () => {
-          setFields(false);
-        },
-        2000,
-      );
+      setTimeout(() => {
+        setFields(false);
+      }, 2000);
     }
-  }
+  };
   const handleProductCreate = () => {
-    if (productName
-      && productCode
-      && minimumRange
-      && maximumRange
-      && interestRate
-      && interestFrequency
-      && penalty
-      && penaltyTypeChoice
-      && penaltyPaymentChoice
-      && tenureMaximum
-      && repaymentCycle
-      && processingFee
-      && gracePeriod
-      && product
-      && approve
+    if (
+      productName &&
+      productCode &&
+      minimumRange &&
+      maximumRange &&
+      interestRate &&
+      interestFrequency &&
+      penalty &&
+      penaltyTypeChoice &&
+      penaltyPaymentChoice &&
+      tenureMaximum &&
+      tenureMaximumChoice &&
+      repaymentCycle &&
+      processingFee &&
+      gracePeriod &&
+      product &&
+      approve
     ) {
       const doc = {
         _type: 'newProduct',
-        productName
-        , productCode
-        , minimumRange
-        , maximumRange
-        , interestRate
-        , interestFrequency
-        , approve
-        , penalty
-        , penaltyTypeChoice
-        , penaltyPaymentChoice
-        , tenureMaximum
-        , repaymentCycle
-        , processingFee
-        , gracePeriod
-        , product
+        productName,
+        productCode,
+        minimumRange,
+        maximumRange,
+        interestRate,
+        interestFrequency,
+        approve,
+        penalty,
+        penaltyTypeChoice,
+        penaltyPaymentChoice,
+        tenureMaximum,
+        tenureMaximumChoice,
+        repaymentCycle,
+        processingFee,
+        gracePeriod,
+        product,
       };
       client.create(doc).then(() => {
-        alert('Success')
-        navigate('/loan/maintenance')
+        alert('Success');
+        navigate('/loan/creat-loan');
       });
     } else {
       setFields(true);
-      setTimeout(
-        () => {
-          setFields(false);
-        },
-        2000,
-      );
+      setTimeout(() => {
+        setFields(false);
+      }, 2000);
     }
-  }
-
+  };
 
   function renderNewProduct() {
     return (
       <div>
         <div className="w-full mt-5">
-          <span className="flex uppercase mb-3 justify-center items-center sm:text-3xl p-2 font-bold text-3xl flex-col">New Product</span>
+          <span className="flex uppercase mb-3 justify-center items-center sm:text-3xl p-2 font-bold text-3xl flex-col">
+            New Product
+          </span>
           <div className="flex flex-wrap -mx-3 mb-0">
             <div className="w-full md:w-1/2 px-3 mb-0 md:mb-0">
               <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
@@ -298,17 +302,25 @@ export default function NewProduct() {
               <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
                 Product Code
               </label>
-              <span
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              >
-                {`DC-${(code?.length > 9 ? code?.length > 99 ? code?.length > 999 ? (Number(code?.length) + 1) : 'P' + (Number(code?.length) + 1) : 'P0' + (Number(code?.length) + 1) : 'P00' + (Number(code?.length) + 1))}`}
+              <span className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
+                {`DC-${
+                  code?.length > 9
+                    ? code?.length > 99
+                      ? code?.length > 999
+                        ? Number(code?.length) + 1
+                        : 'P' + (Number(code?.length) + 1)
+                      : 'P0' + (Number(code?.length) + 1)
+                    : 'P00' + (Number(code?.length) + 1)
+                }`}
               </span>
             </div>
           </div>
           <div className="flex flex-wrap mt-8 -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label className="block tracking-wide text-xs mb-2">
-                <span className="uppercase text-gray-700 font-bold text-md">Minimum Range (KShs)</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Minimum Range (KShs)
+                </span>
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -321,7 +333,9 @@ export default function NewProduct() {
             </div>
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2">
-                <span className="uppercase text-gray-700 font-bold text-md">Maximum Range (KSHs)</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Maximum Range (KSHs)
+                </span>
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -336,7 +350,9 @@ export default function NewProduct() {
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label className="block tracking-wide text-xs mb-2">
-                <span className="uppercase text-gray-700 font-bold text-md">Interest Rate (%)</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Interest Rate (%)
+                </span>
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -352,9 +368,16 @@ export default function NewProduct() {
                 Frequency (pm, pa)
               </label>
               <div className="relative">
-                <select value={interestFrequency} onChange={(e) => setInterestFrequency(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                <select
+                  value={interestFrequency}
+                  onChange={(e) => setInterestFrequency(e.target.value)}
+                  className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-state"
+                >
                   {frequencies.map((option) => (
-                    <option key={option.id} value={option.value}>{option?.label}</option>
+                    <option key={option.id} value={option.value}>
+                      {option?.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -366,16 +389,28 @@ export default function NewProduct() {
                 Repayment Cycle
               </label>
               <div className="relative">
-                <select value={repaymentCycle} onChange={(e) => { setRepaymentCycle(e.target.value); setProduct(e.target.value) }} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                <select
+                  value={repaymentCycle}
+                  onChange={(e) => {
+                    setRepaymentCycle(e.target.value);
+                    setProduct(e.target.value);
+                  }}
+                  className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-state"
+                >
                   {cycles.map((option) => (
-                    <option key={option.id} value={option.value}>{option?.label}</option>
+                    <option key={option.id} value={option.value}>
+                      {option?.label}
+                    </option>
                   ))}
                 </select>
               </div>
             </div>
             <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
               <label className="block tracking-wide text-xs mb-2">
-                <span className="uppercase text-gray-700 font-bold text-md">Processing Fee (%)</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Processing Fee (%)
+                </span>
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -411,10 +446,17 @@ export default function NewProduct() {
                   Grace Period
                 </label>
                 <div className="relative">
-                  <select value={gracePeriod} onChange={(e) => setGracePeriod(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                  <select
+                    value={gracePeriod}
+                    onChange={(e) => setGracePeriod(e.target.value)}
+                    className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="grid-state"
+                  >
                     <option>...</option>
                     {grace.map((option) => (
-                      <option key={option.id} value={option.value}>{option?.label} Day</option>
+                      <option key={option.id} value={option.value}>
+                        {option?.label} Day
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -426,10 +468,7 @@ export default function NewProduct() {
             {/* {repaymentCycle === 'daily' && ( */}
             <div className="w-full md:w-1/3 px-3">
               <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                Penalty Rate
-                <span className="text-red-500 italic">
-                  {penaltyTypeChoice === 'amount' ? `Minimum 300 /=` : null}
-                </span>
+                Penalty Rate (%)
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -443,15 +482,21 @@ export default function NewProduct() {
             {/* )} */}
             {/* {repaymentCycle === 'daily' && ( */}
             <>
-
               <div className="w-full md:w-1/3 px-3">
                 <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                  Penalty Type
+                  Penalty Charged as
                 </label>
                 <div className="relative">
-                  <select value={penaltyTypeChoice} onChange={(e) => setPenaltyTypeChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                  <select
+                    value={penaltyTypeChoice}
+                    onChange={(e) => setPenaltyTypeChoice(e.target.value)}
+                    className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="grid-state"
+                  >
                     {penalties.map((option) => (
-                      <option key={option.id} value={option.value}>{option?.label}</option>
+                      <option key={option.id} value={option.value}>
+                        {option?.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -461,9 +506,16 @@ export default function NewProduct() {
                   Penalty Payment
                 </label>
                 <div className="relative">
-                  <select value={penaltyPaymentChoice} onChange={(e) => setPenaltyPaymentChoice(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+                  <select
+                    value={penaltyPaymentChoice}
+                    onChange={(e) => setPenaltyPaymentChoice(e.target.value)}
+                    className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    id="grid-state"
+                  >
                     {payments.map((option) => (
-                      <option key={option.id} value={option.value}>{option?.label}</option>
+                      <option key={option.id} value={option.value}>
+                        {option?.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -474,7 +526,9 @@ export default function NewProduct() {
           <div className="flex flex-wrap mt-8 -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3">
               <label className="block tracking-wide text-xs mb-2">
-                <span className="uppercase text-gray-700 font-bold text-md">Maximum Tenure</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Maximum Tenure
+                </span>
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -484,28 +538,33 @@ export default function NewProduct() {
                 value={tenureMaximum}
                 onChange={(e) => {
                   setTenureMaximum(e.target.value);
-                  setTenureMaximumChoice(repaymentCycle === 'daily' ? tenures[1].value : repaymentCycle === 'weekly' ? tenures[2].value : tenures[3].value);
+                  setTenureMaximumChoice(
+                    repaymentCycle === 'daily'
+                      ? tenures[1].value
+                      : repaymentCycle === 'weekly'
+                      ? tenures[2].value
+                      : tenures[3].value,
+                  );
                 }}
               />
             </div>
             <div className="w-full md:w-1/2 px-3">
-              <label className="block tracking-wide text-xs mb-2">
-              </label>
-              <span
-                className="appearance-none block w-full font-semibold text-xl text-gray-700 py-3 mt-5 px-2 mb-3 leading-tight focus:outline-none focus:bg-white"
-              >
-                {repaymentCycle === 'daily' ? tenures[1].value : repaymentCycle === 'weekly' ? tenures[2].value : tenures[3].value}
+              <label className="block tracking-wide text-xs mb-2"></label>
+              <span className="appearance-none block w-full font-semibold text-xl text-gray-700 py-3 mt-5 px-2 mb-3 leading-tight focus:outline-none focus:bg-white">
+                {repaymentCycle === 'daily'
+                  ? tenures[1].value
+                  : repaymentCycle === 'weekly'
+                  ? tenures[2].value
+                  : tenures[3].value}
               </span>
             </div>
           </div>
         </div>
-        {
-          fields && (
-            <p className="flex justify-center items-center ml-auto mr-auto text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
-              Please Fill All the Required Fields!
-            </p>
-          )
-        }
+        {fields && (
+          <p className="flex justify-center items-center ml-auto mr-auto text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
+            Please Fill All the Required Fields!
+          </p>
+        )}
         <div className="flex justify-center mt-5">
           <div className="w-full md:w-1/3 mr-auto ml-auto">
             <button
@@ -521,10 +580,5 @@ export default function NewProduct() {
       </div>
     );
   }
-  return (
-    <>
-      {renderNewProduct()}
-    </>
-  )
+  return <>{renderNewProduct()}</>;
 }
-

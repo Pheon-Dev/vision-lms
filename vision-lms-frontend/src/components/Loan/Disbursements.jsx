@@ -1,188 +1,181 @@
 import React, { useEffect, useState } from "react";
+import { ListLayout, Spinner, Status, TableData } from "../Components";
 
-import { MdDownloadForOffline } from 'react-icons/md';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from "react-router-dom";
 
-import { client, urlFor } from '../../client';
-import { products, memberDetailMoreMemberQuery, memberDetailQuery, loanFeedQuery, searchQuery } from '../../utils/data';
-import { Spinner, Layout } from '../Components';
+import { client } from "../../client";
 
 export default function Disbursement() {
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [approvedList, setApprovedList] = useState();
-  const [disbursedList, setDisbursedList] = useState();
+  const [list, setList] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
 
-  useEffect(() => {
-    // setLoading(true);
-    const dquery = '*[_type == "disburse"]';
-    const aquery = '*[_type == "approve"]';
+  const fetchPayments = async () => {
     let subscription = true;
+    const query = '*[_type == "maintenance"] | order(disbursementDate desc)';
 
     if (subscription) {
-      client.fetch(dquery).then((data) => {
-        setDisbursedList(data);
-        // setLoading(false);
+      await client.fetch(query).then((data) => {
+        setList(data);
       });
-
-      client.fetch(aquery).then((data) => {
-        setApprovedList(data);
-        // setLoading(false);
-      });
-
     }
 
-    return () => subscription = false;
+    return () => (subscription = false);
+  };
 
+  useEffect(() => {
+    fetchPayments();
   }, []);
 
-  const disbursals = 'Disbursal';
-  const disbursed = 'Disbursed';
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = list?.slice(indexOfFirstItem, indexOfLastItem);
 
-  // if (loading) {
-  //   return (
-  //     <Spinner message={`Fetching all data pending ${disbursals} and ${disbursed} data ...`} />
-  //   );
-  // }
+  // Change page
+  const paginateFront = () => setCurrentPage(currentPage + 1);
+  const paginateBack = () => setCurrentPage(currentPage - 1);
 
-  // if (approvedList?.length === 0) {
-  //   return (
-  //     <div className="text-xl font-bold text-center items-center">Fetching data pending {disbursals} ...</div>
-  //   )
-  // }
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // if (disbursedList?.length === 0) {
-  //   return (
-  //     <div className="text-xl font-bold text-center items-center">Loading {disbursed} data ...</div>
-  //   )
-  // }
+  const headers = ["Reg. No.", "Name", "Principal", "Product", "Status"];
 
-  function renderApprovedLoans() {
+  function renderLoans() {
     return (
-      <div className="flex flex-col mt-5">
-        <div className="font-bold flex justify-center w-full text-xl">
-          <span className="text-gray-700 ml-auto mr-auto">Loans Pending Disbursal</span>
-        </div>
-        <br />
-        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="py-2 align-middle inline-block min-w-full sm:px-8">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-200 border-b-2 border-gray-300">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Principal</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {approvedList?.map((member) => (
-                    member.maintained !== 'false' && member.approved === 'true' && member.disbursed === 'false' ?
-                      <tr
-                        onClick={() => navigate(`/loan/disbursements/${member._id}`)}
-                        key={member._id}
-                        className="hover:bg-gray-300 cursor-pointer"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="ml-0">
-                              <div className="text-sm font-medium text-gray-900">{member.memberNames}</div>
-                              <div className="text-sm text-gray-500">{member.memberPhoneNumber}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">KSHs. {member.principalAmount}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{member.productType}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-indigo-600">
-                            Disburse
-                          </div>
-                        </td>
-                      </tr>
-                      :
-                      null
-                  ))
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  function renderDisbursedLoans() {
-    return (
-      <div className="flex flex-col mt-5">
-        <div className="font-bold flex justify-center w-full text-xl">
-          <span className="text-gray-700 ml-auto mr-auto">Loans Disbursed Today</span>
-        </div>
-        <br />
-        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="py-2 align-middle inline-block min-w-full sm:px-8">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-200 border-b-2 border-gray-300">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Principal</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {disbursedList?.map((member) => (
-                    member.maintained !== 'false' && member.approved === 'true' && member.disbursed !== 'false' ?
-                      <tr
-                        onClick={() => navigate("/loan")}
-                        key={member._id}
-                        className="hover:bg-gray-300 cursor-pointer"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="ml-0">
-                              <div className="text-sm font-medium text-gray-900">{member.memberNames}</div>
-                              <div className="text-sm text-gray-500">{member.memberPhoneNumber}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">KSHs. {member.principalAmount}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{member.productType}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-green-600">
-                            Disbursed
-                          </div>
-                        </td>
-                      </tr>
-                      :
-                      null
-                  ))
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+      <ListLayout
+        title="Disbursements List"
+        headers={headers}
+        itemsPerPage={itemsPerPage}
+        totalItems={list?.length}
+        paginate={paginate}
+        currentPage={currentPage}
+        paginateBack={paginateBack}
+        paginateFront={paginateFront}
+      >
+        <tbody className="bg-white divide-y divide-gray-200">
+          {currentItems?.map((member) =>
+            member?.approved === "true" ? (
+              <tr
+                onClick={() => {
+                  member?.disbursed === "true"
+                    ? navigate("/loan/payments")
+                    : navigate(`/loan/disbursements/${member._id}`);
+                }}
+                key={member._id}
+                className={
+                  member.disbursed === "true"
+                    ? "hover:bg-indigo-200 bg-indigo-50 cursor-pointer transition-all duration-300"
+                    : "hover:bg-green-200 bg-green-50 cursor-pointer transition-all duration-300"
+                }
+              >
+                <TableData>
+                  <div className="ml-0">
+                    <div className="text-sm font-semibold text-gray-900">
+                      {member.loanAccNumber}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {member?.disbursed === "false" ? (
+                        member.memberIdNumber
+                      ) : (
+                        <>
+                          {member.disbursementDate?.split("-")[0]}
+                          {Number(member.disbursementDate?.split("-")[1]) > 9
+                            ? "-" +
+                              (Number(member.disbursementDate?.split("-")[1]) +
+                                1)
+                            : "-0" +
+                              (Number(member.disbursementDate?.split("-")[1]) +
+                                1)}
+                          {Number(member.disbursementDate?.split("-")[2]) > 9
+                            ? "-" +
+                              (Number(member.disbursementDate?.split("-")[2]) +
+                                0)
+                            : "-0" +
+                              (Number(member.disbursementDate?.split("-")[2]) +
+                                0)}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </TableData>
+                <TableData>
+                  <div className="flex items-center">
+                    <div className="ml-0">
+                      <div className="text-sm font-semibold text-gray-900">
+                        {member.memberNames}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {member.memberPhoneNumber}
+                      </div>
+                    </div>
+                  </div>
+                </TableData>
+                <TableData>
+                  <div className="ml-0">
+                    <div className="text-sm font-semibold text-gray-900">
+                      {member.principalAmount}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {member.installmentAmount} [installment]
+                    </div>
+                  </div>
+                </TableData>
+                <TableData>
+                  <div className="ml-0">
+                    <div className="text-sm font-semibold text-gray-900">
+                      {member.productType}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {member?.repaymentCycle === "days"
+                        ? Number(member?.loanTenure) -
+                          Number(member?.sundays) +
+                          " "
+                        : member?.loanTenure + " "}{" "}
+                      {member?.repaymentCycle === "months"
+                        ? member?.loanTenure === "1"
+                          ? "month"
+                          : member?.repaymentCycle
+                        : member?.repaymentCycle === "weeks"
+                        ? member?.loanTenure === "1"
+                          ? "week"
+                          : member?.repaymentCycle
+                        : member?.repaymentCycle}
+                      <span className="text-sm">
+                        {member.repaymentCycle === "days"
+                          ? " [daily]"
+                          : member?.repaymentCycle === "weeks"
+                          ? " [weekly]"
+                          : " [monthly]"}
+                      </span>
+                    </div>
+                  </div>
+                </TableData>
+                <TableData>
+                  {member.disbursed === "true" ? (
+                    <Status range="700" level="500" colour="indigo" state="Disbursed" />
+                  ) : (
+                    <Status range="700" level="500" colour="green" state="Disburse" />
+                  )}
+                </TableData>
+              </tr>
+            ) : null
+          )}
+        </tbody>
+      </ListLayout>
+    );
   }
 
   return (
-    <>
-      {renderApprovedLoans()}
-      {renderDisbursedLoans()}
-    </>
-  )
+    <div
+      onClick={() => {
+        fetchPayments();
+      }}
+      onMouseEnter={() => {
+        fetchPayments();
+      }}
+    >
+      {list ? renderLoans() : <Spinner message="Loading Disbursements List" />}
+      {/* <pre>{JSON.stringify(list, undefined, 2)}</pre> */}
+    </div>
+  );
 }
-

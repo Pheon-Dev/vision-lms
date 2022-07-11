@@ -16,9 +16,9 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth()
-// const db = firebase.firestore()
+const db = firebase.firestore()
 
-export { auth }
+export { auth, db }
 
 // const app = firebase.initializeApp({
 //   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

@@ -1,23 +1,41 @@
-import React, { useState } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
-import { RiBarChartGroupedLine, RiHome2Fill } from "react-icons/ri";
-import { IoIosArrowForward, IoIosLogOut, IoMdLogOut } from "react-icons/io";
-import { useAuth } from "../../contexts/AuthContext"
+import React, { useState } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { RiBarChartGroupedLine, RiHome2Fill } from 'react-icons/ri';
+import { IoIosArrowForward, IoIosLogOut, IoMdLogOut } from 'react-icons/io';
+import { useAuth } from '../../contexts/AuthContext';
 
-import logo from "../../assets/vision-black.png";
+import logo from '../../assets/vision-black.png';
 // import logo from '../assets/logo.svg';
-import { products } from "../../utils/data";
-import { BsFileArrowUp, BsFileBarGraph, BsFileBreak, BsFileCheck, BsFilePlus, BsGear, BsGearFill, BsHouse, BsPerson, BsPersonPlus, BsPlus, BsSearch } from "react-icons/bs";
-import { AiFillHome, AiOutlineHome, AiOutlineUsergroupAdd } from "react-icons/ai";
-import { HiOutlineDocumentReport } from "react-icons/hi";
-import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
+import {
+  BsFileArrowUp,
+  BsFileBarGraph,
+  BsFileBreak,
+  BsFileCheck,
+  BsFilePlus,
+  BsGear,
+  BsGearFill,
+  BsHouse,
+  BsPerson,
+  BsPersonPlus,
+  BsPlus,
+  BsSearch,
+} from 'react-icons/bs';
+import {
+  AiFillHome,
+  AiOutlineHome,
+  AiOutlineUsergroupAdd,
+} from 'react-icons/ai';
+import { HiOutlineDocumentReport } from 'react-icons/hi';
+import { GiPayMoney, GiReceiveMoney } from 'react-icons/gi';
 
-const isNotActiveStyle = 'flex hover:bg-gray-300 items-center px-5 gap-3 text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize';
-const isActiveStyle = 'flex items-center bg-gray-300 px-5 gap-3 font-extrabold border-r-2 border-black transition-all duration-200 ease-in-out capitalize';
+const isNotActiveStyle =
+  'flex hover:bg-gray-300 items-center px-5 gap-3 text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize';
+const isActiveStyle =
+  'flex items-center bg-gray-300 px-5 gap-3 font-extrabold border-r-2 border-black transition-all duration-200 ease-in-out capitalize';
 
 export default function Sidebar({ closeToggle, user }) {
   const navigate = useNavigate();
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const { currentUser, signout } = useAuth();
 
   const handleCloseSidebar = () => {
@@ -25,13 +43,13 @@ export default function Sidebar({ closeToggle, user }) {
   };
 
   async function handleSignOut() {
-    setError("");
+    setError('');
 
     try {
-      await signout()
-      navigate("/sign-in")
+      await signout();
+      navigate('/sign-in');
     } catch {
-      setError("Failed to Log Out!")
+      setError('Failed to Log Out!');
     }
   }
 
@@ -40,7 +58,7 @@ export default function Sidebar({ closeToggle, user }) {
       {icon}
       <span className="sidebar-tooltip group-hover:scale-100">{text}</span>
     </div>
-  )
+  );
 
   const Divider = () => <hr className="sidebar-hr" />;
 
@@ -60,7 +78,10 @@ export default function Sidebar({ closeToggle, user }) {
             <SideBarIcon icon={<BsPersonPlus size="28" />} text="New Member" />
           </Link>
           <Link to="/group/create-group">
-            <SideBarIcon icon={<AiOutlineUsergroupAdd size="28" />} text="New Group" />
+            <SideBarIcon
+              icon={<AiOutlineUsergroupAdd size="28" />}
+              text="New Group"
+            />
           </Link>
           <Link to="/loan/new-product">
             <SideBarIcon icon={<BsFilePlus size="28" />} text="New Product" />
@@ -109,7 +130,5 @@ export default function Sidebar({ closeToggle, user }) {
       {renderSideBar()}
       {/* {renderSideBarOne()} */}
     </>
-  )
-
+  );
 }
-

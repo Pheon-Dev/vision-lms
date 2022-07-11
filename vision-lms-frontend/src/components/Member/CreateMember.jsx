@@ -1,67 +1,60 @@
 import React, { useState, useEffect } from "react";
-import { AiOutlineCloudUpload } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
-import { MdDelete } from 'react-icons/md';
-import { v4 as uuidv4 } from 'uuid';
+import { AiOutlineCloudUpload } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { MdDelete } from "react-icons/md";
 
-import { products } from '../../utils/data';
-import { client } from '../../client';
-import { Spinner } from '../Components';
+import { client } from "../../client";
+import { Spinner, Label } from "../Components";
 
 export default function CreateMember() {
-  const [title, setTitle] = useState('');
-  const [about, setAbout] = useState('');
   const [loading, setLoading] = useState(false);
-  const [destination, setDestination] = useState();
   const [fields, setFields] = useState();
-  const [product, setProduct] = useState();
+  const [validator, setValidator] = useState(false);
   const [imageAsset, setImageAsset] = useState();
   const [wrongImageType, setWrongImageType] = useState(false);
+  const [adding, setAdding] = useState(false);
 
-  const [date, setDate] = useState('');
-  const [branchName, setBranchName] = useState('');
-  const [memberNumber, setMemberNumber] = useState('');
-  const [surName, setSurName] = useState('');
-  const [otherNames, setOtherNames] = useState('');
-  const [dob, setDOB] = useState('');
-  const [idPass, setIDPass] = useState('');
-  const [pinNumber, setPinNumber] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [gender, setGender] = useState('');
-  const [age, setAge] = useState('');
-  const [religion, setReligion] = useState('');
-  const [maritalStatus, setMaritalStatus] = useState('');
-  const [nameSpouse, setNameSpouse] = useState('');
-  const [spouseNumber, setSpouseNumber] = useState('');
-  const [postalAddress, setPostalAddress] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [cityTown, setCityTown] = useState('');
-  const [residentialAddress, setResidentialAddress] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
-  const [rented, setRented] = useState('');
-  const [owned, setOwned] = useState('');
-  const [landCareAgent, setLandCareAgent] = useState('');
-  const [occupationEmployer, setOccupationEmployer] = useState('');
-  const [employerNumber, setEmployerNumber] = useState('');
-  const [businessLocation, setBusinessLocation] = useState('');
-  const [businessAge, setBusinessAge] = useState('');
-  const [refereeName, setRefereeName] = useState('');
-  const [group, setGroup] = useState('false');
-  const [communityPosition, setCommunityPosition] = useState('');
-  const [mpesaTransNumber, setMpesaTransNumber] = useState('');
-  const [nameKin, setNameKin] = useState('');
-  const [relationship, setRelationship] = useState('');
-  const [residentialAddressKin, setResidentialAddressKin,] = useState('');
-  const [postalAddressKin, setPostalAddressKin,] = useState('');
-  const [postalCodeKin, setPostalCodeKin,] = useState('');
-  const [cityTownKin, setCityTownKin] = useState('');
-  const [mobileNumberKin, setMobileNumberKin] = useState('');
-  const [groupName, setGroupName] = useState('');
-  const [groupLeaderName, setGroupLeaderName] = useState('');
-  const [leaderIdNumber, setLeaderIdNumber] = useState('');
-  const [leaderNumber, setLeaderNumber] = useState('');
+  const [date, setDate] = useState("");
+  const [branchName, setBranchName] = useState("");
+  const [memberNumber, setMemberNumber] = useState("");
+  const [surName, setSurName] = useState("");
+  const [otherNames, setOtherNames] = useState("");
+  const [dob, setDOB] = useState("");
+  const [idPass, setIDPass] = useState("");
+  const [pinNumber, setPinNumber] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [gender, setGender] = useState("");
+  const [age, setAge] = useState("");
+  const [religion, setReligion] = useState("");
+  const [maritalStatus, setMaritalStatus] = useState("");
+  const [nameSpouse, setNameSpouse] = useState("");
+  const [spouseNumber, setSpouseNumber] = useState("");
+  const [postalAddress, setPostalAddress] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [cityTown, setCityTown] = useState("");
+  const [residentialAddress, setResidentialAddress] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+  const [rentedOwned, setRentedOwned] = useState("");
+  const [landCareAgent, setLandCareAgent] = useState("");
+  const [occupationEmployer, setOccupationEmployer] = useState("");
+  const [employerNumber, setEmployerNumber] = useState("");
+  const [businessLocation, setBusinessLocation] = useState("");
+  const [businessAge, setBusinessAge] = useState("");
+  const [refereeName, setRefereeName] = useState("");
+  const [refereeNumber, setRefereeNumber] = useState("");
+  const [communityPosition, setCommunityPosition] = useState("");
+  const [mpesaTransNumber, setMpesaTransNumber] = useState("");
+  const [mpesaAmount, setMpesaAmount] = useState("");
+  const [nameKin, setNameKin] = useState("");
+  const [relationship, setRelationship] = useState("");
+  const [residentialAddressKin, setResidentialAddressKin] = useState("");
+  const [postalAddressKin, setPostalAddressKin] = useState("");
+  const [postalCodeKin, setPostalCodeKin] = useState("");
+  const [cityTownKin, setCityTownKin] = useState("");
+  const [mobileNumberKin, setMobileNumberKin] = useState("");
 
-  const [maintained, setMaintained] = useState('false');
+  const [maintained, setMaintained] = useState("false");
+  const [group, setGroup] = useState("false");
 
   const navigate = useNavigate();
   const [code, setCode] = useState();
@@ -76,38 +69,63 @@ export default function CreateMember() {
       });
     }
 
-    return () => subscription = false;
+    return () => (subscription = false);
   }, []);
+
+  const rentedOrOwned = [
+    {
+      name: "Rented/Owned ...",
+      abbr: "RO",
+    },
+    {
+      name: "Rented",
+      abbr: "R",
+    },
+    {
+      name: "Owned",
+      abbr: "O",
+    },
+  ];
 
   const genderSelector = [
     {
-      name: 'gender',
-      abbr: 'G'
+      name: "Gender ...",
+      abbr: "G",
     },
     {
-      name: 'female',
-      abbr: 'F'
+      name: "female",
+      abbr: "F",
     },
     {
-      name: 'male',
-      abbr: 'M'
+      name: "male",
+      abbr: "M",
     },
-  ]
+  ];
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
     // uploading asset to sanity
-    if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff' || selectedFile.type === 'image/jpg') {
+    if (
+      selectedFile.type === "image/png" ||
+      selectedFile.type === "image/svg" ||
+      selectedFile.type === "image/jpeg" ||
+      selectedFile.type === "image/gif" ||
+      selectedFile.type === "image/tiff" ||
+      selectedFile.type === "image/jpg"
+    ) {
       setWrongImageType(false);
       setLoading(true);
       client.assets
-        .upload('image', selectedFile, { contentType: selectedFile.type, filename: selectedFile.name })
+        .upload("image", selectedFile, {
+          contentType: selectedFile.type,
+          filename: selectedFile.name,
+        })
         .then((document) => {
           setImageAsset(document);
           setLoading(false);
         })
         .catch((error) => {
-          console.log('Upload failed:', error.message);
+          console.log("Upload failed:", error.message);
         });
     } else {
       setLoading(false);
@@ -115,753 +133,635 @@ export default function CreateMember() {
     }
   };
 
+  let res_age = 0;
+  let year_diff = (date.split('-')[0] - dob.split('-')[0]);
+  function renderAge(month_now, month_dob) {
+    let result = 0;
+    if (month_now === month_dob) result = 1;
+    if (month_now > month_dob) result = 1;
+    if (month_now < month_dob) result = 0;
+    return result;
+  }
+  let month_date = renderAge((Number(date.split('-')[1]) + 0), (dob.split('-')[1] - 0));
+  res_age = year_diff + month_date - 1;
+  res_age = res_age > 0 ? res_age : res_age * -1;
+  res_age = res_age.toString();
+
   // console.log(Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + code.length : '000' + code.length))
   // console.log(Date().split(' ')[2] + Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1])
   // console.log(memberNumber)
   const preSaveMember = () => {
-    setMaintained('false');
-    setGroup('false');
-    setMemberNumber(`${(code.length > 9 ? code.length > 99 ? code.length > 999 ? (Number(code.length) + 1) : '0' + (Number(code.length) + 1) : '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
-  }
+    setMaintained("false");
+    setGroup("false");
+    setAge(res_age);
+    setMemberNumber(
+      `DC-${code.length > 9
+        ? code.length > 99
+          ? code.length > 999
+            ? Number(code.length) + 1
+            : "0" + (Number(code.length) + 1)
+          : "00" + (Number(code.length) + 1)
+        : "000" + (Number(code.length) + 1)
+      }`
+    );
+    console.log(date, branchName, memberNumber, mpesaAmount, surName, otherNames, dob, idPass, pinNumber, mobileNumber, gender, age, religion, maritalStatus, spouseNumber, nameSpouse, postalAddress, postalCode, cityTown, residentialAddress, emailAddress, rentedOwned, landCareAgent, occupationEmployer, employerNumber, businessLocation, businessAge, refereeName, group, communityPosition, mpesaTransNumber, nameKin, relationship, residentialAddressKin, postalAddressKin, postalCodeKin, cityTownKin, mobileNumberKin)
+  };
 
   const saveMember = () => {
-    // setMemberNumber(`${Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`)
-    // setMemberNumber(`${Date().split(' ')[2] + Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1]}`)
-    // if (date && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && group && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && groupName && groupLeaderName && leaderNumber && leaderIdNumber && imageAsset?._id) {
-    if (date && maintained && branchName && memberNumber && surName && otherNames && dob && idPass && pinNumber && mobileNumber && gender && age && religion && maritalStatus && spouseNumber && nameSpouse && postalAddress && postalCode && cityTown && residentialAddress && emailAddress && rented && owned && landCareAgent && occupationEmployer && employerNumber && businessLocation && businessAge && refereeName && communityPosition && mpesaTransNumber && nameKin && relationship && residentialAddressKin && group && postalAddressKin && postalCodeKin && cityTownKin && mobileNumberKin && imageAsset?._id) {
+    setAdding(true);
+    if (
+      date &&
+      maintained &&
+      branchName &&
+      memberNumber &&
+      surName &&
+      otherNames &&
+      dob &&
+      idPass &&
+      pinNumber &&
+      mobileNumber &&
+      gender &&
+      age &&
+      religion &&
+      maritalStatus &&
+      spouseNumber &&
+      nameSpouse &&
+      postalAddress &&
+      postalCode &&
+      cityTown &&
+      residentialAddress &&
+      emailAddress &&
+      rentedOwned &&
+      landCareAgent &&
+      occupationEmployer &&
+      employerNumber &&
+      businessLocation &&
+      businessAge &&
+      refereeName &&
+      refereeNumber &&
+      communityPosition &&
+      mpesaTransNumber &&
+      mpesaAmount &&
+      nameKin &&
+      relationship &&
+      residentialAddressKin &&
+      group &&
+      postalAddressKin &&
+      postalCodeKin &&
+      cityTownKin &&
+      mobileNumberKin &&
+      imageAsset?._id
+    ) {
       const doc = {
-        _type: 'member',
+        _type: "member",
         memberNumber,
         date,
         maintained,
         branchName,
-        personalDetails: {
-          surName,
-          otherNames,
-          dob,
-          idPass,
-          pinNumber,
-          mobileNumber,
-          gender,
-          age,
-          religion,
-          maritalStatus,
-          spouseNumber,
-          nameSpouse,
-          postalAddress,
-          postalCode,
-          cityTown,
-          residentialAddress,
-          emailAddress,
-          rented,
-          owned,
-          landCareAgent,
-          occupationEmployer,
-          employerNumber,
-          businessLocation,
-          businessAge,
-          refereeName,
-          group,
-          communityPosition,
-          mpesaTransNumber,
-        },
-        kinInformation: {
-          nameKin,
-          relationship,
-          residentialAddressKin,
-          postalAddressKin,
-          postalCodeKin,
-          cityTownKin,
-          mobileNumberKin,
-        },
-        // groupInformation: {
-        //   groupName,
-        //   groupLeaderName,
-        //   leaderNumber,
-        //   leaderIdNumber,
-        // },
+        surName,
+        otherNames,
+        dob,
+        idPass,
+        pinNumber,
+        mobileNumber,
+        gender,
+        age,
+        religion,
+        maritalStatus,
+        spouseNumber,
+        nameSpouse,
+        postalAddress,
+        postalCode,
+        cityTown,
+        residentialAddress,
+        emailAddress,
+        rentedOwned,
+        landCareAgent,
+        occupationEmployer,
+        employerNumber,
+        businessLocation,
+        businessAge,
+        refereeName,
+        refereeNumber,
+        group,
+        communityPosition,
+        mpesaTransNumber,
+        mpesaAmount,
+        nameKin,
+        relationship,
+        residentialAddressKin,
+        postalAddressKin,
+        postalCodeKin,
+        cityTownKin,
+        mobileNumberKin,
         image: {
-          _type: 'image',
+          _type: "image",
           asset: {
-            _type: 'reference',
+            _type: "reference",
             _ref: imageAsset?._id,
           },
         },
-        // userId: user._id,
-        // postedBy: {
-        //   _type: 'postedBy',
-        //   _ref: user._id,
-        // },
-        // product,
       };
       client.create(doc).then(() => {
-        navigate('/');
-        // window.location.reload();
+        setAdding(false);
+        navigate("/member/");
+        alert("Member Registered Successfully");
       });
     } else {
       setFields(true);
+      setValidator(true);
 
-      setTimeout(
-        () => {
-          setFields(false);
-        },
-        2000,
-      );
+      setAdding(false);
+      setTimeout(() => {
+        setFields(false);
+      }, 2000);
     }
   };
+
+
+  let classInput = "appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
 
   function renderCreateMember() {
     return (
       <div className="w-full mt-5">
-        <div className="flex uppercase flex-col text-3xl mb-3 items-center sm:text-3xl font-bold p-2">Member Registration Form</div>
+        <div className="flex uppercase flex-col text-3xl mb-3 items-center sm:text-3xl font-bold p-2">
+          Member Registration Form
+        </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Date</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Date" item={date} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="date"
               type="date"
-              placeholder="Date ..."
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={(e) => setDate(e.target.value.toUpperCase())}
+              className={classInput}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            {/* <label className="relative cursor-pointer"> */}
-            {/*   <input */}
-            {/*     className="h-1/2 w-full px-6 bg-gray-300 text-l border-2 rounded-lg-lg border-gray-500 border-opacity-50 outline-none focus:border-cyan-500 focus:text-black transition duration-500" */}
-            {/*     // id="branchName" */}
-            {/*     type="text" */}
-            {/*     placeholder="." */}
-            {/*     value={branchName} */}
-            {/*     onChange={(e) => setBranchName(e.target.value)} */}
-            {/*   /> */}
-            {/*   <span className="text-xl text-black text-opacity-30 absolute left-5 top-3 px-1 transition duration-300 input-text">Branch Name</span> */}
-            {/* </label> */}
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Branch Name</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Branch Name" item={branchName} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="branchName"
               type="text"
               placeholder="Branch Name ..."
               value={branchName}
-              onChange={(e) => setBranchName(e.target.value)}
+              onChange={(e) => setBranchName(e.target.value.toUpperCase())}
+              className={classInput}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Member Number</span>
-              {/* <span className="text-red-500 italic">*{memNum.split('-')[0]}</span> */}
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Member Number" item={memberNumber} />
             {code && (
-              <span
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              >
-                {/* {`DC-${Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1))}`} */}
-                {`DC-${code.length > 9 ? code.length > 99 ? code.length > 999 ? (Number(code.length) + 1) : '0' + (Number(code.length) + 1) : '00' + (Number(code.length) + 1) : '000' + (Number(code.length) + 1)}`}
+              <span className={classInput}>
+                {`DC-${code.length > 9
+                    ? code.length > 99
+                      ? code.length > 999
+                        ? Number(code.length) + 1
+                        : "0" + (Number(code.length) + 1)
+                      : "00" + (Number(code.length) + 1)
+                    : "000" + (Number(code.length) + 1)
+                  }`}
               </span>
             )}
-            {/* <input */}
-            {/*   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" */}
-            {/*   id="memberNumber" */}
-            {/*   type="number" */}
-            {/*   // placeholder="Member Number ..." */}
-            {/*   placeholder={`DC-${memNum.split('-')[1]}`} */}
-            {/*   value={memberNumber} */}
-            {/*   onChange={(e) => setMemberNumber(e.target.value)} */}
-            {/* /> */}
           </div>
         </div>
-        <div className="flex flex-col uppercase text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold p-2">Personal Details</div>
+        <div className="flex flex-col uppercase text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold p-2">
+          Personal Details
+        </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Surname
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Surname" item={surName} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="surName"
               type="text"
               placeholder="Surname ..."
               value={surName}
-              onChange={(e) => setSurName(e.target.value)}
+              onChange={(e) => setSurName(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Other Names
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Other Names" item={otherNames} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="otherNames"
               type="text"
               placeholder="Other Names ..."
               value={otherNames}
-              onChange={(e) => setOtherNames(e.target.value)}
+              onChange={(e) => setOtherNames(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Date Of Birth
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Date Of Birth" item={dob} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="dob"
               type="date"
               placeholder="Date of Birth ..."
               value={dob}
-              onChange={(e) => setDOB(e.target.value)}
+              onChange={(e) => setDOB(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              ID/Passport No.
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="ID/Passport No." item={idPass} />
             <input
               className="uppercase appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="idPass"
               type="text"
               placeholder="ID/Passport ..."
               value={idPass}
-              onChange={(e) => setIDPass(e.target.value)}
+              onChange={(e) => setIDPass(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              PIN No. (Attach Copy)
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="PIN No. (Attach Copy)" item={pinNumber} />
             <input
               className="uppercase appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="pinNumber"
               type="text"
               placeholder="PIN ..."
               value={pinNumber}
-              onChange={(e) => setPinNumber(e.target.value)}
+              onChange={(e) => setPinNumber(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Mobile No.
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Mobile No." item={mobileNumber} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="mobileNumber"
               type="tel"
               placeholder="Mobile No. ..."
               value={mobileNumber}
-              onChange={(e) => setMobileNumber(e.target.value)}
+              onChange={(e) => setMobileNumber(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Gender</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Gender" item={gender} />
             <select
-              onChange={(e) => { setGender(e.target.value); (e.target.value) }} className="outline-none w-4.5 text-base border-gray-200 p-2 rounded-lg-md cursor-pointer"
+              onChange={(e) => {
+                setGender(e.target.value.toUpperCase());
+                e.target.value.toUpperCase();
+              }}
+              className={classInput}
             >
-              {/* <option value="Gender ..." className="sm:text-bg bg-white text-gray-400">Gender ...</option> */}
               {genderSelector.map((item) => (
-                <option key={item.name} className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}>
+                <option
+                  key={item.name}
+                  className={classInput}
+                  value={item.name}
+                >
                   {item.name}
                 </option>
-              )
-              )}
+              ))}
             </select>
           </div>
-          {/* Calculate age */}
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Age</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="age"
-              type="number"
-              placeholder="Age ..."
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-            />
+            <Label valid={validator} label="Age" item={age} />
+            {res_age && (
+              <span className={classInput}>
+                {`${res_age}`}
+              </span>
+            )}
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Religion</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Religion" item={religion} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="religion"
               type="text"
               placeholder="Religion ..."
               value={religion}
-              onChange={(e) => setReligion(e.target.value)}
+              onChange={(e) => setReligion(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Marital Status</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Marital Status" item={maritalStatus} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="maritalStatus"
               type="text"
               placeholder="Marital Status ..."
               value={maritalStatus}
-              onChange={(e) => setMaritalStatus(e.target.value)}
+              onChange={(e) => setMaritalStatus(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Name of Spouse</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Name of Spouse" item={nameSpouse} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="nameSpouse"
               type="text"
               placeholder="Name of Spouse ..."
               value={nameSpouse}
-              onChange={(e) => setNameSpouse(e.target.value)}
+              onChange={(e) => setNameSpouse(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Spouse Tel. No.</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Spouse Tel. No." item={spouseNumber} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="spouseNumber"
               type="tel"
               placeholder="Spouse Tel. ..."
               value={spouseNumber}
-              onChange={(e) => setSpouseNumber(e.target.value)}
+              onChange={(e) => setSpouseNumber(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Postal Address</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Postal Address" item={postalAddress} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="postalAddress"
               type="text"
               placeholder="Postal Address ..."
               value={postalAddress}
-              onChange={(e) => setPostalAddress(e.target.value)}
+              onChange={(e) => setPostalAddress(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Postal Code</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Postal Code" item={postalCode} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="postalCode"
-              type="number"
+              type="text"
               placeholder="Postal Code..."
               value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
+              onChange={(e) => setPostalCode(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">City/Town</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="City/Town" item={cityTown} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="cityTown"
               type="text"
               placeholder="City/Town ..."
               value={cityTown}
-              onChange={(e) => setCityTown(e.target.value)}
+              onChange={(e) => setCityTown(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Residential Address
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Residential Address" item={residentialAddress} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="residentialAddress"
               type="text"
               placeholder="Residential Address ..."
               value={residentialAddress}
-              onChange={(e) => setResidentialAddress(e.target.value)}
+              onChange={(e) => setResidentialAddress(e.target.value.toUpperCase())}
             />
           </div>
           {/* // valid email */}
           <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Email Address
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500"
+            <Label valid={validator} label="Email Address" item={emailAddress} />
+            <input
+              className={classInput}
               id="emailAddress"
               type="email"
               placeholder="Email Address ..."
               value={emailAddress}
-              onChange={(e) => setEmailAddress(e.target.value)}
+              onChange={(e) => setEmailAddress(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Rented</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 required:border-red-500 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="rented"
-              type="text"
-              placeholder="Rented ..."
-              value={rented}
-              onChange={(e) => setRented(e.target.value)}
-            />
+            <Label valid={validator} label="Rented/Owned" item={rentedOwned} />
+            <select
+              onChange={(e) => {
+                setRentedOwned(e.target.value.toUpperCase());
+                e.target.value;
+              }}
+              className={classInput}
+            >
+              {rentedOrOwned.map((item) => (
+                <option
+                  key={item.name}
+                  className={classInput}
+                  value={item.name}
+                >
+                  {item.name}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Owned</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+          <div className="w-full md:w-2/3 px-3">
+            <Label valid={validator} label="Landlord/Caretaker/Agent Name" item={landCareAgent} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="owned"
-              type="text"
-              placeholder="Owned ..."
-              value={owned}
-              onChange={(e) => setOwned(e.target.value)}
-            />
-          </div>
-          <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Landlord/Caretaker/Agent Name</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="landCareAgent"
               type="text"
               placeholder="Landlord/Caretaker/Agent Name ..."
               value={landCareAgent}
-              onChange={(e) => setLandCareAgent(e.target.value)}
+              onChange={(e) => setLandCareAgent(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         {/* Show business if not employed */}
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Occupation/Employer
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Occupation/Employer" item={occupationEmployer} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="occupationEmployer"
               type="text"
               placeholder="Occupation/Employer ..."
               value={occupationEmployer}
-              onChange={(e) => setOccupationEmployer(e.target.value)}
+              onChange={(e) => setOccupationEmployer(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Employer Contacts (Tel. No.)
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+            <Label valid={validator} label="Employer Contacts (Tel. No.)" item={employerNumber} />
+            <input
+              className={classInput}
               id="employerNumber"
               type="tel"
               placeholder="Employer Contacts ..."
               value={employerNumber}
-              onChange={(e) => setEmployerNumber(e.target.value)}
+              onChange={(e) => setEmployerNumber(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Location of Business (Attach Map)
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Location of Business (Attach Map)" item={businessLocation} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="businessLocation"
               type="text"
               placeholder="Business Location ..."
               value={businessLocation}
-              onChange={(e) => setBusinessLocation(e.target.value)}
+              onChange={(e) => setBusinessLocation(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Age of Business
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+            <Label valid={validator} label="Age of Business" item={businessAge} />
+            <input
+              className={classInput}
               id="businessAge"
-              type="number"
+              type="text"
               placeholder="Age of Business ..."
               value={businessAge}
-              onChange={(e) => setBusinessAge(e.target.value)}
+              onChange={(e) => setBusinessAge(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Name of Referee
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Name of Referee" item={refereeName} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="refereeName"
               type="text"
               placeholder="Name of Referee ..."
               value={refereeName}
-              onChange={(e) => setRefereeName(e.target.value)}
+              onChange={(e) => setRefereeName(e.target.value.toUpperCase())}
             />
           </div>
-          <div className="hidden w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Group
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="group"
-              type="text"
-              placeholder="Group ..."
-              value={group}
-              onChange={(e) => setGroup(e.target.value)}
+          <div className="w-full md:w-1/2 px-3">
+            <Label valid={validator} label="Tel No." item={refereeNumber} />
+            <input
+              className={classInput}
+              id="refereeNumber"
+              type="tel"
+              placeholder="Referee Number ..."
+              value={refereeNumber}
+              onChange={(e) => setRefereeNumber(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-full px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Any Position of Leadership in the Community
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Any Position of Leadership in the Community" item={communityPosition} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="communityPosition"
               type="text"
               placeholder="Poistion in Community ..."
               value={communityPosition}
-              onChange={(e) => setCommunityPosition(e.target.value)}
+              onChange={(e) => setCommunityPosition(e.target.value.toUpperCase())}
             />
           </div>
-          <div className="w-full md:w-full px-3">
-            <label className="block tracking-wide text-l mb-2 uppercase text-gray-900 font-bold text-md">
-              Membership fee M-PESA Transaction No.
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input className="uppercase appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+        </div>
+        <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <Label valid={validator} label="Membership fee M-PESA Transaction No." item={communityPosition} />
+            <input
+              className={classInput}
               id="mpesaTransNumber"
               type="text"
               placeholder="M-PESA Transaction NUMBER ..."
               value={mpesaTransNumber}
-              onChange={(e) => setMpesaTransNumber(e.target.value)}
+              onChange={(e) => setMpesaTransNumber(e.target.value.toUpperCase())}
+            />
+          </div>
+          <div className="w-full md:w-1/2 px-3">
+            <Label valid={validator} label="Membership fee Amount" item={communityPosition} />
+            <input
+              className={classInput}
+              id="mpesaAmount"
+              type="text"
+              placeholder="Membership Amount ..."
+              value={mpesaAmount}
+              onChange={(e) => setMpesaAmount(e.target.value.toUpperCase())}
             />
           </div>
         </div>
-        <div className="flex flex-col text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold p-2">NEXT OF KIN INFORMATION</div>
+        <div className="flex flex-col text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold p-2">
+          NEXT OF KIN INFORMATION
+        </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Name
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Name" item={nameKin} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="nameKin"
               type="text"
               placeholder="Name ..."
               value={nameKin}
-              onChange={(e) => setNameKin(e.target.value)}
+              onChange={(e) => setNameKin(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Relationship
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Relationship" item={nameKin} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="relationship"
               type="text"
               placeholder="Relationship ..."
               value={relationship}
-              onChange={(e) => setRelationship(e.target.value)}
+              onChange={(e) => setRelationship(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-full px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Residential Address
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Residential Address" item={residentialAddressKin} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="residentialAddressKin"
               type="text"
               placeholder="Residential Address ..."
               value={residentialAddressKin}
-              onChange={(e) => setResidentialAddressKin(e.target.value)}
+              onChange={(e) => setResidentialAddressKin(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Postal Address</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Postal Address" item={postalAddressKin} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="postalAddressKin"
               type="text"
               placeholder="Postal Address ..."
               value={postalAddressKin}
-              onChange={(e) => setPostalAddressKin(e.target.value)}
+              onChange={(e) => setPostalAddressKin(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Postal Code</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Postal Code" item={postalCodeKin} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="postalCodeKin"
-              type="number"
+              type="text"
               placeholder="Postal Code..."
               value={postalCodeKin}
-              onChange={(e) => setPostalCodeKin(e.target.value)}
+              onChange={(e) => setPostalCodeKin(e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">City/Town</span>
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="City/Town" item={cityTownKin} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="cityTownKin"
               type="text"
               placeholder="City/Town ..."
               value={cityTownKin}
-              onChange={(e) => setCityTownKin(e.target.value)}
+              onChange={(e) => setCityTownKin(e.target.value.toUpperCase())}
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-full px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Mobile/Tel No.
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label valid={validator} label="Mobile/Tel No." item={mobileNumberKin} />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               id="mobileNumberKin"
               type="tel"
               placeholder="Mobile/Tel ..."
               value={mobileNumberKin}
-              onChange={(e) => setMobileNumberKin(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="flex hidden flex-col text-2xl text-gray-700 mb-5 items-center sm:text-2xl font-semibold p-2">GROUP INFORMATION</div>
-        <div className="flex hidden flex-wrap -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Group Name
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="groupName"
-              type="text"
-              placeholder="Group Name ..."
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-            />
-          </div>
-          <div className="w-full md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Name of Group Leader
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="groupLeaderName"
-              type="text"
-              placeholder="Name of Group Leader ..."
-              value={groupLeaderName}
-              onChange={(e) => setGroupLeaderName(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="flex hidden flex-wrap -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              ID No. of Leader
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="leaderIdNumber"
-              type="number"
-              placeholder="ID No. of Leader ..."
-              value={leaderIdNumber}
-              onChange={(e) => setLeaderIdNumber(e.target.value)}
-            />
-          </div>
-          <div className="w-full hidden md:w-1/2 px-3">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Mobile No. of Group Leader
-              <span className="text-red-500 italic">*</span>
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="leaderNumber"
-              type="tel"
-              placeholder="Mobile No. of Group Leader ..."
-              value={leaderNumber}
-              onChange={(e) => setLeaderNumber(e.target.value)}
+              onChange={(e) => setMobileNumberKin(e.target.value.toUpperCase())}
             />
           </div>
         </div>
@@ -877,14 +777,8 @@ export default function CreateMember() {
             <div className="flex flex-col">
               <div className="bg-secondaryColor p-3 flex flex-0.7 w-full">
                 <div className=" flex justify-center items-center flex-col border-2 border-dotted border-gray-300 p-3 w-full h-420">
-                  {loading && (
-                    <Spinner />
-                  )}
-                  {
-                    wrongImageType && (
-                      <p>It&apos;s wrong file type.</p>
-                    )
-                  }
+                  {loading && <Spinner />}
+                  {wrongImageType && <p>It&apos;s wrong file type.</p>}
                   {!imageAsset ? (
                     // eslint-disable-next-line jsx-a11y/label-has-associated-control
                     <label>
@@ -893,11 +787,14 @@ export default function CreateMember() {
                           <p className="font-bold text-2xl">
                             <AiOutlineCloudUpload />
                           </p>
-                          <p className="text-lg">Click to Upload Profile Picture</p>
+                          <p className="text-lg">
+                            <Label valid={validator} label="Click to Upload Profile Picture" item={imageAsset} />
+                          </p>
                         </div>
 
                         <p className="mt-32 text-gray-400">
-                          Recommended: Use High-Quality JPG, JPEG, SVG, PNG, GIF or TIFF less than 20MB
+                          Recommended: Use High-Quality JPG, JPEG, SVG, PNG, GIF
+                          or TIFF less than 20MB
                         </p>
                       </div>
                       <input
@@ -929,14 +826,14 @@ export default function CreateMember() {
                 {/* <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Product Line</p> */}
                 {/* <select */}
                 {/*   onChange={(e) => { */}
-                {/*     setProduct(e.target.value); */}
-                {/*     (e.target.value); */}
+                {/*     setProduct(e.target.value.toUpperCase()); */}
+                {/*     (e.target.value.toUpperCase()); */}
                 {/*   }} */}
                 {/*   className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-lg-md cursor-pointer" */}
                 {/* > */}
                 {/*   <option value="others" className="sm:text-bg bg-white">Select Product</option> */}
                 {/*   {products.map((item) => ( */}
-                {/*     <option key={item.name} className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}> */}
+                {/*     <option key={item.name} className="text-base border-0 outline-none capitalize bg-white text-black " item={item.name}> */}
                 {/*       {item.name} */}
                 {/*     </option> */}
                 {/*   ))} */}
@@ -950,17 +847,15 @@ export default function CreateMember() {
                     onMouseEnter={preSaveMember}
                     className="bg-green-500 text-white font-bold p-2 rounded-lg w-36 outline-none"
                   >
-                    Save Member
+                  {adding ? 'Saving ...' : 'Save Member'}
                   </button>
                 </div>
                 <div className="w-full md:w-1/2">
-                  {
-                    fields && (
-                      <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
-                        Please Fill All the Required Fields!
-                      </p>
-                    )
-                  }
+                  {fields && (
+                    <p className="text-red-500 mb-3 text-xl transition-all duration-150 ease-in">
+                      Please Fill All the Required Fields!
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -986,5 +881,4 @@ export default function CreateMember() {
       {renderUploadsAndSaving()}
     </>
   );
-};
-
+}

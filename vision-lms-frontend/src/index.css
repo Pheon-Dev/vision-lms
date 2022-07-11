@@ -1,13 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @import-normalize;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  body {
+body{
+    margin: 0;
+    padding:0;
+    /* font-family: "Open Sans", sans-serif; */
     font-family: 'Lato', sans-serif;
-  }
 }
+}
+
 input[type="text"]:focus ~ .input-text,
 input[type="text"]:not(:placeholder-shown) ~ .input-text{
   @apply text-gray-800 uppercase transform -translate-y-10 font-bold text-xl -translate-x-9 scale-75;
@@ -49,8 +55,8 @@ input[type="text"]:not(:placeholder-shown) ~ .input-text{
   }
 
   .sidebar-hr {
-    @apply bg-gray-200 dark:bg-gray-800 
-    border border-gray-200 dark:border-gray-800 rounded-full
+    @apply bg-gray-500 dark:bg-gray-600 
+    border border-gray-500 dark:border-gray-600 rounded-full
     mx-2;
   }
 

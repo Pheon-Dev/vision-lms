@@ -1,18 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { AiFillDelete, AiOutlineCloudUpload } from 'react-icons/ai';
-import { MdDelete } from 'react-icons/md';
-import { Link, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import { BsCheck2Circle } from "react-icons/bs";
+import { ModalAlert } from "../Modals";
+import { List, Label, Spinner } from "../Components";
+import { v4 as uuidv4 } from "uuid";
 
-import { client, urlFor } from '../../client';
-import { productDetailQuery } from '../../utils/data';
-
-import Spinner from '../Components/Spinner';
+import { client, urlFor } from "../../client";
 
 export default function CreateLoan() {
-  const navigate = useNavigate();
+  const [maintenanceId, setMaintenanceId] = useState();
   const [fields, setFields] = useState();
-  const [loading, setLoading] = useState(false);
+  const [validator, setValidator] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [show, setShow] = useState(false);
+  const [maintaining, setMaintaining] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [list, setList] = useState(false);
+  const [guarantorList, setGuarantorList] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchGuarantorTerm, setSearchGuarantorTerm] = useState("");
+  const [members, setMembers] = useState("");
+  const [guarantors, setGuarantors] = useState("");
+  const [toggleSundays, setToggleSundays] = useState(false);
+  const [togglePayoff, setTogglePayoff] = useState(false);
+  const [plusSundays, setPlusSundays] = useState("false");
+  const [payoff, setPayoff] = useState("false");
 
   const [memberId, setMemberId] = useState("");
   const [memberIdNumber, setMemberIdNumber] = useState("");
@@ -33,76 +44,53 @@ export default function CreateLoan() {
   const [loanAccNumber, setLoanAccNumber] = useState("");
   const [repaymentCycle, setRepaymentCycle] = useState("");
 
+  const [sundays, setSundays] = useState("");
+
   const [interestAmount, setInterestAmount] = useState("");
   const [installmentAmount, setInstallmentAmount] = useState("");
   const [processingFee, setProcessingFee] = useState("");
   const [penaltyAmount, setPenaltyAmount] = useState("");
 
-  const [guarantorsList, setGuarantorsList] = useState('');
-  const [guarantorName, setGuarantorName] = useState('');
-  const [guarantorId, setGuarantorId] = useState('');
-  const [guarantorDetails, setGuarantorDetails] = useState('');
-  const [guarantor, setGuarantor] = useState('');
-  const [guarantorRelationship, setGuarantorRelationship] = useState('');
-  const [guarantorPhone, setGuarantorPhone] = useState('');
+  const [guarantorName, setGuarantorName] = useState("");
+  const [guarantorId, setGuarantorId] = useState("");
+  const [guarantorDetails, setGuarantorDetails] = useState("");
+  const [guarantor, setGuarantor] = useState("");
+  const [guarantorRelationship, setGuarantorRelationship] = useState("");
+  const [guarantorPhone, setGuarantorPhone] = useState("");
 
-  const [addingCollaterals, setAddingCollaterals] = useState(false);
-  const [collateralList, setCollateralList] = useState([{ collateral: "", value: "", image: "" }]);
+  const [collateralItem, setCollateralItem] = useState("");
+  const [collateralValue, setCollateralValue] = useState("");
 
-  const [maintained, setMaintained] = useState('');
-  const [approved, setApproved] = useState('');
-  const [disbursed, setDisbursed] = useState('');
+  const [maintained, setMaintained] = useState("");
+  const [approved, setApproved] = useState("");
+  const [disbursed, setDisbursed] = useState("");
 
-  const id = memberIdentity.split(' ')[0]
-  const sname = memberIdentity.split(' ')[1]
-  const oname = memberIdentity.split(' ')[2] + ' ' + memberIdentity.split(' ')[3]
-  const names = sname + ' ' + oname
+  const id = memberIdentity.split(" ")[0];
+  const sname = memberIdentity.split(" ")[1];
+  const oname =
+    memberIdentity.split(" ")[2] + " " + memberIdentity.split(" ")[3];
+  const names = sname + " " + oname;
 
-  const gid = guarantorDetails.split(' ')[0]
-  const gsname = guarantorDetails.split(' ')[1]
-  const goname = guarantorDetails.split(' ')[2] + ' ' + guarantorDetails.split(' ')[3]
-  const gnames = gsname + ' ' + goname
+  const gid = guarantorDetails.split(" ")[0];
+  const gsname = guarantorDetails.split(" ")[1];
+  const goname =
+    guarantorDetails.split(" ")[2] + " " + guarantorDetails.split(" ")[3];
+  const gnames = gsname + " " + goname;
 
-  const [imageAsset, setImageAsset] = useState();
-  const [wrongImageType, setWrongImageType] = useState(false);
-
-  const uploadImage = (e) => {
-    const selectedFile = e.target.files[0];
-    // uploading asset to sanity
-    if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff' || selectedFile.type === 'image/jpg') {
-      setWrongImageType(false);
-      setLoading(true);
-      client.assets
-        .upload('image', selectedFile, { contentType: selectedFile.type, filename: selectedFile.name })
-        .then((document) => {
-          setImageAsset(document);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log('Upload failed:', error.message);
-        });
-    } else {
-      setLoading(false);
-      setWrongImageType(true);
-    }
-  };
   useEffect(() => {
     let subscription = true;
     const membersListQuery = '*[_type == "member" && maintained == "false"]';
-    const memberQuery = `*[_type == "member" && memberNumber match '${id}' || personalDetails.surName match '${sname}' || personalDetails.otherNames match '${oname}']`;
+    const memberQuery = `*[_type == "member" && memberNumber match '${id}' || surName match '${sname}' || otherNames match '${oname}']`;
     const productListQuery = '*[_type == "newProduct"]';
-    const guarantorsListQuery = '*[_type == "member"]';
-    const guarantorQuery = `*[_type == "member" && memberNumber match '${gid}' || personalDetails.surName match '${gsname}' || personalDetails.otherNames match '${goname}']`;
+    const guarantorQuery = `*[_type == "member" && memberNumber match '${gid}' || surName match '${gsname}' || otherNames match '${goname}']`;
     // const productTypeQuery = productDetailQuery(productType);
     const productTypeQuery = `*[_type == "newProduct" && productName == "${productType}"]`;
+    const m_query = `*[_type == "member" && memberNumber match '${searchTerm}*' || surName match '${searchTerm}*' || otherNames match '${searchTerm}*' || mobileNumber match '${searchTerm}*' || idPass match '${searchTerm}*']`;
+    const g_query = `*[_type == "member" && memberNumber match '${searchGuarantorTerm}*' || surName match '${searchGuarantorTerm}*' || otherNames match '${searchGuarantorTerm}*' || mobileNumber match '${searchGuarantorTerm}*' || idPass match '${searchGuarantorTerm}*']`;
 
     if (subscription) {
       client.fetch(membersListQuery).then((data) => {
         setMembersList(data);
-      });
-
-      client.fetch(guarantorsListQuery).then((data) => {
-        setGuarantorsList(data);
       });
 
       client.fetch(guarantorQuery).then((data) => {
@@ -120,29 +108,147 @@ export default function CreateLoan() {
       client.fetch(productTypeQuery).then((data) => {
         setProductDetails(data);
       });
+
+      client.fetch(m_query).then((data) => {
+        setMembers(data);
+      });
+
+      client.fetch(g_query).then((data) => {
+        setGuarantors(data);
+      });
     }
+    return () => (subscription = false);
+  }, [
+    productType,
+    memberIdentity,
+    id,
+    sname,
+    oname,
+    names,
+    gid,
+    goname,
+    gsname,
+    searchTerm,
+    searchGuarantorTerm,
+  ]);
 
-    return () => subscription = false;
+  // if (members?.length === 0) {
+  //   return (
+  //       <>
+  //         <div className="flex flex-col justify-center items-center ml-auto mr-auto">
+  //           <div className="mt-9">
+  //             <span className="font-bold text-red-500 text-xl mr-2">No</span>
+  //             <span className="font-bold text-gray-500 text-xl mr-2">
+  //               members available ...
+  //             </span>
+  //           </div>
+  //           <div className="mt-5">
+  //             <span className="font-bold text-blue-400 text-xl mr-2">
+  //               They've either been maintained for or have an active loan.
+  //             </span>
+  //           </div>
+  //           <div className="mt-0">
+  //             <span className="font-bold text-blue-500 text-xl mr-2">
+  //               Checkout the approval list ...
+  //             </span>
+  //           </div>
+  //           <div className="mt-8">
+  //             <Link
+  //               to="/loan/approvals"
+  //               className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+  //             >
+  //               Approval List
+  //             </Link>
+  //           </div>
+  //         </div>
+  //       </>
+  //   )
+  // }
 
-  }, [productType, id, sname, oname, names, gid, goname, gsname]);
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleGuarantorChange = (event) => {
+    setSearchGuarantorTerm(event.target.value);
+  };
 
   function renderSundays(tenure) {
-    var day = '';
+    var day = "";
+    let result = "";
     var sundays = 0;
     var counter = 0;
-    while (counter < tenure + 1) {
+
+    while (counter < Number(tenure) + 1) {
       const date = new Date();
       date.setDate(date.getDate() + counter);
       day = date.getDay();
       if (day === 0) {
-        sundays += 1
+        sundays += 1;
       }
       counter++;
     }
-    return sundays;
+
+    result = plusSundays === "true" ? 0 : sundays;
+    return result;
   }
 
+  function renderPayoffButton() {
+    return (
+      //   Switch Container
+      <div
+        className={`md:w-14 md:h-7 w-12 h-6 flex items-center ${
+          !togglePayoff ? "bg-gray-400" : "bg-green-500"
+        } rounded-full p-1 cursor-pointer`}
+        onClick={() => {
+          setTogglePayoff(!togglePayoff);
+          setPayoff(!togglePayoff ? "true" : "false");
+        }}
+      >
+        {/* Switch */}
+        <div
+          className={
+            `${
+              !togglePayoff ? "bg-green-100" : "bg-red-100"
+            } md:w-6 md:h-6 h-5 w-5 rounded-full shadow-md ease-in-out duration-500` +
+            (togglePayoff ? null : toggleClass)
+          }
+        ></div>
+      </div>
+    );
+  }
+
+  function renderSundayButton() {
+    return (
+      //   Switch Container
+      <div
+        className={`md:w-14 md:h-7 w-12 h-6 flex items-center ${
+          !toggleSundays ? "bg-gray-400" : "bg-green-500"
+        } rounded-full p-1 cursor-pointer`}
+        onClick={() => {
+          setToggleSundays(!toggleSundays);
+          setPlusSundays(!toggleSundays ? "true" : "false");
+        }}
+      >
+        {/* Switch */}
+        <div
+          className={
+            `${
+              !toggleSundays ? "bg-green-100" : "bg-red-100"
+            } md:w-6 md:h-6 h-5 w-5 rounded-full shadow-md ease-in-out duration-500` +
+            (toggleSundays ? null : toggleClass)
+          }
+        ></div>
+      </div>
+    );
+  }
+
+  const toggleClass = "transform translate-x-6";
+
   function renderDailyInterestAmount(rate, principal, tenure) {
+    tenure = Number(tenure);
+    let multiplier = 30 / 4;
+    tenure = tenure === 7 ? multiplier : tenure === 14 ? multiplier * 2 : tenure === 21 ? multiplier * 3 : tenure;
     return roundOff(((rate * principal) / 3000) * tenure);
   }
 
@@ -154,121 +260,55 @@ export default function CreateLoan() {
     return roundOff(((rate * principal) / 100) * tenure);
   }
 
-  // Note Sundays
   function renderDailyInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = ((rate * principal) / 3000 * tenure);
-    return roundOff((Number(principalAmount) + Number(principal)) / (Number(tenure) - Number(renderSundays(Number(tenure))))); // - sundays
+    tenure = Number(tenure);
+    let multiplier = 30 / 4;
+    tenure = tenure === 7 ? multiplier : tenure === 14 ? multiplier * 2 : tenure === 21 ? multiplier * 3 : tenure;
+    let principalAmount = ((rate * principal) / 3000) * tenure;
+    return roundOff(
+      (Number(principalAmount) + Number(principal)) /
+        (Number(tenure) - Number(renderSundays(Number(tenure))))
+    );
   }
 
   function renderWeeklyInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = (((rate * principal) / 400) * tenure);
-    return roundOff((Number(principalAmount) + Number(principal)) / Number(tenure));
+    let principalAmount = ((rate * principal) / 400) * tenure;
+    return roundOff(
+      (Number(principalAmount) + Number(principal)) / Number(tenure)
+    );
   }
 
   function renderMonthlyInstallmentsAmount(rate, principal, tenure) {
-    let principalAmount = (((rate * principal) / 100) * tenure);
+    let principalAmount = ((rate * principal) / 100) * tenure;
     return roundOff((Number(principalAmount) + Number(principal)) / tenure);
   }
 
   function renderProcessingFeeAmount(feePercentage, principal) {
     let procFee = roundOff((feePercentage / 100) * principal);
-    return (procFee < 301 ? '300' : procFee)
+    return procFee < 301 ? "300" : procFee;
   }
 
-  function renderPenaltyAmount(penaltyPercentage, rate, principal, tenure) {
-    return roundOff(((((rate * principal) / 100) + Number(principal)) / tenure) * (penaltyPercentage / 100));
+  function renderPenaltyAmount(penaltyPercentage, installment) {
+    return roundOff((Number(penaltyPercentage) / 100) * installment);
   }
 
   function roundOff(x) {
-    return ((Number((x).toString().split('.')[1]) > 0 ? Number((x).toString().split('.')[0]) + 1 : Number((x).toString().split('.')[0]) + 0).toString())
+    return (
+      Number(x.toString().split(".")[1]) > 0
+        ? Number(x.toString().split(".")[0]) + 1
+        : Number(x.toString().split(".")[0]) + 0
+    ).toString();
   }
-
-  // const ideaName = 'Member Details';
-  // if (loading) {
-  //   return (
-  //     <Spinner message={`Loading ${ideaName} ...`} />
-  //   );
-  // }
-  // if (membersList?.length === 0) {
-  //   return (
-  //     <div className="flex flex-col justify-center items-center ml-auto mr-auto">
-  //       <div className="mt-3">
-  //         <span className="font-bold text-red-500 text-xl mr-2">
-  //           No
-  //         </span>
-  //         <span className="font-bold text-gray-500 text-xl mr-2">
-  //           members available ...
-  //         </span>
-  //       </div>
-  //       <div>
-  //         <span className="font-bold text-blue-500 text-xl mr-2">
-  //           They've either been maintained for or have an active loan.
-  //         </span>
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
-  function sundays(year, month) {
-
-    var day, counter, date;
-
-    day = 1;
-    counter = 0;
-    date = new Date(year, month, day);
-    while (date.getMonth() === month) {
-      if (date.getDay() === 0) { // Sun=0, Mon=1, Tue=2, etc.
-        counter += 1;
-      }
-      day += 1;
-      date = new Date(year, month, day);
-    }
-    return counter;
-  }
-
-  // console.log(sundays(2022, 2));
-
-  function sundaysInMonth(m, y) {
-    var days = new Date(y, m, 0).getDate();
-    var sundays = [(8 - (new Date(m + '/01/' + y).getDay())) % 7];
-    for (var i = sundays[0] + 7; i < days; i += 7) {
-      sundays.push(i);
-    }
-    return sundays;
-  }
-
-  const date = new Date();
-
-  // console.log(sundaysInMonth(date.getMonth(), Date().split(' ')[3])); //=> [ 7,14,21,28 ]
-
-  // date.setDate(date.getDate() + loan_tenure);
-  // console.log(sundaysInMonth(2, 2022).length); //=> 4
-  // console.log(date.getDate());
-
-  // let count = 0;
-  // const d = new Date();
-  // while (count < 10) {
-  //   d.setDate(d.getDate() + loan_tenure);
-  //   console.log(d.getDate());
-  //   count += 1
-  //   return count
-  // }
 
   function renderDays(tenure) {
     var days;
-    var day = '';
+    var day = "";
     var sundays = 0;
     var sundates = [];
     var counter = 0;
     var months = 1;
     var startDate = 1;
     var data = [];
-    // for (var i = 0; i < tenure + 1;) {
-    //   date.setDate(date.getDate() + i);
-    //   sundays = date.getDate();
-    //   i += 1;
-    //   console.log(sundays)
-    // }
     while (counter < tenure + 1) {
       const date = new Date();
       startDate = [{ start_date: date.getDate(), start_day: date.getDay() }];
@@ -276,179 +316,386 @@ export default function CreateLoan() {
       days = date.getDate();
       day = date.getDay();
       if (day === 0) {
-        sundays += 1
-        sundates.push([{ date: days, month: Number(date.getMonth() + 1), day: 'sunday' }])
-        // sundates.push(days + ' ' + Number(date.getMonth() + 1))
-        // console.log('date', days, 'sunday')
+        sundays += 1;
+        sundates.push([
+          { date: days, month: Number(date.getMonth() + 1), day: "sunday" },
+        ]);
       }
-      // console.log('date', days, day)
       if (days === 1) {
-        months += 1
+        months += 1;
       }
-      // console.log('months', months, date.getMonth())
       counter++;
     }
-    var endDate = [{ end_date: days, end_day: day }]
-    // console.log('start date', startDate)
-    // console.log('total months', months)
-    // console.log('sundays', sundays)
-    // console.log('tenure', counter - 1)
-    // console.log('end date', endDate)
-    data = [{ tenure: counter - 1, start_date_data: startDate, end_date_data: endDate, total_months: months, total_sundays: sundays, sunday_dates: sundates }]
+    var endDate = [{ end_date: days, end_day: day }];
+    data = [
+      {
+        tenure: counter - 1,
+        start_date_data: startDate,
+        end_date_data: endDate,
+        total_months: months,
+        total_sundays: sundays,
+        sunday_dates: sundates,
+      },
+    ];
     return data;
-    // return sundays;
   }
 
-  // console.log('data', renderDays(Number(loanTenure)))
-  const handleCollateralChange = (e, index) => {
-    const { name, value } = e.target;
-    const list = [...collateralList];
-    list[index][name] = value;
-    setCollateralList(list);
-  };
-
   const handleCollateralAdd = () => {
-    setCollateralList([...collateralList, { collateral: "", value: "" }]);
-  };
-
-  const handleCollateralDelete = (index) => {
-    const list = [...collateralList];
-    list.splice(index, 1);
-    setCollateralList(list);
-  };
-
-  const handleCollateralSave = () => {
-    if (collateralList) {
-      const doc = {
-        collateralList,
-      };
-      // client.create(doc).then(() => {
-      //   navigate('/');
-      // });
-      // console.log(doc)
+    console.log("1");
+    setMaintenanceId(memberDetail[0]?._id);
+    // setCollateralItem(collateralItem);
+    // setCollateralValue(collateralValue);
+    if (memberDetail?.length === 0) return;
+    console.log("2");
+    if (maintenanceId || collateralValue || collateralItem) {
+      console.log("3");
+      setAdding(true);
+      client
+        .patch(maintenanceId)
+        .setIfMissing({ collateral: [] })
+        .insert("after", "collateral[-1]", [
+          {
+            collateralValue,
+            collateralItem,
+            _key: uuidv4(),
+          },
+        ])
+        .commit()
+        .then(() => {
+          console.log("3");
+          setCollateralItem("");
+          setCollateralValue("");
+          setAdding(false);
+        });
     }
-    // navigate("/create-group")
   };
-
-
 
   const handleLoanSave = () => {
-    setMaintained('true');
-    setApproved('false');
-    setDisbursed('false');
+    setMaintained("true");
+    setApproved("false");
+    setDisbursed("false");
+    setSundays(renderSundays(Number(loanTenure)).toString());
     setMemberId(memberDetail[0]?._id);
     setProductId(productDetails[0]?._id);
     setRepaymentCycle(
-      productDetails[0]?.repaymentCycle === 'weekly' ?
-        productDetails[0]?.repaymentCycle === 'monthly' ?
-          'months'
-          : 'weeks'
-        : 'days'
+      productDetails[0]?.repaymentCycle === "weekly"
+        ? "weeks"
+        : productDetails[0]?.repaymentCycle === "monthly"
+        ? "months"
+        : "days"
     );
-    setMemberNames(names);
-    // setMemberNames(memberDetail[0]?.personalDetails?.surName + ' ' + memberDetail[0]?.personalDetails?.otherNames);
-    setMemberPhoneNumber(memberDetail[0]?.personalDetails?.mobileNumber);
+    setMemberNames(
+      memberDetail[0]?.surName + " " + memberDetail[0]?.otherNames
+    );
+    setMemberPhoneNumber(memberDetail[0]?.mobileNumber);
     setInterestAmount(
-      // renderInterestAmount(productDetails[0]?.interestRate, principalAmount).toString()
-      productDetails[0]?.repaymentCycle === 'weekly' ?
-        productDetails[0]?.repaymentCycle === 'monthly' ?
-          renderMonthlyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
-          : renderWeeklyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
-        : renderDailyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
+      productDetails[0]?.repaymentCycle === "weekly"
+        ? renderWeeklyInterestAmount(
+            productDetails[0]?.interestRate,
+            principalAmount,
+            loanTenure
+          ).toString()
+        : productDetails[0]?.repaymentCycle === "monthly"
+        ? renderMonthlyInterestAmount(
+            productDetails[0]?.interestRate,
+            principalAmount,
+            loanTenure
+          ).toString()
+        : renderDailyInterestAmount(
+            productDetails[0]?.interestRate,
+            principalAmount,
+            loanTenure
+          ).toString()
     );
     setInstallmentAmount(
-      productDetails[0]?.repaymentCycle === 'weekly' ?
-        productDetails[0]?.repaymentCycle === 'monthly' ?
-          renderMonthlyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
-          : renderWeeklyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
-        : renderDailyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure).toString()
+      productDetails[0]?.repaymentCycle === "weekly"
+        ? renderWeeklyInstallmentsAmount(
+            productDetails[0]?.interestRate,
+            principalAmount,
+            loanTenure
+          ).toString()
+        : productDetails[0]?.repaymentCycle === "monthly"
+        ? renderMonthlyInstallmentsAmount(
+            productDetails[0]?.interestRate,
+            principalAmount,
+            loanTenure
+          ).toString()
+        : renderDailyInstallmentsAmount(
+            productDetails[0]?.interestRate,
+            principalAmount,
+            loanTenure
+          ).toString()
     );
-    setProcessingFee(renderProcessingFeeAmount(productDetails[0]?.processingFee, principalAmount).toString());
-    setPenaltyAmount(productDetails[0]?.penaltyTypeChoice === 'amount' ? productDetails[0]?.penalty : renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, principalAmount, loanTenure).toString());
-    setLoanAccNumber(productDetails[0]?.productCode + '-' + memberDetail[0]?.memberNumber)
-    setMemberIdNumber(memberDetail[0]?.personalDetails?.idPass)
-    setMemberEmail(memberDetail[0]?.personalDetails?.emailAddress)
-    setGuarantorName(guarantorDetails === '...' ? guarantorName : gnames)
-    setGuarantorId(guarantorDetails === '...' ? guarantorId : guarantor[0]?.personalDetails?.idPass)
-    setGuarantorPhone(guarantorDetails === '...' ? guarantorPhone : guarantor[0]?.personalDetails?.mobileNumber)
-    // setGuarantorRelationship(guarantorDetails === '...' ? guarantorRelationship : guarantorRelationship)
-  }
+    setProcessingFee(
+      renderProcessingFeeAmount(
+        productDetails[0]?.processingFee,
+        principalAmount
+      ).toString()
+    );
+    setPenaltyAmount(
+      productDetails[0]?.repaymentCycle === "weekly"
+        ? renderPenaltyAmount(
+            productDetails[0]?.penalty,
+            renderWeeklyInstallmentsAmount(
+              productDetails[0]?.interestRate,
+              principalAmount,
+              loanTenure
+            )
+          ).toString()
+        : productDetails[0]?.repaymentCycle === "monthly"
+        ? renderPenaltyAmount(
+            productDetails[0]?.penalty,
+            renderMonthlyInstallmentsAmount(
+              productDetails[0]?.interestRate,
+              principalAmount,
+              loanTenure
+            )
+          ).toString()
+        : renderPenaltyAmount(
+            productDetails[0]?.penalty,
+            renderDailyInstallmentsAmount(
+              productDetails[0]?.interestRate,
+              principalAmount,
+              loanTenure
+            )
+          ).toString()
+    );
+    setLoanAccNumber(
+      productDetails[0]?.productCode +
+        "-" +
+        memberDetail[0]?.memberNumber.split("-")[1]
+    );
+    setMemberIdNumber(memberDetail[0]?.idPass);
+    setMemberEmail(memberDetail[0]?.emailAddress);
+
+    setGuarantorName(
+      guarantorDetails
+        ? guarantor[0]?.surName + " " + guarantor[0]?.otherNames
+        : guarantorName
+    );
+    setGuarantorId(guarantorDetails ? guarantor[0]?.idPass : guarantorId);
+    setGuarantorPhone(
+      guarantorDetails ? guarantor[0]?.mobileNumber : guarantorPhone
+    );
+    setGuarantorRelationship(guarantorRelationship);
+    console.log(
+      productType,
+      principalAmount,
+      repaymentCycle,
+      memberId,
+      productId,
+      memberIdNumber,
+      memberEmail,
+      memberNames,
+      memberPhoneNumber,
+      loanTenure,
+      interestAmount,
+      installmentAmount,
+      processingFee,
+      penaltyAmount,
+      maintained,
+      approved,
+      disbursed,
+      loanAccNumber,
+      guarantorName,
+      guarantorId,
+      guarantorPhone,
+      guarantorRelationship,
+      payoff,
+      sundays
+    );
+  };
 
   const handleLoanSubmit = () => {
     if (
-      productType
-      && principalAmount
-      && memberId
-      && productId
-      && memberIdNumber
-      && memberEmail
-      && memberNames
-      && memberPhoneNumber
-      && loanTenure
-      && interestAmount
-      && installmentAmount
-      && processingFee
-      && penaltyAmount
-      && maintained
-      && approved
-      && disbursed
-      && loanAccNumber
-      && guarantorName
-      && guarantorId
-      && guarantorPhone
-      && guarantorRelationship
-      && repaymentCycle
+      productType &&
+      principalAmount &&
+      memberId &&
+      productId &&
+      memberIdNumber &&
+      memberEmail &&
+      memberNames &&
+      memberPhoneNumber &&
+      loanTenure &&
+      interestAmount &&
+      installmentAmount &&
+      processingFee &&
+      penaltyAmount &&
+      maintained &&
+      approved &&
+      disbursed &&
+      loanAccNumber &&
+      guarantorName &&
+      guarantorId &&
+      guarantorPhone &&
+      guarantorRelationship &&
+      sundays &&
+      payoff &&
+      repaymentCycle
     ) {
+      setMaintaining(true);
       client
         .patch(memberId)
         .set({
-          maintained: 'true',
+          maintained: "true",
         })
         .commit()
         .then((update) => {
+          setMaintaining(true);
           console.log(update);
         });
       const doc = {
-        _type: 'maintenance',
-        productType
-        , principalAmount
-        , repaymentCycle
-        , memberId
-        , productId
-        , memberIdNumber
-        , memberEmail
-        , memberNames
-        , memberPhoneNumber
-        , loanTenure
-        , interestAmount
-        , installmentAmount
-        , processingFee
-        , penaltyAmount
-        , maintained
-        , approved
-        , disbursed
-        , loanAccNumber
-        , guarantorName
-        , guarantorId
-        , guarantorPhone
-        , guarantorRelationship
+        _type: "maintenance",
+        productType,
+        principalAmount,
+        repaymentCycle,
+        memberId,
+        productId,
+        memberIdNumber,
+        memberEmail,
+        memberNames,
+        memberPhoneNumber,
+        loanTenure,
+        interestAmount,
+        installmentAmount,
+        processingFee,
+        penaltyAmount,
+        maintained,
+        approved,
+        disbursed,
+        loanAccNumber,
+        guarantorName,
+        guarantorId,
+        guarantorPhone,
+        guarantorRelationship,
+        sundays,
+        payoff,
       };
       client.create(doc).then(() => {
-        alert('Loan Maintained Successfully!')
-        console.log('Submitted', doc)
-        navigate("/loan/approvals")
+        setOpen(true);
+        console.log("Submitted", doc);
+        // navigate("/loan/approvals");
         // navigate(`/loan/preview/${_id}`)
       });
-
     } else {
+      setValidator(true);
       setFields(true);
-      setTimeout(
-        () => {
-          setFields(false);
-        },
-        2000,
-      );
+      setTimeout(() => {
+        setFields(false);
+      }, 2000);
     }
+  };
+
+  let classInput =
+    "appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white";
+  let classSpan =
+    "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white";
+
+  function renderGuaList(gua) {
+    return (
+      <>
+        {gua.length > 0 ? (
+          gua?.map((member) => (
+            <div key={member?._id}>
+              {member?.surName === undefined ? null : (
+                <li
+                  className="flex cursor-pointer items-center border-gray-200 border-b-1 border-t-1 pl-2 pr-2 hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"
+                  onClick={() => {
+                    setGuarantorDetails(
+                      member?.memberNumber +
+                        "  " +
+                        member?.surName +
+                        " " +
+                        member?.otherNames
+                    );
+                    setGuarantorList(false);
+                  }}
+                >
+                  <span className="mr-2">
+                    {member?.memberNumber +
+                      "  " +
+                      member?.surName +
+                      " " +
+                      member?.otherNames}
+                  </span>
+                </li>
+              )}
+            </div>
+          ))
+        ) : (
+          <span className="bg-red-100 p-3 rounded-lg flex ml-auto mr-auto">
+            No matching results found ...
+          </span>
+        )}
+      </>
+    );
+  }
+
+  function renderMemList(mem) {
+    return (
+      <>
+        {mem.length > 0 ? (
+          mem?.map((member) => (
+            <div key={member?._id}>
+              {member?.surName === undefined ? null : (
+                <li
+                  className="flex cursor-pointer items-center border-gray-200 border-b-1 border-t-1 pl-2 pr-2 hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3"
+                  onClick={() => {
+                    setMemberIdentity(
+                      member?.memberNumber +
+                        "  " +
+                        member?.surName +
+                        " " +
+                        member?.otherNames
+                    );
+                    setList(false);
+                  }}
+                >
+                  <span className="mr-2">
+                    {member?.memberNumber +
+                      "  " +
+                      member?.surName +
+                      " " +
+                      member?.otherNames}
+                  </span>
+                </li>
+              )}
+            </div>
+          ))
+        ) : (
+          <span className="bg-red-100 p-3 rounded-lg flex ml-auto mr-auto">
+            No matching results found ...
+          </span>
+        )}
+      </>
+    );
+  }
+
+  function renderList(mem, term) {
+    return (
+      <div className="relative">
+        {list ? (
+          <ul className="bg-white w-1/2 md:w-full rounded-lg absolute">
+            <>{renderMemList(mem)}</>
+          </ul>
+        ) : null}
+        {memberIdentity ? null : (
+          <>
+            {term.length > 1 ? (
+              <ul
+                className="bg-white w-1/2 md:w-full rounded-lg absolute"
+                value={memberIdentity}
+                onChange={(e) =>
+                  setMemberIdentity(e.target.value.toUpperCase())
+                }
+              >
+                <>{renderMemList(mem)}</>
+              </ul>
+            ) : null}
+          </>
+        )}
+      </div>
+    );
   }
 
   function renderGuarantors() {
@@ -461,111 +708,190 @@ export default function CreateLoan() {
         </div>
         <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Select Guarantor
-            </label>
-            <div className="relative">
-              <select value={guarantorDetails} onChange={(e) => setGuarantorDetails(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                <option
-                  className="text-gray-500"
-                >...</option>
-                {
-                  guarantorsList && (
-                    guarantorsList?.map((member) => (
-                      <option key={member?._id}>{member?.memberNumber + ' ' + member?.personalDetails?.surName + ' ' + member?.personalDetails?.otherNames}</option>
-                    )
-                    ))
+            <Label
+              valid={
+                guarantorDetails?.length === 0 || guarantor?.length > 0
+                  ? validator
+                  : !validator
+              }
+              label="Search for a Guarantor"
+              item={guarantorName}
+            />
+            <div>
+              <input
+                type="text"
+                placeholder="Search ..."
+                value={
+                  guarantorDetails ? guarantorDetails : searchGuarantorTerm
                 }
-              </select>
+                onChange={handleGuarantorChange}
+                onClick={() => {
+                  setGuarantorDetails("");
+                  setGuarantorName("");
+                  setGuarantorPhone("");
+                  setGuarantorId("");
+                  setGuarantorRelationship("");
+                  setSearchTerm("");
+                  setGuarantorList(true);
+                  setList(false);
+                  setTimeout(() => {
+                    setGuarantorList(false);
+                  }, 8000);
+                }}
+                className={classInput}
+              />
+              <div className="relative">
+                {guarantorList ? (
+                  <ul className="bg-white w-1/2 md:w-full rounded-lg absolute">
+                    <>{renderGuaList(guarantors)}</>
+                  </ul>
+                ) : null}
+                {guarantorDetails ? null : (
+                  <>
+                    {searchGuarantorTerm.length > 1 ? (
+                      <ul
+                        className="bg-white w-1/2 md:w-full rounded-lg absolute"
+                        value={guarantorDetails}
+                        onChange={(e) => {
+                          setGuarantorDetails(e.target.value.toUpperCase());
+                        }}
+                      >
+                        <>{renderGuaList(guarantors)}</>
+                      </ul>
+                    ) : null}
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Guarantor Names
-            </label>
-            {!guarantorDetails && (
+            <Label
+              valid={
+                guarantorDetails?.length === 0 || guarantor?.length > 0
+                  ? validator
+                  : !validator
+              }
+              label="Guarantor Names"
+              item={guarantorName}
+            />
+            {guarantorDetails.length === 0 ? (
               <input
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                className={classInput}
                 type="text"
                 placeholder="Guarantor Names ..."
                 value={guarantorName}
-                onChange={(e) => setGuarantorName(e.target.value)}
+                onChange={(e) => setGuarantorName(e.target.value.toUpperCase())}
+                onClick={() => {
+                  setGuarantorDetails("");
+                  setSearchGuarantorTerm("");
+                  setGuarantorList(false);
+                  setList(false);
+                }}
               />
-            )
-            }
-            {guarantorDetails && (
-              <span
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              >
-                {gnames}
-              </span>
-            )
-            }
+            ) : (
+              <div className="flex">
+                <span className="appearance-none mr-2 block w-3/4 bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white">
+                  {gnames}
+                </span>
+                <span
+                  onClick={() => {
+                    setGuarantorDetails("");
+                    setGuarantor("");
+                    setSearchGuarantorTerm("");
+                    setGuarantorList(false);
+                  }}
+                  className="flex items-center font-bold cursor-pointer text-lg bg-red-400 w-1/3 text-gray-100 border border-gray-500 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                >
+                  Clear Details
+                </span>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Guarantor Phone
-              <span className="text-red-500 italic">*</span>
-            </label>
+            <Label
+              valid={
+                guarantorDetails?.length === 0 || guarantor?.length > 0
+                  ? validator
+                  : !validator
+              }
+              label="Guarantor Phone"
+              item={guarantorPhone}
+            />
             {!guarantorDetails && (
               <input
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                type="tel"
+                className={classInput}
+                type="text"
                 placeholder="Phone Number ..."
                 value={guarantorPhone}
-                onChange={(e) => setGuarantorPhone(e.target.value)}
+                onChange={(e) =>
+                  setGuarantorPhone(e.target.value.toUpperCase())
+                }
+                onClick={() => {
+                  setGuarantorList(false);
+                  setList(false);
+                }}
               />
-            )
-            }
+            )}
             {guarantorDetails && (
-              <span
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              >
-                {guarantor[0]?.personalDetails?.mobileNumber}
-              </span>
-            )
-            }
+              <span className={classSpan}>{guarantor[0]?.mobileNumber}</span>
+            )}
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Guarantor ID</span>
-            </label>
+            <Label
+              valid={
+                guarantorDetails?.length === 0 || guarantor?.length > 0
+                  ? validator
+                  : !validator
+              }
+              label="Guarantor ID"
+              item={guarantorId}
+            />
             {!guarantorDetails && (
               <input
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                type="number"
+                className={classInput}
+                type="text"
                 placeholder="ID Number ..."
                 value={guarantorId}
-                onChange={(e) => setGuarantorId(e.target.value)}
+                onChange={(e) => setGuarantorId(e.target.value.toUpperCase())}
+                onClick={() => {
+                  setGuarantorList(false);
+                  setList(false);
+                }}
               />
-            )
-            }
+            )}
             {guarantorDetails && (
-              <span
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              >
-                {guarantor[0]?.personalDetails?.idPass}
-              </span>
-            )
-            }
+              <span className={classSpan}>{guarantor[0]?.idPass}</span>
+            )}
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <label className="block tracking-wide text-xs mb-2">
-              <span className="uppercase text-gray-700 font-bold text-md">Guarantor Relationship</span>
-            </label>
+            <Label
+              valid={
+                guarantorDetails?.length === 0 || guarantor?.length > 0
+                  ? validator
+                  : !validator
+              }
+              label="Guarantor Relationship"
+              item={guarantorRelationship}
+            />
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={classInput}
               type="text"
               placeholder="Relationship ..."
               value={guarantorRelationship}
-              onChange={(e) => setGuarantorRelationship(e.target.value)}
+              onChange={(e) =>
+                setGuarantorRelationship(e.target.value.toUpperCase())
+              }
+              onClick={() => {
+                setGuarantorList(false);
+                setList(false);
+              }}
             />
           </div>
         </div>
       </>
-    )
+    );
   }
 
   function renderCollaterals() {
@@ -578,126 +904,122 @@ export default function CreateLoan() {
         </div>
         <div className="flex flex-col justify-center w-full flex-wrap -mx-3 mt-9">
           <div className="flex w-full mb-6 mr-auto ml-auto flex-wrap -mx-3">
-            <div className="flex justify-center w-1/6 px-3 md:mb-0">
+            <div className="flex justify-center w-1/8 px-3 md:mb-0">
               <label className="block tracking-wide text-xs">
-                <span className="uppercase text-gray-700 font-bold text-md">Nọ</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Nọ
+                </span>
                 {/* <span className="text-red-500 italic">*</span> */}
               </label>
             </div>
             <div className="w-full md:w-1/3 px-3 md:mb-0">
               <label className="block tracking-wide text-xs">
-                <span className="uppercase text-gray-700 font-bold text-md">Collateral Items</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Collateral Items
+                </span>
                 {/* <span className="text-red-500 italic">*</span> */}
               </label>
             </div>
             <div className="w-full md:w-1/3 px-3">
               <label className="block tracking-wide text-xs">
-                <span className="uppercase text-gray-700 font-bold text-md">Value (KSHs)</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Value (KSHs)
+                </span>
                 {/* <span className="text-red-500 italic">*</span> */}
               </label>
             </div>
             <div className="w-full md:w-1/6 px-3">
               <label className="block tracking-wide text-xs">
-                <span className="uppercase text-gray-700 font-bold text-md">Image</span>
+                <span className="uppercase text-gray-700 font-bold text-md">
+                  Image
+                </span>
                 {/* <span className="text-red-500 italic">*</span> */}
               </label>
             </div>
           </div>
-          {collateralList.map((singleItem, index) => (
-            <div key={uuidv4()} >
-              <div className="flex flex-wrap w-full mb-2">
-                <span className="font-bold flex justify-center w-1/6 text-gray-700 p-2 mt-1">{index + 1}.</span>
-                <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
-                  <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                    id="collateralName"
-                    type="text"
-                    name="collateral"
-                    placeholder="Item Name ..."
-                    value={singleItem.collateral}
-                    onChange={(e) => handleCollateralChange(e, index)}
-                    required
-                  />
-                </div>
-                <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
-                  <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                    id="idNumber"
-                    type="number"
-                    name="value"
-                    placeholder="Value ..."
-                    value={singleItem.value}
-                    onChange={(e) => handleCollateralChange(e, index)}
-                    required
-                  />
-                </div>
-                <div className="flex w-full flex-wrap items-center justify-start md:w-1/6 px-3">
-                  {loading && (
-                    <Spinner />
-                  )}
-                  {
-                    wrongImageType && (
-                      <p>It&apos;s wrong file type.</p>
-                    )
-                  }
-                  {!imageAsset ? (
-                    // eslint-disable-next-line jsx-a11y/label-has-associated-control
-                    <label className="mt-3">
-                      <p className="font-bold text-2xl">
-                        <AiOutlineCloudUpload />
-                      </p>
-                      <input
-                        type="file"
-                        name="upload-image"
-                        onChange={uploadImage}
-                        className="w-0 h-0"
-                      />
-                    </label>
-                  ) : (
-                    <div className="relative h-6 w-auto">
-                      <img
-                        src={imageAsset?.url}
-                        alt="uploaded-pic"
-                        className="h-4 w-4"
-                      />
-                      <button
-                        type="button"
-                        className="absolute bottom-3 right-3 p-3 rounded-lg-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-                        onClick={() => setImageAsset(null)}
-                      >
-                        <MdDelete />
-                      </button>
-                    </div>
-                  )}
-                  {collateralList.length !== 1 && (
-                    <span className="w-full md:w-1/6">
-                      <button
-                        onClick={() => handleCollateralDelete(index)}
-                        type="button"
-                        className="text-red-400 hover:text-red-600 pl-5 mb-4 font-bold"
-                      >
-                        <AiFillDelete />
-                      </button>
-                    </span>
-                  )}
-                </div>
-              </div>
-              {collateralList.length - 1 === index && collateralList.length < 10 && (
-                <div className="flex justify-center items-center">
-                  <button
-                    onClick={handleCollateralAdd}
-                    type="button"
-                    className="bg-blue-500 m-2 w-1/3 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          <div>
+            {memberDetail?.length > 0
+              ? memberDetail[0]?.collateral?.map((item, index) => (
+                  <div
+                    key={index.toString()}
+                    className="flex flex-wrap w-full mb-2"
                   >
-                    Add a Item +
-                  </button>
-                </div>
-              )}
+                    <span className="font-bold flex justify-center w-1/8 text-gray-700 p-2 mt-1">
+                      {index + 1}
+                    </span>
+                    <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
+                      <input
+                        className={classInput}
+                        value={item.collateralItem}
+                        onChange={(e) =>
+                          setCollateralItem(e.target.value.toUpperCase())
+                        }
+                      />
+                    </div>
+                    <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
+                      <input
+                        className={classInput}
+                        value={item.collateralValue}
+                        onChange={(e) =>
+                          setCollateralValue(e.target.value.toUpperCase())
+                        }
+                      />
+                    </div>
+                  </div>
+                ))
+              : null}
+            <div className="flex flex-wrap w-full mb-2">
+              <div />
+              <span className="font-bold flex justify-center w-1/8 text-gray-700 p-2 mt-1">
+                0
+              </span>
+              <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
+                <input
+                  className={classInput}
+                  type="text"
+                  placeholder="Item Name ..."
+                  value={collateralItem}
+                  onChange={(e) =>
+                    setCollateralItem(e.target.value.toUpperCase())
+                  }
+                  onClick={() => {
+                    setGuarantorList(false);
+                    setList(false);
+                  }}
+                  required
+                />
+              </div>
+              <div className="w-full md:w-1/3 px-3 mb-1 md:mb-0">
+                <input
+                  className={classInput}
+                  type="text"
+                  placeholder="Value ..."
+                  value={collateralValue}
+                  onChange={(e) =>
+                    setCollateralValue(e.target.value.toUpperCase())
+                  }
+                  onClick={() => {
+                    setGuarantorList(false);
+                    setList(false);
+                  }}
+                  required
+                />
+              </div>
+              <div className="flex justify-center items-center ">
+                <button
+                  onClick={handleCollateralAdd}
+                  type="button"
+                  className="bg-purple-500 m-2 hover:bg-purple-700 ml-2 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                >
+                  {adding ? "Adding ..." : "Add"}
+                </button>
+              </div>
+              {/* )} */}
             </div>
-          ))}
+          </div>
         </div>
       </>
-    )
+    );
   }
 
   function renderMaintenance() {
@@ -707,119 +1029,108 @@ export default function CreateLoan() {
           onMouseEnter={() => setMemberId(memberDetail[0]?._id)}
           className="w-full md:w-full md:mx-2"
         >
-          {memberDetail && productDetails && (
+          {memberDetail && (
             <>
               <div className="flex justify-center items-center px-4 py-4">
-                {
-                  membersList.length !== 0 ?
-                    <div className="mt-3">
-                      {memberDetail.length === 0 ?
+                {membersList.length !== 0 ? (
+                  <div className="mt-3">
+                    {memberDetail.length === 0 ? (
+                      <span className="font-bold uppercase text-blue-500 text-xl mr-2">
+                        Select a Member & a product
+                      </span>
+                    ) : memberIdentity.length === 0 ? (
+                      <>
                         <span className="font-bold uppercase text-blue-500 text-xl mr-2">
                           Select a Member & a product
                         </span>
-                        :
-                        <>
-                          <span className="font-bold text-gray-500 text-xl mr-2">
-                            Maintain
-                          </span>
-                          <span className="font-bold text-gray-500 text-xl mr-2">
-                            for
-                          </span>
-                          <span className="font-bold text-xl mr-2">
-                            {names}
-                            {/* {memberDetail[0]?.personalDetails?.surName + ' ' + memberDetail[0]?.personalDetails?.otherNames} */}
-                          </span>
-                        </>
-                      }
-                    </div>
-                    :
-                    <div className="flex flex-col justify-center items-center ml-auto mr-auto">
-                      <div className="mt-3">
-                        <span className="font-bold text-red-500 text-xl mr-2">
-                          No
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-bold text-gray-500 text-xl mr-2">
+                          Maintain
                         </span>
                         <span className="font-bold text-gray-500 text-xl mr-2">
-                          members available ...
+                          for
                         </span>
-                      </div>
-                      <div>
-                        <span className="font-bold text-blue-500 text-xl mr-2">
-                          They've either been maintained for or have an active loan.
+                        <span className="font-bold text-xl mr-2">
+                          {names}
+                          {/* {memberDetail[0]?.surName + ' ' + memberDetail[0]?.otherNames} */}
                         </span>
-                      </div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex flex-col justify-center items-center ml-auto mr-auto">
+                    <div className="mt-3">
+                      <span className="font-bold text-red-500 text-xl mr-2">
+                        No
+                      </span>
+                      <span className="font-bold text-gray-500 text-xl mr-2">
+                        members available ...
+                      </span>
                     </div>
-                }
+                    <div>
+                      <span className="font-bold text-blue-500 text-xl mr-2">
+                        They've either been maintained for or have an active
+                        loan.
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
-              {memberDetail.length !== 0 ?
-                <div>
-                  <div className="image overflow-hidden">
-                    <img className="h-auto w-1/4 mx-auto" src={(memberDetail[0]?.image && urlFor(memberDetail[0]?.image).url())} alt="member-profile-pic" />
-                  </div>
-                  <div className="ml-auto mr-auto mb-3">
-                    <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Member Code
-                        </span>
-                        <span className="ml-auto">DC-{memberDetail[0]?.memberNumber}</span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Mobile No.
-                        </span>
-                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.mobileNumber}</span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Email
-                        </span>
-                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.emailAddress}</span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          ID Number
-                        </span>
-                        <span className="ml-auto">{memberDetail[0]?.personalDetails?.idPass}</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                :
-                null
-              }
               <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                    Select a Member
-                  </label>
-                  <div className="relative">
-                    <select value={memberIdentity} onChange={(e) => setMemberIdentity(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                      <option
-                        className="text-gray-500"
-                      >Select a Member ...</option>
-                      {
-                        membersList && (
-                          membersList?.map((member) => (
-                            <option key={member?._id}>{member.memberNumber + ' ' + member.personalDetails.surName + ' ' + member.personalDetails.otherNames}</option>
-                          )
-                          ))
-                      }
-                    </select>
+                  <Label
+                    valid={validator}
+                    label="Search for a Member"
+                    item={memberIdentity ? memberIdentity : searchTerm}
+                  />
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Search ..."
+                      value={memberIdentity ? memberIdentity : searchTerm}
+                      onChange={handleChange}
+                      onClick={() => {
+                        setMemberIdentity("");
+                        setSearchGuarantorTerm("");
+                        setList(true);
+                        setGuarantorList(false);
+                        setTimeout(() => {
+                          setList(false);
+                        }, 8000);
+                      }}
+                      className={classInput}
+                    />
+                    {renderList(members, searchTerm)}
                   </div>
                 </div>
                 <div className="w-full md:w-1/2 px-3">
-                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                    Select a Product
-                  </label>
+                  <Label
+                    valid={validator}
+                    label="Select a Product"
+                    item={productType}
+                  />
                   <div className="relative">
-                    <select value={productType} onChange={(e) => setProductType(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-                      <option
-                        className="text-gray-500"
-                      >Select a Product ...</option>
-                      {productList ?
-                        productList?.map((item) => (
-                          <option key={item._id}>{item.productName}</option>
-                        ))
+                    <select
+                      value={productType}
+                      onChange={(e) =>
+                        setProductType(e.target.value.toUpperCase())
+                      }
+                      className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      id="grid-state"
+                      onClick={() => {
+                        setGuarantorList(false);
+                        setList(false);
+                      }}
+                    >
+                      <option className="text-gray-500">
+                        Select a Product ...
+                      </option>
+                      {productList
+                        ? productList?.map((item) => (
+                            <option key={item._id}>{item.productName}</option>
+                          ))
                         : null}
                     </select>
                   </div>
@@ -827,238 +1138,398 @@ export default function CreateLoan() {
               </div>
               <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                  <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-                    Amount (KShs)
-                    <span className="text-red-500 italic">*</span>
-                  </label>
+                  <Label
+                    valid={validator}
+                    label="Amount (KShs)"
+                    item={principalAmount}
+                  />
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    className={classInput}
                     id="principalAmount"
                     type="number"
                     placeholder="Principal Amount ..."
                     value={principalAmount}
-                    onChange={(e) => setPrincipalAmount(e.target.value)}
+                    onChange={(e) =>
+                      setPrincipalAmount(e.target.value.toUpperCase())
+                    }
+                    onClick={() => {
+                      setGuarantorList(false);
+                      setList(false);
+                    }}
                   />
                 </div>
                 <div className="w-full md:w-1/2 px-3">
-                  <label className="block tracking-wide text-xs mb-2">
-                    {productDetails && (
-                      <span className="uppercase text-gray-700 font-bold text-md">Loan Tenure {productDetails[0]?.tenureMaximumChoice}</span>
-                    )}
-                  </label>
+                  <Label
+                    valid={validator}
+                    label={`Loan Tenure ${
+                      productDetails[0]?.repaymentCycle === "daily"
+                        ? !loanTenure
+                          ? 0
+                          : renderDays(Number(loanTenure))[0]?.total_sundays +
+                            " sundays"
+                        : ""
+                    }`}
+                    item={loanTenure}
+                  />
                   <input
-                    className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    className={classInput}
                     id="loanTenure"
                     type="number"
                     placeholder="Loan Tenure ..."
                     value={loanTenure}
-                    onChange={(e) => setLoanTenure(e.target.value)}
+                    onChange={(e) => {
+                      setLoanTenure(e.target.value.toUpperCase());
+                    }}
+                    onClick={() => {
+                      setGuarantorList(false);
+                      setList(false);
+                    }}
                   />
                 </div>
               </div>
-              {productDetails ?
-                <>
-                  <span key={productDetails[0]?.productCode} className="flex justify-center w-full text-red-500 italic">{Number(loanTenure) > Number(productDetails[0]?.tenureMaximum) ? `Maximum Tenure is ${productDetails[0]?.tenureMaximum} ${productDetails[0]?.tenureMaximumChoice}` : null}</span>
-                  <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) > Number(productDetails[0]?.maximumRange) ? `Maximum Principal Amount is KSHs. ${productDetails[0]?.maximumRange}` : null}</span>
-                  <span className="flex justify-center w-full text-red-500 italic">{Number(principalAmount) < Number(productDetails[0]?.minimumRange) ? `Minimum Principal Amount is KSHs. ${productDetails[0]?.minimumRange}` : null}</span>
-                  <div key={productDetails[0]?.productName} className="flex flex-wrap">
-                    <ul className="bg-gray-100 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Product Type
-                        </span>
-                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          {productDetails[0]?.productName}
-                        </span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Loan A/C Number
-                        </span>
-                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          DC-{productDetails[0]?.productCode}-{memberDetail[0]?.memberNumber}
-                        </span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Interest Rate
-                        </span>
-                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          {productDetails[0]?.interestRate} %
-                        </span>
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Interest Amount
-                        </span>
-                        {
-                          productDetails[0]?.repaymentCycle === 'weekly' ?
-                            <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                              KSHs. {renderWeeklyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
-                            </span>
-                            :
-                            productDetails[0]?.repaymentCycle === 'monthly' ?
-                              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                                KSHs. {renderMonthlyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
-                              </span>
-                              :
-                              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                                KSHs. {renderDailyInterestAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
-                              </span>
-                        }
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Installments
-                        </span>
-                        {
-                          productDetails[0]?.repaymentCycle === 'weekly' ?
-                            <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                              KSHs. {renderWeeklyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
-                            </span>
-                            :
-                            productDetails[0]?.repaymentCycle === 'monthly' ?
-                              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                                KSHs. {renderMonthlyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
-                              </span>
-                              :
-                              <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                                KSHs. {renderDailyInstallmentsAmount(productDetails[0]?.interestRate, principalAmount, loanTenure)}
-                              </span>
-                        }
-                      </li>
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Repayment Cycle
-                        </span>
-                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          {productDetails[0]?.repaymentCycle}
-                        </span>
-                      </li>
-                      {productDetails[0]?.repaymentCycle === 'daily' ?
-                        <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                          <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Grace Period
-                          </span>
-                          <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {productDetails[0]?.gracePeriod}
-                          </span>
-                        </li>
-                        :
-                        null
-                      }
-                      <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                        <span className="tracking-wide text-l text-gray-700 font-bold">
-                          Processing Fee
-                        </span>
-                        <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                          KSHs. {renderProcessingFeeAmount(productDetails[0]?.processingFee, principalAmount)}
-                        </span>
-                      </li>
-                      {productDetails[0]?.repaymentCycle === 'daily' ?
-                        <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                          <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Penalty
-                          </span>
-                          <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {productDetails[0]?.penaltyTypeChoice === 'amount' ? `KSHs. ${productDetails[0]?.penalty}` : `${renderPenaltyAmount(productDetails[0]?.penalty, productDetails[0]?.interestRate, principalAmount, loanTenure)} %`}
-                          </span>
-                        </li>
-                        :
-                        <li className="flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3">
-                          <span className="tracking-wide text-l text-gray-700 font-bold">
-                            Penalty
-                          </span>
-                          <span className="tracking-wide text-gray-500 font-semibold text-md ml-auto">
-                            {productDetails[0]?.penaltyTypeChoice === 'amount' ? `KSHs. ${productDetails[0]?.penalty}` : `${productDetails[0]?.penalty} %`}
-                          </span>
-                        </li>
-                      }
-                    </ul>
-                  </div>
-                </>
-                : null
-              }
-
             </>
           )}
         </div>
         {/* <pre>{JSON.stringify(memberDetail, undefined, 2)}</pre> */}
         <br />
       </>
-    )
+    );
+  }
+
+  function renderMember() {
+    return (
+      <>
+        {memberDetail.length !== 0 ? (
+          <div>
+            {productDetails.length > 0 ? null : (
+              <div className="image overflow-hidden">
+                <img
+                  className="h-auto w-1/4 mx-auto"
+                  src={
+                    memberDetail[0]?.image &&
+                    urlFor(memberDetail[0]?.image).url()
+                  }
+                  alt="member-profile-pic"
+                />
+              </div>
+            )}
+            <div className="ml-auto mr-auto mb-3">
+              <ul className="bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
+                <List
+                  title="Member Code"
+                  note=""
+                  content={memberDetail[0]?.memberNumber}
+                />
+                <List
+                  title="Member No."
+                  note=""
+                  content={memberDetail[0]?.mobileNumber}
+                />
+                <List
+                  title="Email"
+                  note=""
+                  content={memberDetail[0]?.emailAddress}
+                />
+                <List
+                  title="ID Number"
+                  note=""
+                  content={memberDetail[0]?.idPass}
+                />
+              </ul>
+            </div>
+          </div>
+        ) : null}
+      </>
+    );
+  }
+
+  function renderProduct() {
+    return (
+      <>
+        {productDetails.length !== 0 ? (
+          <>
+            <span
+              key={productDetails[0]?.productCode}
+              className="flex justify-center w-full text-red-500 italic"
+            >
+              {Number(loanTenure) > Number(productDetails[0]?.tenureMaximum)
+                ? `Maximum Tenure is ${productDetails[0]?.tenureMaximum} ${productDetails[0]?.tenureMaximumChoice}`
+                : null}
+            </span>
+            <span className="flex justify-center w-full text-red-500 italic">
+              {Number(principalAmount) > Number(productDetails[0]?.maximumRange)
+                ? `Maximum Principal Amount is KSHs. ${productDetails[0]?.maximumRange}`
+                : null}
+            </span>
+            <span className="flex justify-center w-full text-red-500 italic">
+              {Number(principalAmount) < Number(productDetails[0]?.minimumRange)
+                ? `Minimum Principal Amount is KSHs. ${productDetails[0]?.minimumRange}`
+                : null}
+            </span>
+            <div
+              key={productDetails[0]?.productName}
+              className="flex flex-wrap"
+            >
+              <ul className="bg-gray-100 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm">
+                {productDetails[0]?.repaymentCycle === "daily" ? (
+                  <List
+                    title={
+                      plusSundays === "true"
+                        ? "Sundays Inclusive"
+                        : "Sundays Exclusive"
+                    }
+                    note={" (+" + renderSundays(loanTenure) + " " + "Sundays) "}
+                    content={renderSundayButton()}
+                  />
+                ) : null}
+                {memberDetail[0]?.maintained !== "true" ? (
+                  <>
+                      <List
+                        title="Loan Payoff :"
+                        note={payoff === "true" ? "TRUE" : "FALSE"}
+                        content={renderPayoffButton()}
+                      />
+                  </>
+                ) : null}
+                <List
+                  title="Loan A/C Number"
+                  note=""
+                  content={`DC-${productDetails[0]?.productCode}-${
+                    memberDetail[0]?.memberNumber.split("-")[1]
+                  }`}
+                />
+                <List
+                  title="Interest Rate"
+                  note=""
+                  content={`${productDetails[0]?.interestRate} %`}
+                />
+                <List
+                  title="Interest Amount"
+                  note=""
+                  content={
+                    productDetails[0]?.repaymentCycle === "weekly"
+                      ? `KSHs. ${renderWeeklyInterestAmount(
+                          productDetails[0]?.interestRate,
+                          principalAmount,
+                          loanTenure
+                        )}`
+                      : productDetails[0]?.repaymentCycle === "monthly"
+                      ? `KSHs. ${renderMonthlyInterestAmount(
+                          productDetails[0]?.interestRate,
+                          principalAmount,
+                          loanTenure
+                        )}`
+                      : `KSHs. ${renderDailyInterestAmount(
+                          productDetails[0]?.interestRate,
+                          principalAmount,
+                          loanTenure
+                        )}`
+                  }
+                />
+                <List
+                  title="Installments"
+                  note=""
+                  content={
+                    productDetails[0]?.repaymentCycle === "weekly"
+                      ? `KSHs. ${renderWeeklyInstallmentsAmount(
+                          productDetails[0]?.interestRate,
+                          principalAmount,
+                          loanTenure
+                        )}`
+                      : productDetails[0]?.repaymentCycle === "monthly"
+                      ? `KSHs. ${renderMonthlyInstallmentsAmount(
+                          productDetails[0]?.interestRate,
+                          principalAmount,
+                          loanTenure
+                        )}`
+                      : `KSHs. ${renderDailyInstallmentsAmount(
+                          productDetails[0]?.interestRate,
+                          principalAmount,
+                          loanTenure
+                        )}`
+                  }
+                />
+                <List
+                  title="Repayment Cycle"
+                  note=""
+                  content={`${productDetails[0]?.repaymentCycle}`}
+                />
+                {productDetails[0]?.repaymentCycle === "daily" ? (
+                  <List
+                    title="Grace Period"
+                    note=""
+                    content={`
+                      ${productDetails[0]?.gracePeriod} ${
+                      productDetails[0]?.gracePeriod === "1" ? "day" : "days"
+                    }
+                      `}
+                  />
+                ) : null}
+                <List
+                  title="Processing Fee"
+                  note=""
+                  content={`
+                    KSHs. ${renderProcessingFeeAmount(
+                      productDetails[0]?.processingFee,
+                      principalAmount
+                    )}
+                      `}
+                />
+                {productDetails[0]?.repaymentCycle === "daily" ? (
+                  <List
+                    title="Penalty"
+                    note=""
+                    content={
+                      productDetails[0]?.repaymentCycle === "weekly"
+                        ? `KSHs. ${renderPenaltyAmount(
+                            productDetails[0]?.penalty,
+                            renderWeeklyInstallmentsAmount(
+                              productDetails[0]?.interestRate,
+                              principalAmount,
+                              loanTenure
+                            )
+                          )}`
+                        : productDetails[0]?.repaymentCycle === "monthly"
+                        ? `KSHs. ${renderPenaltyAmount(
+                            productDetails[0]?.penalty,
+                            renderMonthlyInstallmentsAmount(
+                              productDetails[0]?.interestRate,
+                              principalAmount,
+                              loanTenure
+                            )
+                          )}`
+                        : `KSHs. ${renderPenaltyAmount(
+                            productDetails[0]?.penalty,
+                            renderMonthlyInstallmentsAmount(
+                              productDetails[0]?.interestRate,
+                              principalAmount,
+                              loanTenure
+                            )
+                          )}`
+                    }
+                  />
+                ) : (
+                  <List
+                    title="Penalty"
+                    note=""
+                    content={
+                      productDetails[0]?.penaltyTypeChoice === "amount"
+                        ? `KSHs. ${productDetails[0]?.penalty}`
+                        : `${productDetails[0]?.penalty} %`
+                    }
+                  />
+                )}
+              </ul>
+            </div>
+          </>
+        ) : null}
+      </>
+    );
+  }
+
+  function renderPayoff() {
+    return (
+      <>
+        <div className="ml-auto mr-auto mb-3">
+          <div className="flex justify-center items-center px-4 py-4">
+            <div className="mt-3">
+              <span className="font-bold text-red-400 text-xl mr-2">
+                Payoff Details coming soon!
+              </span>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  function renderButtons() {
+    return (
+      <>
+        <div className="flex mt-8 mb-8">
+          <button
+            type="button"
+            onClick={() => {
+              show ? setShow(false) : setShow(true);
+            }}
+            className="flex bg-blue-500 items-center w-1/4 ml-auto mr-auto hover:bg-blue-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            <span className="flex items-center ml-auto mr-auto">
+              {show ? "Hide" : "Add Guarantor"}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              handleLoanSubmit();
+              setValidator(true);
+            }}
+            onMouseEnter={handleLoanSave}
+            className="flex bg-green-500 items-center w-1/4 ml-auto mr-auto hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            <span className="flex items-center ml-auto mr-auto">
+              {maintaining ? "Submitting ..." : "Submit"}
+            </span>
+          </button>
+        </div>
+        <div className="flex justify-center">
+          <div className="w-1/2 ml-auto mr-auto">
+            {fields && (
+              <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
+                Please Fill All the Required Fields!
+              </p>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  function renderSuccessModal() {
+    return (
+      <div>
+        <ModalAlert
+          open={open}
+          onClose={() => setOpen(false)}
+          message="Navigate to Approved ..."
+          title={names}
+          path="/loan/approvals"
+        >
+          <div className="flex items-center w-full">
+            <div className="bg-green-300 opacity-80 relative rounded-full p-2">
+              <BsCheck2Circle className="w-10 font-bold text-black h-10" />
+            </div>
+            <div className="text-md p-3">
+              <span className="font-bold text-3xl">
+                Successfully Maintained!
+              </span>
+            </div>
+          </div>
+        </ModalAlert>
+      </div>
+    );
   }
 
   return (
-    <>
-      {membersList?.length === 0 ?
+    <div
+      onMouseEnter={() => {
+        setList(false);
+        setGuarantorList(false);
+      }}
+    >
+      {renderMaintenance()}
+      {show ? (
         <>
-          <div className="flex flex-col justify-center items-center ml-auto mr-auto">
-            <div className="mt-9">
-              <span className="font-bold text-red-500 text-xl mr-2">
-                No
-              </span>
-              <span className="font-bold text-gray-500 text-xl mr-2">
-                members available ...
-              </span>
-            </div>
-            <div className="mt-5">
-              <span className="font-bold text-blue-400 text-xl mr-2">
-                They've either been maintained for or have an active loan.
-              </span>
-            </div>
-            <div className="mt-0">
-              <span className="font-bold text-blue-500 text-xl mr-2">
-                Checkout the approval list ...
-              </span>
-            </div>
-            <div className="mt-8">
-              <Link
-                to="/loan/approvals"
-                className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Approval List
-              </Link>
-            </div>
-          </div>
-        </>
-        :
-        <>
-          {renderMaintenance()}
           {renderGuarantors()}
           {renderCollaterals()}
-          <>
-            <div className="flex justify-center mt-5">
-              <div className="w-full md:w-1/3 mr-auto ml-auto">
-                <button
-                  type="button"
-                  onClick={handleLoanSubmit}
-                  onMouseEnter={handleLoanSave}
-                  className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Submit
-                </button>
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <div className="w-1/2 ml-auto mr-auto">
-                {
-                  fields && (
-                    <p className="text-red-500 mt-3 text-xl transition-all duration-150 ease-in">
-                      Please Fill All the Required Fields!
-                    </p>
-                  )
-                }
-              </div>
-            </div>
-          </>
-          <pre>
-            {JSON.stringify(renderDays(Number(loanTenure)), undefined, 2)}
-          </pre>
         </>
-      }
-    </>
+      ) : null}
+      {productDetails ? renderProduct() : null}
+      {memberDetail ? renderMember() : null}
+      {togglePayoff ? renderPayoff() : null}
+      {memberDetail ? renderButtons() : <Spinner message="Loading ..." />}
+      {renderSuccessModal()}
+      {/* <pre>{JSON.stringify(renderDays(Number(loanTenure)), undefined, 2)}</pre> */}
+    </div>
   );
 }
-
-
