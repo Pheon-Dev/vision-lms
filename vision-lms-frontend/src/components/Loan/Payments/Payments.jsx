@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { client } from "../../../client";
+import {useGetMpesaQuery} from "../../../services/MpesaApi";
+import {fetchApi, baseUrl} from "../../../services/fetchApi";
 import { ListLayout, Spinner, Status, TableData } from "../../Components";
 
 export default function Payments() {
+  // const {data} = useGetMpesaQuery();
   const [subscription, setSubscription] = useState(true);
   const [paymentsList, setPaymentsList] = useState("");
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
+
+  // console.log(data)
+
+  async function getStaticProps() {
+    const data = await fetchApi(`${baseUrl}`);
+
+    return data;
+  }
+
+  console.log(getStaticProps())
 
   const fetchPayments = async () => {
     const query = '*[_type == "maintenance"] | order(_updatedAt desc)';
