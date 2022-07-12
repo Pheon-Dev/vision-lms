@@ -181,8 +181,7 @@ export default function Payments() {
                         </div>
                         <div className="text-sm text-gray-500">
                           {member?.repaymentCycle === "days"
-                            ? Number(member?.loanTenure) -
-                              Number(member?.sundays) +
+                            ? Number(member?.loanTenure) +
                               " "
                             : member?.loanTenure + " "}{" "}
                           {member?.repaymentCycle === "months"

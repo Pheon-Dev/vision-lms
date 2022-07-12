@@ -82,7 +82,7 @@ const isActiveStyle = 'dropdown-selection-text text-cyan-500';
 
 export default function ChannelBar() {
   return (
-    <div className="w-full h-full mr-0 m-0 ml-16 bg-gray-200 dark:bg-gray-800 overflow-hidden shadow-lg">
+    <div className="w-full h-full mr-0 m-0 ml-16 bg-gray-800 dark:bg-gray-800 overflow-hidden shadow-lg">
       <ChannelBlock />
       <div className="channel-container">
         <Dropdown data={dashboard} title="Home" />

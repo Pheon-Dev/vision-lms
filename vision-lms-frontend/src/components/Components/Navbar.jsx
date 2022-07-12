@@ -93,7 +93,7 @@ export default function Navbar({ searchTerm, setSearchTerm }) {
 
   function renderNavBar() {
     return (
-      <div className='top-navigation'>
+      <div className='top-navigation bg-gray-800'>
         {/* <HashtagIcon /> */}
         <Title />
         {/* <ThemeIcon /> */}
