@@ -1,5 +1,28 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { mpesa } from '../mpesa';
+import { Mpesa } from 'mpesa-api';
+
+const credentials = {
+  clientKey: import.meta.env.VITE_CUSTOMER_KEY,
+  clientSecret: import.meta.env.VITE_CUSTOMER_SECRET,
+  // initiatorPassword: import.meta.env.VITE_INITIATOR_PASSWORD,
+  securityCredential: import.meta.env.VITE_SECURITY_CREDENTIAL,
+  certificatePath: null
+}
+
+const environment = "sandbox"   // "production"
+
+// const mpesa = new Mpesa(credentials, environment);
+
+const mpesa = new Mpesa(
+  {
+  clientKey: import.meta.env.VITE_CUSTOMER_KEY,
+  clientSecret: import.meta.env.VITE_CUSTOMER_SECRET,
+  // initiatorPassword: import.meta.env.VITE_INITIATOR_PASSWORD,
+  securityCredential: import.meta.env.VITE_SECURITY_CREDENTIAL,
+    certificatepath: null,
+  },
+  "sandbox"
+);
 
 const MPesaContext = React.createContext();
 
