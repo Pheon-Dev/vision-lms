@@ -261,10 +261,7 @@ export default function CreateLoan() {
   }
 
   function renderDailyInstallmentsAmount(rate, principal, tenure) {
-    tenure = Number(tenure);
-    let multiplier = 30 / 4;
-    tenure = tenure === 7 ? multiplier : tenure === 14 ? multiplier * 2 : tenure === 21 ? multiplier * 3 : tenure;
-    let principalAmount = ((rate * principal) / 3000) * tenure;
+    let principalAmount = renderDailyInterestAmount(rate, principal, tenure);
     return roundOff(
       (Number(principalAmount) + Number(principal)) /
         (Number(tenure) - Number(renderSundays(Number(tenure))))
