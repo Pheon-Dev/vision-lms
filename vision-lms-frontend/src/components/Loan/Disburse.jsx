@@ -18,8 +18,6 @@ export default function Disburse() {
   const [loanTenure, setLoanTenure] = useState("");
   const [memberId, setMemberId] = useState("");
 
-  const [loanOfficerName, setLoanOfficerName] = useState("");
-  const [loanOfficerPhoneNumber, setLoanOfficerPhoneNumber] = useState("");
   const [arrears, setArrears] = useState("");
   const [paymentCount, setPaymentCount] = useState("");
   const [counter, setCounter] = useState(0);
@@ -163,11 +161,9 @@ export default function Disburse() {
         loanTenure &&
         memberId &&
         counter &&
-        loanOfficerName &&
         paymentCount &&
         paymentDay &&
-        loanOfficerPhoneNumber) ||
-      arrears ||
+        arrears) ||
       (disbursementDate && outstandingPenalty) ||
       (firstInstallmentDate && referenceNumber)
     ) {
@@ -182,10 +178,8 @@ export default function Disburse() {
           loanId: loanId,
           memberId: memberId,
           counter: counter,
-          loanOfficerName: loanOfficerName,
           paymentCount: paymentCount,
           paymentDay: paymentDay,
-          loanOfficerPhoneNumber: loanOfficerPhoneNumber,
           arrears: arrears,
           disbursementDate: disbursementDate,
           outstandingPenalty: outstandingPenalty,
@@ -353,46 +347,6 @@ export default function Disburse() {
     );
   }
 
-  function renderLoanOfficer() {
-    return (
-      <>
-        <div className="w-full flex justify-center mr-auto ml-auto px-3 mb-6 md:mb-0">
-          <label className="block uppercase tracking-wide text-gray-700 text-xl font-bold mb-2">
-            Loan Officer Details
-          </label>
-        </div>
-        <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              Loan Officer Names
-            </label>
-            <input
-              className={classInput}
-              type="text"
-              placeholder="Full Names ..."
-              value={loanOfficerName}
-              onChange={(e) => setLoanOfficerName(e.target.value.toUpperCase())}
-            />
-          </div>
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
-              Loan Officer Phone
-            </label>
-            <input
-              className={classInput}
-              type="text"
-              placeholder="Phone Number ..."
-              value={loanOfficerPhoneNumber}
-              onChange={(e) =>
-                setLoanOfficerPhoneNumber(e.target.value.toUpperCase())
-              }
-            />
-          </div>
-        </div>
-      </>
-    );
-  }
-
   function renderInitialInfo() {
     return (
       <>
@@ -501,7 +455,6 @@ export default function Disburse() {
     >
       {renderLoaninfo()}
       {renderInitialInfo()}
-      {renderLoanOfficer()}
       <div className="flex justify-center mt-5">
         <div className="w-full md:w-1/3 mr-auto ml-auto">
           <button

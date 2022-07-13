@@ -9,6 +9,8 @@ import { client } from "../../client";
 export default function Approve() {
   const { loanId } = useParams();
 
+  const [loanOfficerName, setLoanOfficerName] = useState("");
+  const [loanOfficerPhoneNumber, setLoanOfficerPhoneNumber] = useState("");
   const [loanDetails, setLoanDetails] = useState("");
   const [productDetails, setProductDetails] = useState("");
   const [productType, setProductType] = useState("");
@@ -57,13 +59,18 @@ export default function Approve() {
 
   const handleLoanApprove = () => {
     setApproving(true);
-    if (loanId) {
+    if (loanId &&
+        loanOfficerName &&
+        loanOfficerPhoneNumber
+    ) {
       client
         .patch(loanId)
         .set({
           maintained: "true",
           approved: "true",
           disbursed: "false",
+          loanOfficerName: loanOfficerName,
+          loanOfficerPhoneNumber: loanOfficerPhoneNumber,
         })
         .commit()
         .then((update) => {
@@ -77,6 +84,46 @@ export default function Approve() {
     "flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3";
   let classUnorderedList =
     "bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm";
+
+  function renderLoanOfficer() {
+    return (
+      <>
+        <div className="w-full flex justify-center mr-auto ml-auto px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xl font-bold mb-2">
+            Loan Officer Details
+          </label>
+        </div>
+        <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
+          <div className="w-full md:w-1/2 px-3">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+              Loan Officer Names
+            </label>
+            <input
+              className={classInput}
+              type="text"
+              placeholder="Full Names ..."
+              value={loanOfficerName}
+              onChange={(e) => setLoanOfficerName(e.target.value.toUpperCase())}
+            />
+          </div>
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
+              Loan Officer Phone
+            </label>
+            <input
+              className={classInput}
+              type="text"
+              placeholder="Phone Number ..."
+              value={loanOfficerPhoneNumber}
+              onChange={(e) =>
+                setLoanOfficerPhoneNumber(e.target.value.toUpperCase())
+              }
+            />
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -226,6 +273,7 @@ export default function Approve() {
             )}
           </ul>
         </div>
+      {renderLoanOfficer()}
         <div className="flex justify-center mt-5">
           <div className="w-full md:w-1/3 mr-auto ml-auto">
             <button
