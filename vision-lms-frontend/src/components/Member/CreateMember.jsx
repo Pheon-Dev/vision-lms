@@ -147,9 +147,6 @@ export default function CreateMember() {
   res_age = res_age > 0 ? res_age : res_age * -1;
   res_age = res_age.toString();
 
-  // console.log(Date().split(' ')[3].split('0')[1] + Date().split(' ')[2] + '-' + (code.length > 9 ? '00' + code.length : '000' + code.length))
-  // console.log(Date().split(' ')[2] + Date().split(' ')[4].split(':')[0] + Date().split(' ')[4].split(':')[1])
-  // console.log(memberNumber)
   const preSaveMember = () => {
     setMaintained("false");
     setGroup("false");
@@ -823,21 +820,6 @@ export default function CreateMember() {
                 </div>
               </div>
               <div>
-                {/* <p className="mb-2 font-semibold text:lg sm:text-xl">Choose Product Line</p> */}
-                {/* <select */}
-                {/*   onChange={(e) => { */}
-                {/*     setProduct(e.target.value.toUpperCase()); */}
-                {/*     (e.target.value.toUpperCase()); */}
-                {/*   }} */}
-                {/*   className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-lg-md cursor-pointer" */}
-                {/* > */}
-                {/*   <option value="others" className="sm:text-bg bg-white">Select Product</option> */}
-                {/*   {products.map((item) => ( */}
-                {/*     <option key={item.name} className="text-base border-0 outline-none capitalize bg-white text-black " item={item.name}> */}
-                {/*       {item.name} */}
-                {/*     </option> */}
-                {/*   ))} */}
-                {/* </select> */}
               </div>
               <div className="flex justify-end items-end mt-5">
                 <div className="w-full md:w-1/2">
@@ -859,16 +841,6 @@ export default function CreateMember() {
                 </div>
               </div>
             </div>
-            {/* {user && ( */}
-            {/*   <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg-lg "> */}
-            {/*     <img */}
-            {/*       src={user.image} */}
-            {/*       className="w-10 h-10 rounded-lg-full" */}
-            {/*       alt="user-profile" */}
-            {/*     /> */}
-            {/*     <p className="font-bold">{user.userName}</p> */}
-            {/*   </div> */}
-            {/* )} */}
           </div>
         </div>
       </div>

@@ -132,39 +132,6 @@ export default function CreateLoan() {
     searchGuarantorTerm,
   ]);
 
-  // if (members?.length === 0) {
-  //   return (
-  //       <>
-  //         <div className="flex flex-col justify-center items-center ml-auto mr-auto">
-  //           <div className="mt-9">
-  //             <span className="font-bold text-red-500 text-xl mr-2">No</span>
-  //             <span className="font-bold text-gray-500 text-xl mr-2">
-  //               members available ...
-  //             </span>
-  //           </div>
-  //           <div className="mt-5">
-  //             <span className="font-bold text-blue-400 text-xl mr-2">
-  //               They've either been maintained for or have an active loan.
-  //             </span>
-  //           </div>
-  //           <div className="mt-0">
-  //             <span className="font-bold text-blue-500 text-xl mr-2">
-  //               Checkout the approval list ...
-  //             </span>
-  //           </div>
-  //           <div className="mt-8">
-  //             <Link
-  //               to="/loan/approvals"
-  //               className="bg-green-500 w-full hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-  //             >
-  //               Approval List
-  //             </Link>
-  //           </div>
-  //         </div>
-  //       </>
-  //   )
-  // }
-
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
   };
