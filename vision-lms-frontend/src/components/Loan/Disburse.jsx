@@ -194,9 +194,6 @@ export default function Disburse() {
     }
   };
 
-  let classInput =
-    "appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white";
-
   function renderLoaninfo() {
     return (
       <>

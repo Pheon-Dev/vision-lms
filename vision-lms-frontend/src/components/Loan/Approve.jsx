@@ -80,8 +80,7 @@ export default function Approve() {
     }
   };
 
-  let classList =
-    "flex items-center hover:bg-gray-300 hover:p-3 transition-all duration-100 rounded-lg py-3";
+  let classInput = "appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white";
   let classUnorderedList =
     "bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm";
 
