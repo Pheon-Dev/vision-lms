@@ -75,7 +75,9 @@ export default function LoansFeed() {
                     0
                     ? "hover:bg-purple-200 bg-purple-50 cursor-pointer transition-all duration-300"
                     : "hover:bg-blue-200 bg-blue-50 cursor-pointer transition-all duration-300"
-                  : "hover:bg-red-200 bg-red-50 cursor-pointer transition-all duration-300"
+                  : member?.disbursed === 'false' 
+                  ? "hover:bg-cyan-200 bg-cyan-50 cursor-pointer transition-all duration-300"
+                : "hover:bg-red-200 bg-red-50 cursor-pointer transition-all duration-300"
               }
             >
               <TableData>

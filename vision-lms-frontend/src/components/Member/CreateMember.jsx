@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
+import { BsCheck2Circle } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
+import { ModalAlert } from "../Modals";
 
 import { client } from "../../client";
 import { Spinner, Label } from "../Components";
@@ -13,6 +15,7 @@ export default function CreateMember() {
   const [imageAsset, setImageAsset] = useState();
   const [wrongImageType, setWrongImageType] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const [date, setDate] = useState("");
   const [branchName, setBranchName] = useState("");
@@ -839,6 +842,26 @@ export default function CreateMember() {
                     </p>
                   )}
                 </div>
+        <div>
+          <ModalAlert
+            open={open}
+            onClose={() => setOpen(false)}
+            title={surName + ' ' + otherNames}
+            message="Navigate to All Members List ..."
+            path="/member/"
+          >
+            <div className="flex items-center w-full">
+              <div className="bg-green-300 opacity-80 relative rounded-full p-2">
+                <BsCheck2Circle className="w-10 font-bold text-black h-10" />
+              </div>
+              <div className="text-md p-3">
+                <span className="font-bold text-3xl">
+                  Successfully Registered!
+                </span>
+              </div>
+            </div>
+          </ModalAlert>
+        </div>
               </div>
             </div>
           </div>
