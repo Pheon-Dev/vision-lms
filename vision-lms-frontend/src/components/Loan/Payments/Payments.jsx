@@ -2,26 +2,30 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { client } from "../../../client";
 import { ListLayout, Spinner, Status, TableData } from "../../Components";
-// import { MPesaProvider } from "../../../contexts/MPesaContext";
+import { useMpesa } from "../../../services/MpesaApi";
 
 export default function Payments() {
+  const {data} = useMpesa();
   const [subscription, setSubscription] = useState(true);
   const [paymentsList, setPaymentsList] = useState("");
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
 
+
+  console.log(data)
+
   const fetchPayments = async () => {
     const query = '*[_type == "maintenance"] | order(_updatedAt desc)';
 
-      await client.fetch(query).then((data) => {
-        setPaymentsList(data);
-      });
+    await client.fetch(query).then((data) => {
+      setPaymentsList(data);
+    });
   };
 
   useEffect(() => {
     if (subscription) {
-    fetchPayments();
+      fetchPayments();
     }
     return () => setSubscription(false);
   }, []);
@@ -144,14 +148,13 @@ export default function Payments() {
                         <div className="text-sm font-semibold text-gray-900">
                           {member.outstandingPenalty === "false"
                             ? member?.principalAmount
-                            : member?.defaulted === "true" ? 
-                            Number(
+                            : member?.defaulted === "true"
+                            ? Number(
                                 member.recentPayments[
                                   member.recentPayments?.length - 1
                                 ]?.faceOutstandingBalance
                               )
-                          :
-                            Number(
+                            : Number(
                                 member.recentPayments[
                                   member.recentPayments?.length - 1
                                 ]?.faceOutstandingArrears
@@ -181,8 +184,7 @@ export default function Payments() {
                         </div>
                         <div className="text-sm text-gray-500">
                           {member?.repaymentCycle === "days"
-                            ? Number(member?.loanTenure) +
-                              " "
+                            ? Number(member?.loanTenure) + " "
                             : member?.loanTenure + " "}{" "}
                           {member?.repaymentCycle === "months"
                             ? member?.loanTenure === "1"
@@ -205,27 +207,51 @@ export default function Payments() {
                     </TableData>
                     <TableData>
                       {member.outstandingPenalty === "false" ? (
-                        <Status range="700" level="500" colour="green" state="New Loan" />
+                        <Status
+                          range="700"
+                          level="500"
+                          colour="green"
+                          state="New Loan"
+                        />
                       ) : member.outstandingPenalty === "0" ? (
                         Number(
                           member.recentPayments[
                             member.recentPayments?.length - 1
                           ]?.faceOutstandingBalance
-                        ) <=
-                        0 ? (
-                          <Status level="500" colour="purple" range="700" state="Loan Cleared" />
+                        ) <= 0 ? (
+                          <Status
+                            level="500"
+                            colour="purple"
+                            range="700"
+                            state="Loan Cleared"
+                          />
                         ) : (
-                          <Status level="500" colour="blue" range="700" state="Loan Active" />
+                          <Status
+                            level="500"
+                            colour="blue"
+                            range="700"
+                            state="Loan Active"
+                          />
                         )
-                      ) :
+                      ) : (
                         <>
-                        {member?.defaulted === "true" ?
-                          <Status level="400" colour="gray" range="500" state="Loan Default" />
-                        :
-                          <Status level="500" colour="red" range="700" state="In Arrears" />
-                        }
+                          {member?.defaulted === "true" ? (
+                            <Status
+                              level="400"
+                              colour="gray"
+                              range="500"
+                              state="Loan Default"
+                            />
+                          ) : (
+                            <Status
+                              level="500"
+                              colour="red"
+                              range="700"
+                              state="In Arrears"
+                            />
+                          )}
                         </>
-                      }
+                      )}
                     </TableData>
                   </tr>
                 ) : null

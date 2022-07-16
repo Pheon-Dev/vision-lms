@@ -1,43 +1,74 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Mpesa } from "mpesa-api";
 
-const mpesaApiHedaers = {
-  clientKey: import.meta.env.VITE_CUSTOMER_KEY,
-  clientSecret: import.meta.env.VITE_CUSTOMER_SECRET,
-  // initiatorPassword: import.meta.env.VITE_INITIATOR_PASSWORD,
-  securityCredential: import.meta.env.VITE_SECURITY_CREDENTIAL,
-}
+const CONSUMER_KEY = import.meta.env.VITE_CONSUMER_KEY;
+const CONSUMER_SECRET = import.meta.env.VITE_CONSUMER_SECRET;
+const INITIATOR_PASSWORD = import.meta.env.VITE_INITIATOR_PASSWORD;
+const SECURITY_CREDENTIAL = import.meta.env.VITE_SECURITY_CREDENTIAL;
+const PASS_KEY = import.meta.env.VITE_PASS_KEY;
+const PAY_BILL = import.meta.env.VITE_PAY_BILL;
+const TILL_NUMBER = import.meta.env.VITE_TILL_NUMBER;
+const PHONE_NUMBER = import.meta.env.VITE_PHONE_NUMBER;
+const CALL_BACK_URL = import.meta.env.VITE_CALL_BACK_URS;
 
-const environment = "sandbox";
+export const mpesaApi = () => {
+    const credentials = {
+      clientKey: `${CONSUMER_KEY}`,
+      clientSecret: `${CONSUMER_SECRET}`,
+      initiatorPassword: `${SECURITY_CREDENTIAL}`,
+      // securityCredential: `${SECURITY_CREDENTIAL}`,
+      // certificatePath: null,
+    };
 
-const baseUrl = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+    // const environment = "sandbox";
+    const environment = "production";
 
-const createRequest = (url) => ({url, headers: mpesaApiHedaers});
+    const mpesa = new Mpesa(credentials, environment);
 
-export const mpesaApi = () => createApi({
-  reducerPath: 'mpesaApi',
-  baseQuery: fetchBaseQuery({ baseUrl }),
-  endpoints: (builder) => ({
-    getMpesa: builder.query({
-      query: () => createRequest(`/`),
-    })
-  })
-})
+    return (
+      <>
+        {" "}
+        {mpesa
+          .lipaNaMpesaOnline({
+            BusinessShortCode: Number(PAY_BILL),
+            passKey: `${PASS_KEY}`,
+            TransactionDesc: "Transaction Desc",
+            TransactionType: "CustomerPayBillOnline",
+            PartyA: `${PHONE_NUMBER}`,
+            PartyB: `${PAY_BILL}`,
+            Amount: 1,
+            PhoneNumber: `${PHONE_NUMBER}`,
+            CallBackURL: `${CALL_BACK_URL}`,
+            AccountReference: "Account Reference",
+          })
+          .then((response) => {
+            console.log(response);
+            res
+              .status(200)
+              .json({ name: `${JSON.stringify(response, undefined, 2)}` });
+          })
+          .catch((error) => {
+            console.log(error);
+            res
+              .status(400)
+              .json({ name: `${JSON.stringify(error, undefined, 2)}` });
+          })}
+      </>
+    );
+  }
+
+// const createRequest = (url) => ({url, headers: mpesaApiHeaders});
+//
+// export const mpesaApi = () => createApi({
+//   reducerPath: 'mpesaApi',
+//   baseQuery: fetchBaseQuery({ baseUrl }),
+//   endpoints: (builder) => ({
+//     getMpesa: builder.query({
+//       query: () => createRequest(`/`),
+//     })
+//   })
+// })
 
 export const {
   useGetMpesaQuery
 } = mpesaApi;
-// var unirest = require("unirest");
-// var req = unirest("GET", "https://sandbox.safaricom.co.ke/oauth/v1/generate");
-//  
-// req.query({
-//  "grant_type": "client_credentials"
-// });
-//  
-// req.headers({
-//  "Authorization": "Basic SWZPREdqdkdYM0FjWkFTcTdSa1RWZ2FTSklNY001RGQ6WUp4ZVcxMTZaV0dGNFIzaA=="
-// });
-//  
-// req.end(res => {
-//  if (res.error) throw new Error(res.error);
-//  console.log(res.body);
-// });

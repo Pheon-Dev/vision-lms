@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "ngrok": "ngrok http 3000",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "framer-motion": "^6.2.8",
     "http-proxy-middleware": "^2.0.6",
     "mpesa-api": "^3.0.2",
+    "ngrok": "^4.3.1",
     "perfect-scrollbar": "^1.5.5",
     "prop-types": "^15.8.1",
     "react": "^18.1.0",
