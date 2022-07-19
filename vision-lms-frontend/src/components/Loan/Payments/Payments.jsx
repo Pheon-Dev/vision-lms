@@ -2,18 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { client } from "../../../client";
 import { ListLayout, Spinner, Status, TableData } from "../../Components";
-import { useMpesa } from "../../../services/MpesaApi";
 
 export default function Payments() {
-  const {data} = useMpesa();
   const [subscription, setSubscription] = useState(true);
   const [paymentsList, setPaymentsList] = useState("");
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
-
-
-  console.log(data)
 
   const fetchPayments = async () => {
     const query = '*[_type == "maintenance"] | order(_updatedAt desc)';
@@ -152,12 +147,12 @@ export default function Payments() {
                             ? Number(
                                 member.recentPayments[
                                   member.recentPayments?.length - 1
-                                ]?.faceOutstandingBalance
+                                ]?.faceOutstandingArrears
                               )
                             : Number(
                                 member.recentPayments[
                                   member.recentPayments?.length - 1
-                                ]?.faceOutstandingArrears
+                                ]?.faceOutstandingBalance
                               )}
                         </div>
                         {Number(member?.outstandingPenalty) > 0 ? (

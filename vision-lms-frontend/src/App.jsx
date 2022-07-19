@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
 import { FiSettings } from "react-icons/fi";
 import { AuthProvider } from "./contexts/AuthContext";
-// import { useLipaNaMpesa } from "./mpesa";
 import { Dashboard, Members } from "./container";
 import {
   Login,
@@ -31,11 +30,6 @@ export default function App () {
       setCurrentMode(currentThemeMode);
     }
   }, []);
-
-  // const [lipaNaMpesa, setLipaNaMpesa] = useState('')
-  // const { data } = useLipaNaMpesa();
-
-  // console.log(data);
 
   // if (!currentUser) navigate('/sign-in');
   // console.log(currentUser.email)
