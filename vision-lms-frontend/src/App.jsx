@@ -31,6 +31,8 @@ export default function App () {
     }
   }, []);
 
+
+
   // if (!currentUser) navigate('/sign-in');
   // console.log(currentUser.email)
   // useEffect(() => {

@@ -5,7 +5,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { persistQueryClient } from "react-query/persistQueryClient-experimental";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 import App from "./App";
 import "./index.css";
@@ -38,4 +37,3 @@ ReactDOM.render(
   </QueryClientProvider>,
   document.getElementById("root")
 );
-serviceWorkerRegistration.register();

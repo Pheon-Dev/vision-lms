@@ -137,7 +137,7 @@ export default function CreateMember() {
   };
 
   let res_age = 0;
-  let year_diff = (date.split('-')[0] - dob.split('-')[0]);
+  let year_diff = date.split("-")[0] - dob.split("-")[0];
   function renderAge(month_now, month_dob) {
     let result = 0;
     if (month_now === month_dob) result = 1;
@@ -145,7 +145,10 @@ export default function CreateMember() {
     if (month_now < month_dob) result = 0;
     return result;
   }
-  let month_date = renderAge((Number(date.split('-')[1]) + 0), (dob.split('-')[1] - 0));
+  let month_date = renderAge(
+    Number(date.split("-")[1]) + 0,
+    dob.split("-")[1] - 0
+  );
   res_age = year_diff + month_date - 1;
   res_age = res_age > 0 ? res_age : res_age * -1;
   res_age = res_age.toString();
@@ -155,16 +158,56 @@ export default function CreateMember() {
     setGroup("false");
     setAge(res_age);
     setMemberNumber(
-      `DC-${code.length > 9
-        ? code.length > 99
-          ? code.length > 999
-            ? Number(code.length) + 1
-            : "0" + (Number(code.length) + 1)
-          : "00" + (Number(code.length) + 1)
-        : "000" + (Number(code.length) + 1)
+      `DC-${
+        code.length > 9
+          ? code.length > 99
+            ? code.length > 999
+              ? Number(code.length) + 1
+              : "0" + (Number(code.length) + 1)
+            : "00" + (Number(code.length) + 1)
+          : "000" + (Number(code.length) + 1)
       }`
     );
-    console.log(date, branchName, memberNumber, mpesaAmount, surName, otherNames, dob, idPass, pinNumber, mobileNumber, gender, age, religion, maritalStatus, spouseNumber, nameSpouse, postalAddress, postalCode, cityTown, residentialAddress, emailAddress, rentedOwned, landCareAgent, occupationEmployer, employerNumber, businessLocation, businessAge, refereeName, group, communityPosition, mpesaTransNumber, nameKin, relationship, residentialAddressKin, postalAddressKin, postalCodeKin, cityTownKin, mobileNumberKin)
+    console.log(
+      date,
+      branchName,
+      memberNumber,
+      mpesaAmount,
+      surName,
+      otherNames,
+      dob,
+      idPass,
+      pinNumber,
+      mobileNumber,
+      gender,
+      age,
+      religion,
+      maritalStatus,
+      spouseNumber,
+      nameSpouse,
+      postalAddress,
+      postalCode,
+      cityTown,
+      residentialAddress,
+      emailAddress,
+      rentedOwned,
+      landCareAgent,
+      occupationEmployer,
+      employerNumber,
+      businessLocation,
+      businessAge,
+      refereeName,
+      group,
+      communityPosition,
+      mpesaTransNumber,
+      nameKin,
+      relationship,
+      residentialAddressKin,
+      postalAddressKin,
+      postalCodeKin,
+      cityTownKin,
+      mobileNumberKin
+    );
   };
 
   const saveMember = () => {
@@ -278,8 +321,8 @@ export default function CreateMember() {
     }
   };
 
-
-  let classInput = "appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+  let classInput =
+    "appearance-none uppercase block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white";
 
   function renderCreateMember() {
     return (
@@ -308,17 +351,22 @@ export default function CreateMember() {
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <Label valid={validator} label="Member Number" item={memberNumber} />
+            <Label
+              valid={validator}
+              label="Member Number"
+              item={memberNumber}
+            />
             {code && (
               <span className={classInput}>
-                {`DC-${code.length > 9
+                {`DC-${
+                  code.length > 9
                     ? code.length > 99
                       ? code.length > 999
                         ? Number(code.length) + 1
                         : "0" + (Number(code.length) + 1)
                       : "00" + (Number(code.length) + 1)
                     : "000" + (Number(code.length) + 1)
-                  }`}
+                }`}
               </span>
             )}
           </div>
@@ -376,7 +424,11 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="PIN No. (Attach Copy)" item={pinNumber} />
+            <Label
+              valid={validator}
+              label="PIN No. (Attach Copy)"
+              item={pinNumber}
+            />
             <input
               className="uppercase appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="pinNumber"
@@ -421,11 +473,7 @@ export default function CreateMember() {
           </div>
           <div className="w-full md:w-1/3 px-3">
             <Label valid={validator} label="Age" item={age} />
-            {res_age && (
-              <span className={classInput}>
-                {`${res_age}`}
-              </span>
-            )}
+            {res_age && <span className={classInput}>{`${res_age}`}</span>}
           </div>
           <div className="w-full md:w-1/3 px-3">
             <Label valid={validator} label="Religion" item={religion} />
@@ -441,7 +489,11 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Marital Status" item={maritalStatus} />
+            <Label
+              valid={validator}
+              label="Marital Status"
+              item={maritalStatus}
+            />
             <input
               className={classInput}
               id="maritalStatus"
@@ -463,7 +515,11 @@ export default function CreateMember() {
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <Label valid={validator} label="Spouse Tel. No." item={spouseNumber} />
+            <Label
+              valid={validator}
+              label="Spouse Tel. No."
+              item={spouseNumber}
+            />
             <input
               className={classInput}
               id="spouseNumber"
@@ -476,7 +532,11 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Postal Address" item={postalAddress} />
+            <Label
+              valid={validator}
+              label="Postal Address"
+              item={postalAddress}
+            />
             <input
               className={classInput}
               id="postalAddress"
@@ -511,19 +571,29 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Residential Address" item={residentialAddress} />
+            <Label
+              valid={validator}
+              label="Residential Address"
+              item={residentialAddress}
+            />
             <input
               className={classInput}
               id="residentialAddress"
               type="text"
               placeholder="Residential Address ..."
               value={residentialAddress}
-              onChange={(e) => setResidentialAddress(e.target.value.toUpperCase())}
+              onChange={(e) =>
+                setResidentialAddress(e.target.value.toUpperCase())
+              }
             />
           </div>
           {/* // valid email */}
           <div className="w-full md:w-1/2 px-3">
-            <Label valid={validator} label="Email Address" item={emailAddress} />
+            <Label
+              valid={validator}
+              label="Email Address"
+              item={emailAddress}
+            />
             <input
               className={classInput}
               id="emailAddress"
@@ -556,7 +626,11 @@ export default function CreateMember() {
             </select>
           </div>
           <div className="w-full md:w-2/3 px-3">
-            <Label valid={validator} label="Landlord/Caretaker/Agent Name" item={landCareAgent} />
+            <Label
+              valid={validator}
+              label="Landlord/Caretaker/Agent Name"
+              item={landCareAgent}
+            />
             <input
               className={classInput}
               id="landCareAgent"
@@ -570,18 +644,28 @@ export default function CreateMember() {
         {/* Show business if not employed */}
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Occupation/Employer" item={occupationEmployer} />
+            <Label
+              valid={validator}
+              label="Occupation/Employer"
+              item={occupationEmployer}
+            />
             <input
               className={classInput}
               id="occupationEmployer"
               type="text"
               placeholder="Occupation/Employer ..."
               value={occupationEmployer}
-              onChange={(e) => setOccupationEmployer(e.target.value.toUpperCase())}
+              onChange={(e) =>
+                setOccupationEmployer(e.target.value.toUpperCase())
+              }
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <Label valid={validator} label="Employer Contacts (Tel. No.)" item={employerNumber} />
+            <Label
+              valid={validator}
+              label="Employer Contacts (Tel. No.)"
+              item={employerNumber}
+            />
             <input
               className={classInput}
               id="employerNumber"
@@ -594,18 +678,28 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Location of Business (Attach Map)" item={businessLocation} />
+            <Label
+              valid={validator}
+              label="Location of Business (Attach Map)"
+              item={businessLocation}
+            />
             <input
               className={classInput}
               id="businessLocation"
               type="text"
               placeholder="Business Location ..."
               value={businessLocation}
-              onChange={(e) => setBusinessLocation(e.target.value.toUpperCase())}
+              onChange={(e) =>
+                setBusinessLocation(e.target.value.toUpperCase())
+              }
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <Label valid={validator} label="Age of Business" item={businessAge} />
+            <Label
+              valid={validator}
+              label="Age of Business"
+              item={businessAge}
+            />
             <input
               className={classInput}
               id="businessAge"
@@ -618,7 +712,11 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Name of Referee" item={refereeName} />
+            <Label
+              valid={validator}
+              label="Name of Referee"
+              item={refereeName}
+            />
             <input
               className={classInput}
               id="refereeName"
@@ -642,31 +740,47 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-full px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Any Position of Leadership in the Community" item={communityPosition} />
+            <Label
+              valid={validator}
+              label="Any Position of Leadership in the Community"
+              item={communityPosition}
+            />
             <input
               className={classInput}
               id="communityPosition"
               type="text"
               placeholder="Poistion in Community ..."
               value={communityPosition}
-              onChange={(e) => setCommunityPosition(e.target.value.toUpperCase())}
+              onChange={(e) =>
+                setCommunityPosition(e.target.value.toUpperCase())
+              }
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Membership fee M-PESA Transaction No." item={communityPosition} />
+            <Label
+              valid={validator}
+              label="Membership fee M-PESA Transaction No."
+              item={communityPosition}
+            />
             <input
               className={classInput}
               id="mpesaTransNumber"
               type="text"
               placeholder="M-PESA Transaction NUMBER ..."
               value={mpesaTransNumber}
-              onChange={(e) => setMpesaTransNumber(e.target.value.toUpperCase())}
+              onChange={(e) =>
+                setMpesaTransNumber(e.target.value.toUpperCase())
+              }
             />
           </div>
           <div className="w-full md:w-1/2 px-3">
-            <Label valid={validator} label="Membership fee Amount" item={communityPosition} />
+            <Label
+              valid={validator}
+              label="Membership fee Amount"
+              item={communityPosition}
+            />
             <input
               className={classInput}
               id="mpesaAmount"
@@ -706,27 +820,39 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-full px-3">
-            <Label valid={validator} label="Residential Address" item={residentialAddressKin} />
+            <Label
+              valid={validator}
+              label="Residential Address"
+              item={residentialAddressKin}
+            />
             <input
               className={classInput}
               id="residentialAddressKin"
               type="text"
               placeholder="Residential Address ..."
               value={residentialAddressKin}
-              onChange={(e) => setResidentialAddressKin(e.target.value.toUpperCase())}
+              onChange={(e) =>
+                setResidentialAddressKin(e.target.value.toUpperCase())
+              }
             />
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <Label valid={validator} label="Postal Address" item={postalAddressKin} />
+            <Label
+              valid={validator}
+              label="Postal Address"
+              item={postalAddressKin}
+            />
             <input
               className={classInput}
               id="postalAddressKin"
               type="text"
               placeholder="Postal Address ..."
               value={postalAddressKin}
-              onChange={(e) => setPostalAddressKin(e.target.value.toUpperCase())}
+              onChange={(e) =>
+                setPostalAddressKin(e.target.value.toUpperCase())
+              }
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
@@ -754,7 +880,11 @@ export default function CreateMember() {
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-full px-3">
-            <Label valid={validator} label="Mobile/Tel No." item={mobileNumberKin} />
+            <Label
+              valid={validator}
+              label="Mobile/Tel No."
+              item={mobileNumberKin}
+            />
             <input
               className={classInput}
               id="mobileNumberKin"
@@ -788,7 +918,11 @@ export default function CreateMember() {
                             <AiOutlineCloudUpload />
                           </p>
                           <p className="text-lg">
-                            <Label valid={validator} label="Click to Upload Profile Picture" item={imageAsset} />
+                            <Label
+                              valid={validator}
+                              label="Click to Upload Profile Picture"
+                              item={imageAsset}
+                            />
                           </p>
                         </div>
 
@@ -822,8 +956,7 @@ export default function CreateMember() {
                   )}
                 </div>
               </div>
-              <div>
-              </div>
+              <div></div>
               <div className="flex justify-end items-end mt-5">
                 <div className="w-full md:w-1/2">
                   <button
@@ -832,7 +965,7 @@ export default function CreateMember() {
                     onMouseEnter={preSaveMember}
                     className="bg-green-500 text-white font-bold p-2 rounded-lg w-36 outline-none"
                   >
-                  {adding ? 'Saving ...' : 'Save Member'}
+                    {adding ? "Saving ..." : "Save Member"}
                   </button>
                 </div>
                 <div className="w-full md:w-1/2">
@@ -842,26 +975,26 @@ export default function CreateMember() {
                     </p>
                   )}
                 </div>
-        <div>
-          <ModalAlert
-            open={open}
-            onClose={() => setOpen(false)}
-            title={surName + ' ' + otherNames}
-            message="Navigate to All Members List ..."
-            path="/member/"
-          >
-            <div className="flex items-center w-full">
-              <div className="bg-green-300 opacity-80 relative rounded-full p-2">
-                <BsCheck2Circle className="w-10 font-bold text-black h-10" />
-              </div>
-              <div className="text-md p-3">
-                <span className="font-bold text-3xl">
-                  Successfully Registered!
-                </span>
-              </div>
-            </div>
-          </ModalAlert>
-        </div>
+                <div>
+                  <ModalAlert
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    title={surName + " " + otherNames}
+                    message="Navigate to All Members List ..."
+                    path="/member/"
+                  >
+                    <div className="flex items-center w-full">
+                      <div className="bg-green-300 opacity-80 relative rounded-full p-2">
+                        <BsCheck2Circle className="w-10 font-bold text-black h-10" />
+                      </div>
+                      <div className="text-md p-3">
+                        <span className="font-bold text-3xl">
+                          Successfully Registered!
+                        </span>
+                      </div>
+                    </div>
+                  </ModalAlert>
+                </div>
               </div>
             </div>
           </div>
