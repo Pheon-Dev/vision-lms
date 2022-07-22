@@ -4,6 +4,7 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { ModalAlert } from "../Modals";
+import user from "../../assets/user.png";
 
 import { client } from "../../client";
 import { Spinner, Label } from "../Components";
@@ -107,6 +108,7 @@ export default function CreateMember() {
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
+    // const selectedFile = e.target.files[0];
     // uploading asset to sanity
     if (
       selectedFile.type === "image/png" ||
