@@ -309,8 +309,9 @@ export default function CreateMember() {
       };
       client.create(doc).then(() => {
         setAdding(false);
-        navigate("/member/");
-        alert("Member Registered Successfully");
+        setOpen(true);
+        // navigate("/member/");
+        // alert("Member Registered Successfully");
       });
     } else {
       setFields(true);
