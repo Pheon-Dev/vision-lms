@@ -3,3 +3,4 @@ export { default as Members } from './Members';
 export { default as Loans } from './Loans';
 export { default as Groups } from './Groups';
 export { default as Reports } from './Reports';
+export { default as Apps } from './Apps';

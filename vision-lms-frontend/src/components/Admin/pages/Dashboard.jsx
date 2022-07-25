@@ -333,7 +333,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div
-            onClick={() => navigate("/loan/payments/")}
+            onClick={() => navigate("/apps")}
             className="status-card cursor-pointer m-3"
           >
             <div className="status-card__icon">

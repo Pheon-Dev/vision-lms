@@ -10,6 +10,7 @@ import Reports from './Reports';
 import Members from './Members';
 import Groups from './Groups';
 import Loans from './Loans';
+import Apps from './Apps';
 
 export default function Dashboard() {
   const [toggleSidebar, setToggleSidebar] = useState(false);
@@ -77,6 +78,7 @@ export default function Dashboard() {
           <Route path="/group/*" element={<Groups />} />
           <Route path="/loan/*" element={<Loans />} />
           <Route path="/report/*" element={<Reports />} />
+          <Route path="/apps/*" element={<Apps />} />
         </Routes>
       </div>
     </div>
