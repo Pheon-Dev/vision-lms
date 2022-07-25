@@ -2,7 +2,16 @@ import { createPortal } from "react-dom";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ModalAlert({ open, onClose, children, title, path, message, type }) {
+export default function ModalAlert({
+  open,
+  onClose,
+  onCloseAll,
+  children,
+  title,
+  path,
+  message,
+  type,
+}) {
   const navigate = useNavigate();
   function escHandler({ key }) {
     if (key === "Escape") {
@@ -36,7 +45,7 @@ export default function ModalAlert({ open, onClose, children, title, path, messa
         {/* content */}
         {/* <div id="defaultModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full"> */}
         <div
-          className={`fixed overflow-y-auto overflow-x-hidden ml-auto mr-auto flex items-center md:w-full md:inset-0 max-w-screen-sm p-4 ${
+          className={`fixed flex overflow-y-auto overflow-x-hidden ml-auto mr-auto items-center md:w-full md:inset-0 max-w-screen-sm p-4 ${
             open ? "opacity-100" : "pointer-events-none opacity-0"
           } transition-opacity duration-300 ease-in-out`}
           aria-hidden="true"
@@ -50,7 +59,13 @@ export default function ModalAlert({ open, onClose, children, title, path, messa
                     {title}
                   </h3>
                   <button
-                    onClick={type === 'payment' ? onClose : () => navigate(`${path}`)}
+                    onClick={
+                      type === "payment" || type === "apps"
+                        ? onClose
+                        : type === "expenses"
+                        ? onCloseAll
+                        : () => navigate(`${path}`)
+                    }
                     type="button"
                     className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                     data-modal-toggle="defaultModal"
@@ -73,8 +88,8 @@ export default function ModalAlert({ open, onClose, children, title, path, messa
                   <span className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                     {children}
                   </span>
-      <br/>
-      <br/>
+                  <br />
+                  <br />
                   <span className="text-2xl leading-relaxed text-gray-500 dark:text-gray-400">
                     {message}
                   </span>
@@ -82,11 +97,21 @@ export default function ModalAlert({ open, onClose, children, title, path, messa
                 <div className="flex items-end p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
                   <button
                     data-modal-toggle="defaultModal"
-                    onClick={type === 'payment' ? onClose : () => navigate(`${path}`)}
+                    onClick={
+                      type === "payment" ||
+                      type === "apps" ||
+                      type === "expenses"
+                        ? onClose
+                        : () => navigate(`${path}`)
+                    }
                     type="button"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-800"
                   >
-                    Okay
+                    {type === "apps"
+                      ? "Cancel"
+                      : type === "expenses"
+                      ? "Back"
+                      : "Okay"}
                   </button>
                 </div>
               </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { BsCheck2Circle } from "react-icons/bs";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { BiGroup, BiReceipt } from "react-icons/bi";
@@ -9,6 +10,7 @@ import { useSelector } from "react-redux";
 import { client } from "../../../client";
 import { LoansFeed } from "../../Loan";
 import { List } from "../../Components";
+import { ModalAlert } from "../../Modals";
 
 import "./statuscard.css";
 import "../../Loan/Payments/chart.scss";
@@ -34,6 +36,8 @@ const Dashboard = () => {
   const [products, setProducts] = useState();
   const [active, setActive] = useState();
   const [groups, setGroups] = useState();
+  const [openApps, setOpenApps] = useState(false);
+  const [openExpenses, setOpenExpenses] = useState(false);
 
   useEffect(() => {
     let subscription = true;
@@ -61,10 +65,10 @@ const Dashboard = () => {
   let date_today = new Date();
   let date_today_view = Number(
     date_today.getFullYear() +
-    (Number(date_today.getMonth()) > 9 ? "" : "0") +
-    date_today.getMonth() +
-    (Number(date_today.getDate()) > 9 ? "" : "0") +
-    date_today.getDate()
+      (Number(date_today.getMonth()) > 9 ? "" : "0") +
+      date_today.getMonth() +
+      (Number(date_today.getDate()) > 9 ? "" : "0") +
+      date_today.getDate()
   );
 
   let [data, setData] = React.useState([]);
@@ -333,7 +337,9 @@ const Dashboard = () => {
             </div>
           </div>
           <div
-            onClick={() => navigate("/apps")}
+            onClick={() => {
+              setOpenApps(true);
+            }}
             className="status-card cursor-pointer m-3"
           >
             <div className="status-card__icon">
@@ -345,6 +351,68 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  function renderAppsModal() {
+    return (
+      <div>
+        <ModalAlert
+          open={openApps}
+          onClose={() => {
+            setOpenApps(false);
+          }}
+          type="apps"
+          title="All Applications"
+          message="Navigate to Disbursed Loans ..."
+          path="/"
+        >
+          <div className="flex items-center w-full">
+            <button
+              data-modal-toggle="defaultModal"
+              onClick={() => {
+                setOpenApps(false);
+                setOpenExpenses(true);
+              }}
+              type="button"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-800"
+            >
+              Expenses
+            </button>
+          </div>
+        </ModalAlert>
+      </div>
+    );
+  }
+
+  function renderExpensesAppModal() {
+    return (
+      <div>
+        <ModalAlert
+          open={openExpenses}
+          onCloseAll={() => {
+            setOpenApps(false);
+            setOpenExpenses(false);
+          }}
+          onClose={() => {
+            setOpenApps(true);
+            setOpenExpenses(false);
+          }}
+          title="Expenses App"
+          type="expenses"
+          message="Navigate to Disbursed Loans ..."
+          path="/apps/expenses"
+        >
+          <div className="flex items-center w-full">
+            <div className="bg-green-300 opacity-80 relative rounded-full p-2">
+              <BsCheck2Circle className="w-10 font-bold text-black h-10" />
+            </div>
+            <div className="text-md p-3">
+              <span className="font-bold text-3xl">Successfully Approved!</span>
+            </div>
+          </div>
+        </ModalAlert>
       </div>
     );
   }
@@ -409,7 +477,7 @@ const Dashboard = () => {
               stroke="gray"
               type="number"
               domain={
-                active[0]?.repaymentCycle === "daily" ? [0, 10000] : [0, 20000]
+                active[0]?.repaymentCycle === "daily" ? [0, 10000] : [0, 50000]
               }
             />
             {/* <CartesianGrid strokeDasharray="3 3" className="chartGrid" /> */}
@@ -444,19 +512,21 @@ const Dashboard = () => {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis datakey={`${JSON.stringify(data, undefined, 2).split('\n')[2]}`} />
+            <XAxis
+              datakey={`${JSON.stringify(data, undefined, 2).split("\n")[2]}`}
+            />
             <YAxis type="number" domain={[0, 25000]} />
             <Tooltip />
             <Legend />
             <Line
               type="monotone"
-              dataKey={`${JSON.stringify(data, undefined, 2).split('\n')[2]}`}
+              dataKey={`${JSON.stringify(data, undefined, 2).split("\n")[2]}`}
               stroke="#8884d8"
               activeDot={{ r: 8 }}
             />
             <Line
               type="monotone"
-              dataKey={`${JSON.stringify(data, undefined, 2).split('\n')[4]}`}
+              dataKey={`${JSON.stringify(data, undefined, 2).split("\n")[4]}`}
               stroke="#82ca9d"
             />
           </LineChart>
@@ -467,7 +537,9 @@ const Dashboard = () => {
 
   return (
     <div className="m-3">
-      {renderButtons()}
+      {renderAppsModal()}
+      {renderExpensesAppModal()}
+      {!openApps ? (!openExpenses ? renderButtons() : null) : null}
       {active ? (
         <>
           <div className="charts border border-gray-400 bg-gray-50 m-5 rounded-lg">
