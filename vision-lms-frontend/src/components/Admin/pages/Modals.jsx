@@ -1,90 +1,60 @@
 import React, { useEffect, useState } from "react";
-import { BsCheck2Circle } from "react-icons/bs";
 import { ModalAlert } from "../../Modals";
-  export function renderAppsModal() {
-  const [openApps, setOpenApps] = useState(false);
-    return (
-      <div>
-        <ModalAlert
-          open={openApps}
-          onClose={() => {
-            setOpenApps(false);
-          }}
-          type="apps"
-          title="All Applications"
-          message="Navigate to Disbursed Loans ..."
-          path="/"
-        >
-          <div className="flex items-center gap-6 w-full">
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                setOpenApps(false);
-                setOpenExpenses(true);
-              }}
-              type="button"
-              className="text-white bg-blue-500 hover:bg-blue-800 p-3 rounded-lg"
-            >
-              Expenses
-            </button>
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                setOpenApps(false);
-                setOpenExpenses(true);
-              }}
-              type="button"
-              className="text-white bg-violet-500 hover:bg-violet-800 p-3 rounded-lg"
-            >
-              Income
-            </button>
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                setOpenApps(false);
-                setOpenExpenses(true);
-              }}
-              type="button"
-              className="text-white bg-green-500 hover:bg-green-800 p-3 rounded-lg"
-            >
-              Miscellaneous
-            </button>
-          </div>
-        </ModalAlert>
-      </div>
-    );
-  }
 
-  export function renderExpensesAppModal() {
-  const [openExpenses, setOpenExpenses] = useState(false);
-    return (
-      <div>
-        <ModalAlert
-          open={openExpenses}
-          onCloseAll={() => {
-            setOpenApps(false);
-            setOpenExpenses(false);
-          }}
-          onClose={() => {
-            setOpenApps(true);
-            setOpenExpenses(false);
-          }}
-          title="Expenses App"
-          type="expenses"
-          message="Navigate to Disbursed Loans ..."
-          path="/apps/expenses"
-        >
-          <div className="flex items-center w-full">
-            <div className="bg-green-300 opacity-80 relative rounded-full p-2">
-              <BsCheck2Circle className="w-10 font-bold text-black h-10" />
-            </div>
-            <div className="text-md p-3">
-              <span className="font-bold text-3xl">Successfully Approved!</span>
-            </div>
-          </div>
-        </ModalAlert>
-      </div>
-    );
-  }
-
-
+export function ExpensesAppModal({closeApp, openApp, openExpe, closeExpe, openState}) {
+  return (
+    <div>
+      <ModalAlert
+        open={openState}
+        onCloseAll={() => {
+          closeApp;
+          closeExpe;
+        }}
+        onClose={() => {
+          closeExpe;
+          openApp;
+        }}
+        title="Expenses App"
+        type="expenses"
+        // message="Navigate to Disbursed Loans ..."
+        path="/apps/expenses"
+      >
+        <div className="flex-auto m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
+          <button
+            data-modal-toggle="defaultModal"
+            onClick={() => {
+              closeApp;
+              openExpe;
+            }}
+            type="button"
+            className="hover:text-white text-black bg-blue-300 m-2 hover:bg-blue-600 p-3 rounded-lg transition-all ease-in-out duration-500"
+          >
+            Transactions
+          </button>
+          <button
+            data-modal-toggle="defaultModal"
+            onClick={() => {
+              closeApp;
+              openExpe;
+            }}
+            type="button"
+            className="hover:text-white text-black bg-violet-400 m-2 hover:bg-violet-600 p-3 rounded-lg transition-all ease-in-out duration-500"
+          >
+            Budget
+          </button>
+          <button
+            data-modal-toggle="defaultModal"
+            onClick={() => {
+              closeApp;
+              openExpe;
+            }}
+            type="button"
+            className="hover:text-white text-black bg-green-300 m-2 hover:bg-green-600 p-3 rounded-lg transition-all ease-in-out duration-500"
+          >
+            Miscellaneous
+          </button>
+        </div>
+      </ModalAlert>
+    </div>
+  );
+}

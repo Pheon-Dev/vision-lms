@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { BsCheck2Circle } from "react-icons/bs";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { BiGroup, BiReceipt } from "react-icons/bi";
@@ -11,6 +10,7 @@ import { client } from "../../../client";
 import { LoansFeed } from "../../Loan";
 import { List } from "../../Components";
 import { ModalAlert } from "../../Modals";
+import { ExpensesAppModal } from "./Modals";
 
 import "./statuscard.css";
 import "../../Loan/Payments/chart.scss";
@@ -365,10 +365,10 @@ const Dashboard = () => {
           }}
           type="apps"
           title="All Applications"
-          message="Navigate to Disbursed Loans ..."
+          // message="Navigate to Disbursed Loans ..."
           path="/"
         >
-          <div className="flex-auto m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
+          <div className="flex m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
             <button
               data-modal-toggle="defaultModal"
               onClick={() => {
@@ -378,7 +378,7 @@ const Dashboard = () => {
               type="button"
               className="text-white bg-blue-500 hover:bg-blue-800 p-3 rounded-lg m-2"
             >
-              Expenses
+              Expenses App
             </button>
             <button
               data-modal-toggle="defaultModal"
@@ -389,7 +389,7 @@ const Dashboard = () => {
               type="button"
               className="text-white bg-violet-500 hover:bg-violet-800 p-3 rounded-lg m-2"
             >
-              Calendar
+              Calendar App
             </button>
           </div>
         </ModalAlert>
@@ -412,10 +412,10 @@ const Dashboard = () => {
           }}
           title="Expenses App"
           type="expenses"
-          message="Navigate to Disbursed Loans ..."
+          // message="Navigate to Disbursed Loans ..."
           path="/apps/expenses"
         >
-          <div className="flex-auto m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
+          <div className="flex m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
             <button
               data-modal-toggle="defaultModal"
               onClick={() => {
@@ -576,7 +576,13 @@ const Dashboard = () => {
   return (
     <div className="m-3">
       {renderAppsModal()}
-      {renderExpensesAppModal()}
+      <ExpensesAppModal
+        openApp={() => setOpenApps(true)}
+        closeApp={() => setOpenApps(false)}
+        openExpe={() => setOpenExpenses(true)}
+        closeExpe={() => setOpenExpenses(false)}
+        openState={openExpenses}
+      />
       {!openApps ? (!openExpenses ? renderButtons() : null) : null}
       {active ? (
         <>
