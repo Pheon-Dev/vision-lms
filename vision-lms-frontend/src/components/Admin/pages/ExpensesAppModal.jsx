@@ -13,6 +13,43 @@ const ExpensesAppModal = ({
   const [budget, setBudget] = useState(false);
   const [miscellaneous, setMiscellaneous] = useState(false);
   const [title, setTitle] = useState("Expenses App");
+
+  function renderTransactions() {
+    return (
+      <>
+        {transactions && (
+          <>
+            <div>Transactions</div>
+          </>
+        )}
+      </>
+    );
+  }
+
+  function renderBudget() {
+    return (
+      <>
+        {budget && (
+          <>
+            <div>Budget</div>
+          </>
+        )}
+      </>
+    );
+  }
+
+  function renderMiscellaneous() {
+    return (
+      <>
+        {miscellaneous && (
+          <>
+            <div>Miscellaneous</div>
+          </>
+        )}
+      </>
+    );
+  }
+
   return (
     <ModalAlert
       open={open}
@@ -24,6 +61,7 @@ const ExpensesAppModal = ({
               setTransactions(false);
               setBudget(false);
               setMiscellaneous(false);
+              setTitle("Expenses App");
             }
       }
       title={title}
@@ -79,57 +117,9 @@ const ExpensesAppModal = ({
             </button>
           </>
         )}
-        {transactions && (
-          <>
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                openExpe;
-                setTitle("Expenses App");
-                setTransactions(false);
-              }}
-              type="button"
-              className="hover:text-white text-black bg-red-300 m-2 hover:bg-red-600 p-3 rounded-lg transition-all ease-in-out duration-500"
-            >
-              ←
-            </button>
-            <div>Transactions</div>
-          </>
-        )}
-        {budget && (
-          <>
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                openExpe;
-                setTitle("Expenses App");
-                setBudget(false);
-              }}
-              type="button"
-              className="hover:text-white text-black bg-red-300 m-2 hover:bg-red-600 p-3 rounded-lg transition-all ease-in-out duration-500"
-            >
-              ←
-            </button>
-            <div>Budget</div>
-          </>
-        )}
-        {miscellaneous && (
-          <>
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                openExpe;
-                setTitle("Expenses App");
-                setMiscellaneous(false);
-              }}
-              type="button"
-              className="hover:text-white text-black bg-red-300 m-2 hover:bg-red-600 p-3 rounded-lg transition-all ease-in-out duration-500"
-            >
-              ←
-            </button>
-            <div>Miscellaneous</div>
-          </>
-        )}
+        {renderTransactions()}
+        {renderBudget()}
+        {renderMiscellaneous()}
       </div>
     </ModalAlert>
   );
