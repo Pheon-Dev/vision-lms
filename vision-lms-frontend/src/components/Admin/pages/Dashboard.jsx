@@ -10,7 +10,7 @@ import { client } from "../../../client";
 import { LoansFeed } from "../../Loan";
 import { List } from "../../Components";
 import { ModalAlert } from "../../Modals";
-import { ExpensesAppModal, TransactionsModal } from "./Modals";
+import ExpensesAppModal from "./ExpensesAppModal";
 
 import "./statuscard.css";
 import "../../Loan/Payments/chart.scss";
@@ -38,7 +38,6 @@ const Dashboard = () => {
   const [groups, setGroups] = useState();
   const [openApps, setOpenApps] = useState(false);
   const [openExpenses, setOpenExpenses] = useState(false);
-  const [openTransactions, setOpenTransactions] = useState(false);
 
   useEffect(() => {
     let subscription = true;
@@ -519,57 +518,20 @@ const Dashboard = () => {
   function renderExpensesAppModal() {
     return (
       <div>
-        <ModalAlert
+        <ExpensesAppModal
           open={openExpenses}
-          onCloseAll={() => {
+          closeAll={() => {
             setOpenApps(false);
             setOpenExpenses(false);
           }}
-          onClose={() => {
+          close={() => {
             setOpenApps(true);
             setOpenExpenses(false);
           }}
-          title="Expenses App"
-          type="expenses"
-          // message="Navigate to Disbursed Loans ..."
-          path="/apps/expenses"
-        >
-          <ExpensesAppModal
-            closeApp={() => setOpenApps(false)}
-            openExpe={() => setOpenExpenses(true)}
-            closeExpe={() => setOpenExpenses(false)}
-            openTrans={() => setOpenTransactions(true)}
-          />
-        </ModalAlert>
-      </div>
-    );
-  }
-
-  function renderTransactionsModal() {
-    return (
-      <div>
-        <ModalAlert
-          open={openTransactions}
-          onCloseAll={() => {
-            setOpenApps(false);
-            setOpenExpenses(false);
-            setOpenTransactions(false);
-          }}
-          onClose={() => {
-            setOpenApps(false);
-            setOpenExpenses(true);
-            setOpenTransactions(false);
-          }}
-          title="Transactions"
-          type="expenses"
-          // message="Navigate to Disbursed Loans ..."
-          path="/apps/expenses"
-        >
-          <TransactionsModal
-            closeExpe={() => setOpenExpenses(false)}
-            openTrans={() => setOpenTransactions(true)}
-          />
-        </ModalAlert>
+          closeApp={() => setOpenApps(false)}
+          openExpe={() => setOpenExpenses(true)}
+          closeExpe={() => setOpenExpenses(false)}
+        />
       </div>
     );
   }
@@ -577,15 +539,8 @@ const Dashboard = () => {
   return (
     <div className="m-3">
       {renderAppsModal()}
-      {renderTransactionsModal()}
       {renderExpensesAppModal()}
-      {!openApps
-        ? !openExpenses
-          ? !openTransactions
-            ? renderButtons()
-            : null
-          : null
-        : null}
+      {!openApps ? (!openExpenses ? renderButtons() : null) : null}
       {active ? (
         <>
           <div className="charts border border-gray-400 bg-gray-50 m-5 rounded-lg">
