@@ -10,7 +10,7 @@ import { client } from "../../../client";
 import { LoansFeed } from "../../Loan";
 import { List } from "../../Components";
 import { ModalAlert } from "../../Modals";
-import { ExpensesAppModal } from "./Modals";
+import { ExpensesAppModal, TransactionsModal } from "./Modals";
 
 import "./statuscard.css";
 import "../../Loan/Payments/chart.scss";
@@ -38,6 +38,7 @@ const Dashboard = () => {
   const [groups, setGroups] = useState();
   const [openApps, setOpenApps] = useState(false);
   const [openExpenses, setOpenExpenses] = useState(false);
+  const [openTransactions, setOpenTransactions] = useState(false);
 
   useEffect(() => {
     let subscription = true;
@@ -355,106 +356,6 @@ const Dashboard = () => {
     );
   }
 
-  function renderAppsModal() {
-    return (
-      <div>
-        <ModalAlert
-          open={openApps}
-          onClose={() => {
-            setOpenApps(false);
-          }}
-          type="apps"
-          title="All Applications"
-          // message="Navigate to Disbursed Loans ..."
-          path="/"
-        >
-          <div className="flex m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                setOpenApps(false);
-                setOpenExpenses(true);
-              }}
-              type="button"
-              className="text-white bg-blue-500 hover:bg-blue-800 p-3 rounded-lg m-2"
-            >
-              Expenses App
-            </button>
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                setOpenApps(false);
-                setOpenExpenses(true);
-              }}
-              type="button"
-              className="text-white bg-violet-500 hover:bg-violet-800 p-3 rounded-lg m-2"
-            >
-              Calendar App
-            </button>
-          </div>
-        </ModalAlert>
-      </div>
-    );
-  }
-
-  function renderExpensesAppModal() {
-    return (
-      <div>
-        <ModalAlert
-          open={openExpenses}
-          onCloseAll={() => {
-            setOpenApps(false);
-            setOpenExpenses(false);
-          }}
-          onClose={() => {
-            setOpenApps(true);
-            setOpenExpenses(false);
-          }}
-          title="Expenses App"
-          type="expenses"
-          // message="Navigate to Disbursed Loans ..."
-          path="/apps/expenses"
-        >
-          <div className="flex m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                setOpenApps(false);
-                setOpenExpenses(true);
-              }}
-              type="button"
-              className="text-white bg-blue-500 m-2 hover:bg-blue-800 p-3 rounded-lg"
-            >
-              Transactions
-            </button>
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                setOpenApps(false);
-                setOpenExpenses(true);
-              }}
-              type="button"
-              className="text-white bg-violet-500 m-2 hover:bg-violet-800 p-3 rounded-lg"
-            >
-              Budget
-            </button>
-            <button
-              data-modal-toggle="defaultModal"
-              onClick={() => {
-                setOpenApps(false);
-                setOpenExpenses(true);
-              }}
-              type="button"
-              className="text-white bg-green-500 m-2 hover:bg-green-800 p-3 rounded-lg"
-            >
-              Miscellaneous
-            </button>
-          </div>
-        </ModalAlert>
-      </div>
-    );
-  }
-
   function renderDataUpload() {
     return (
       <>
@@ -573,17 +474,118 @@ const Dashboard = () => {
     );
   };
 
+  function renderAppsModal() {
+    return (
+      <div>
+        <ModalAlert
+          open={openApps}
+          onClose={() => {
+            setOpenApps(false);
+          }}
+          type="apps"
+          title="All Applications"
+          // message="Navigate to Disbursed Loans ..."
+          path="/"
+        >
+          <div className="flex m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
+            <button
+              data-modal-toggle="defaultModal"
+              onClick={() => {
+                setOpenApps(false);
+                setOpenExpenses(true);
+              }}
+              type="button"
+              className="hover:text-white text-black bg-blue-300 m-2 hover:bg-blue-600 p-3 rounded-lg transition-all ease-in-out duration-500"
+            >
+              Expenses App
+            </button>
+            <button
+              data-modal-toggle="defaultModal"
+              onClick={() => {
+                setOpenApps(false);
+                setOpenExpenses(true);
+              }}
+              type="button"
+              className="hover:text-white text-black bg-violet-400 m-2 hover:bg-violet-600 p-3 rounded-lg transition-all ease-in-out duration-500"
+            >
+              Calendar App
+            </button>
+          </div>
+        </ModalAlert>
+      </div>
+    );
+  }
+
+  function renderExpensesAppModal() {
+    return (
+      <div>
+        <ModalAlert
+          open={openExpenses}
+          onCloseAll={() => {
+            setOpenApps(false);
+            setOpenExpenses(false);
+          }}
+          onClose={() => {
+            setOpenApps(true);
+            setOpenExpenses(false);
+          }}
+          title="Expenses App"
+          type="expenses"
+          // message="Navigate to Disbursed Loans ..."
+          path="/apps/expenses"
+        >
+          <ExpensesAppModal
+            closeApp={() => setOpenApps(false)}
+            openExpe={() => setOpenExpenses(true)}
+            closeExpe={() => setOpenExpenses(false)}
+            openTrans={() => setOpenTransactions(true)}
+          />
+        </ModalAlert>
+      </div>
+    );
+  }
+
+  function renderTransactionsModal() {
+    return (
+      <div>
+        <ModalAlert
+          open={openTransactions}
+          onCloseAll={() => {
+            setOpenApps(false);
+            setOpenExpenses(false);
+            setOpenTransactions(false);
+          }}
+          onClose={() => {
+            setOpenApps(false);
+            setOpenExpenses(true);
+            setOpenTransactions(false);
+          }}
+          title="Transactions"
+          type="expenses"
+          // message="Navigate to Disbursed Loans ..."
+          path="/apps/expenses"
+        >
+          <TransactionsModal
+            closeExpe={() => setOpenExpenses(false)}
+            openTrans={() => setOpenTransactions(true)}
+          />
+        </ModalAlert>
+      </div>
+    );
+  }
+
   return (
     <div className="m-3">
       {renderAppsModal()}
-      <ExpensesAppModal
-        openApp={() => setOpenApps(true)}
-        closeApp={() => setOpenApps(false)}
-        openExpe={() => setOpenExpenses(true)}
-        closeExpe={() => setOpenExpenses(false)}
-        openState={openExpenses}
-      />
-      {!openApps ? (!openExpenses ? renderButtons() : null) : null}
+      {renderTransactionsModal()}
+      {renderExpensesAppModal()}
+      {!openApps
+        ? !openExpenses
+          ? !openTransactions
+            ? renderButtons()
+            : null
+          : null
+        : null}
       {active ? (
         <>
           <div className="charts border border-gray-400 bg-gray-50 m-5 rounded-lg">
