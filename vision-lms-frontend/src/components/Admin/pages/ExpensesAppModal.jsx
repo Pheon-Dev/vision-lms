@@ -17,7 +17,15 @@ const ExpensesAppModal = ({
     <ModalAlert
       open={open}
       onCloseAll={closeAll}
-      onClose={close}
+      onClose={
+        !transactions && !budget && !miscellaneous
+          ? close
+          : () => {
+              setTransactions(false);
+              setBudget(false);
+              setMiscellaneous(false);
+            }
+      }
       title={title}
       type="expenses"
     >
@@ -79,8 +87,6 @@ const ExpensesAppModal = ({
                 openExpe;
                 setTitle("Expenses App");
                 setTransactions(false);
-                setBudget(false);
-                setMiscellaneous(false);
               }}
               type="button"
               className="hover:text-white text-black bg-red-300 m-2 hover:bg-red-600 p-3 rounded-lg transition-all ease-in-out duration-500"
@@ -97,9 +103,7 @@ const ExpensesAppModal = ({
               onClick={() => {
                 openExpe;
                 setTitle("Expenses App");
-                setTransactions(false);
                 setBudget(false);
-                setMiscellaneous(false);
               }}
               type="button"
               className="hover:text-white text-black bg-red-300 m-2 hover:bg-red-600 p-3 rounded-lg transition-all ease-in-out duration-500"
@@ -116,8 +120,6 @@ const ExpensesAppModal = ({
               onClick={() => {
                 openExpe;
                 setTitle("Expenses App");
-                setTransactions(false);
-                setBudget(false);
                 setMiscellaneous(false);
               }}
               type="button"
