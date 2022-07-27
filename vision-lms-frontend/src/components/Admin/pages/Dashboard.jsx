@@ -8,7 +8,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { client } from "../../../client";
 import { LoansFeed } from "../../Loan";
-import { List } from "../../Components";
 import { ModalAlert } from "../../Modals";
 import ExpensesAppModal from "./ExpensesAppModal";
 
@@ -494,7 +493,7 @@ const Dashboard = () => {
                 setOpenExpenses(true);
               }}
               type="button"
-              className="hover:text-white text-black bg-blue-300 m-2 hover:bg-blue-600 p-3 rounded-lg transition-all ease-in-out duration-500"
+              className="hover:text-white text-black bg-blue-300 m-2 hover:bg-blue-600 p-3 rounded-lg transition-all ease-in-out duration-500 font-bold"
             >
               Expenses App
             </button>
@@ -505,7 +504,7 @@ const Dashboard = () => {
                 setOpenExpenses(true);
               }}
               type="button"
-              className="hover:text-white text-black bg-violet-400 m-2 hover:bg-violet-600 p-3 rounded-lg transition-all ease-in-out duration-500"
+              className="hover:text-white text-black bg-violet-400 m-2 hover:bg-violet-600 p-3 rounded-lg transition-all ease-in-out duration-500 font-bold"
             >
               Calendar App
             </button>
