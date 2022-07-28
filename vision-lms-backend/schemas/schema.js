@@ -8,13 +8,14 @@ import member from './member';
 // import comment from './comment'
 // import postedBy from './postedBy'
 import recentPayments from './recentPayments';
-import newProduct from './newProduct';
+import transactions from './transactions';
 import maintenance from './maintenance';
 import collateral from './collateral';
+import newProduct from './newProduct';
 import guarantor from './guarantor';
+import disburse from './disburse';
 import payments from './payments';
 import approve from './approve';
-import disburse from './disburse';
 import groups from './groups';
 // import groupMembers from './groupMembers'
 
@@ -30,6 +31,7 @@ export default createSchema({
     groups,
     // groupMembers,
     newProduct,
+    transactions,
     maintenance,
     approve,
     disburse,
