@@ -4,6 +4,11 @@ export default {
   type: 'document',
   fields: [
     {
+      name: 'transactionDescription',
+      title: 'Transaction Description',
+      type: 'string',
+    },
+    {
       name: 'transactionType',
       title: 'Transaction Type',
       type: 'string',
@@ -16,11 +21,6 @@ export default {
     {
       name: 'transactionDate',
       title: 'Transaction Date',
-      type: 'string',
-    },
-    {
-      name: 'transactionDescription',
-      title: 'Transaction Description',
       type: 'string',
     },
   ],

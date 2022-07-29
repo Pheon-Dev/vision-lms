@@ -18,7 +18,7 @@ export default function Pagination({
   const listClassEnd = "bg-gray-300 rounded-lg text-gray-400 inline-flex items-center px-3 py-2 text-sm font-medium"
 
   return (
-    <div className="flex m-3 items-center p-2">
+    <div className="flex justify-center items-center ml-auto mr-auto p-2">
       <div className="ml-auto mr-auto">
       <nav className="ml-auto">
         <ul className="flex pl-0 rounded list-none flex-wrap">
@@ -76,8 +76,7 @@ export default function Pagination({
         </ul>
       </nav>
       </div>
-        <p className="text-sm select-none text-gray-700">
-          Showing
+        <p className="text-sm ml-2 select-none text-gray-500">
           <span className="font-medium">
             {" "}
             {currentPage * itemsPerPage - itemsPerPage}{" "}
@@ -86,7 +85,6 @@ export default function Pagination({
           <span className="font-medium"> {currentPage * itemsPerPage} </span>
           of
           <span className="font-medium"> {totalItems} </span>
-          results
         </p>
     </div>
   );
