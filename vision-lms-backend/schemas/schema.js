@@ -8,7 +8,7 @@ import member from './member';
 // import comment from './comment'
 // import postedBy from './postedBy'
 import recentPayments from './recentPayments';
-import transactions from './transactions';
+import expenditures from './expenditures';
 import maintenance from './maintenance';
 import collateral from './collateral';
 import newProduct from './newProduct';
@@ -31,7 +31,7 @@ export default createSchema({
     groups,
     // groupMembers,
     newProduct,
-    transactions,
+    expenditures,
     maintenance,
     approve,
     disburse,

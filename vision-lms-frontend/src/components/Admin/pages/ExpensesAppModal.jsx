@@ -12,70 +12,126 @@ const ExpensesAppModal = ({
   closeAll,
   close,
 }) => {
-  const [transactions, setTransactions] = useState(false);
+  const [expenditures, setExpenditures] = useState(false);
   const [budget, setBudget] = useState(false);
   const [miscellaneous, setMiscellaneous] = useState(false);
   const [openSubmit, setOpenSubmit] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("Expenses App");
-  const [transactionDate, setTransactionDate] = useState("");
-  const [transactionType, setTransactionType] = useState("");
-  const [transactionAmount, setTransactionAmount] = useState("");
-  const [transactionDescription, setTransactionDescription] = useState("");
-  const [recentTransactions, setRecentTransactions] = useState("");
+  const [expenditureDate, setExpenditureDate] = useState("");
+  const [expenditureType, setExpenditureType] = useState("");
+  const [expenditureAmount, setExpenditureAmount] = useState("");
+  const [expenditureDescription, setExpenditureDescription] = useState("");
+  const [recentExpenditures, setRecentExpenditures] = useState("");
   const [validator, setValidator] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
 
-  const fetchTransactionDetails = () => {
-    const query = `*[_type == "transactions"]`;
+  const fetchExpenditureDetails = () => {
+    const query = `*[_type == "expenditures"]`;
     let subscription = true;
     if (subscription) {
       client.fetch(query).then((data) => {
-        setRecentTransactions(data);
+        setRecentExpenditures(data);
       });
     }
     return () => (subscription = false);
   };
 
   useEffect(() => {
-    fetchTransactionDetails();
+    fetchExpenditureDetails();
   }, []);
+  const overheadSelector = [
+    {
+      id: 0,
+      name: "Rent",
+    },
+    {
+      id: 1,
+      name: "Internet",
+    },
+  ];
 
-  const transactionTypeSelector = [
+  const operationalSelector = [
     {
-      name: "Transaction Type ...",
-      abbr: "T",
+      id: 0,
+      name: "Salaries",
     },
     {
-      name: "Expenditure",
-      abbr: "E",
+      id: 1,
+      name: "Electricity",
     },
     {
-      name: "Income",
-      abbr: "I",
+      id: 2,
+      name: "Drinking Water",
+    },
+    {
+      id: 3,
+      name: "Kitchen & Cleaning",
+    },
+    {
+      id: 4,
+      name: "Transport",
+    },
+    {
+      id: 5,
+      name: "Stationery, Printing & Photocopying",
+    },
+    {
+      id: 6,
+      name: "Telephone & Airtime",
+    },
+    {
+      id: 7,
+      name: "Bank & Safaricom Charges",
+    },
+  ];
+
+  const otherSelector = [
+    {
+      id: 0,
+      name: "Miscellaneous",
+    },
+  ];
+
+  const expenditureTypeSelector = [
+    {
+      id: 0,
+      name: "Expenditures",
+    },
+    {
+      id: 1,
+      name: "Overhead",
+    },
+    {
+      id: 2,
+      name: "Operational",
+    },
+    {
+      id: 3,
+      name: "Other",
     },
   ];
 
   const handleSubmit = () => {
     setProcessing(true);
-    if (transactionDate && transactionType && transactionAmount) {
+    if (expenditureDate && expenditureType && expenditureAmount) {
       const doc = {
-        _type: "transactions",
-        transactionDate,
-        transactionType,
-        transactionAmount,
-        transactionDescription,
+        _type: "expenditures",
+        expenditureDate,
+        expenditureType,
+        expenditureAmount,
+        expenditureDescription,
       };
       client.create(doc).then(() => {
         setOpenSubmit(true);
         setProcessing(false);
         setShow(false);
-        setTransactionDate("");
-        setTransactionAmount("");
-        setTransactionType("");
-        setTransactionDescription("");
+        setExpenditureDate("");
+        setExpenditureAmount("");
+        setExpenditureType("");
+        setExpenditureDescription("");
       });
     } else {
       setValidator(true);
@@ -84,7 +140,7 @@ const ExpensesAppModal = ({
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = recentTransactions?.slice(
+  const currentItems = recentExpenditures?.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
@@ -110,33 +166,33 @@ const ExpensesAppModal = ({
     </>
   );
 
-const TableData = ({ children }) => (
-  <td className="px-6 py-2 whitespace-nowrap">
-    <div className="text-sm font-semibold text-gray-900">{children}</div>
-  </td>
-);
-  function renderTransactionsTable() {
+  const TableData = ({ children }) => (
+    <td className="px-6 py-2 whitespace-nowrap">
+      <div className="text-sm font-semibold text-gray-900">{children}</div>
+    </td>
+  );
+  function renderExpendituresTable() {
     return (
       <ListLayout
-        // title="Recent Transactions List"
+        // title="Recent Expenditures List"
         headers={headers}
         itemsPerPage={itemsPerPage}
-        totalItems={recentTransactions?.length}
+        totalItems={recentExpenditures?.length}
         paginate={paginate}
         currentPage={currentPage}
         paginateBack={paginateBack}
         paginateFront={paginateFront}
       >
         <tbody className="bg-white divide-y divide-gray-200">
-          {currentItems?.map((transaction) => (
+          {currentItems?.map((expenditure) => (
             <tr
               onClick={() => {
                 // navigate("/loan/disbursements");
-                console.log(transaction.transactionAmount);
+                console.log(expenditure.expenditureAmount);
               }}
-              key={transaction._id}
+              key={expenditure._id}
               className={
-                transaction.transactionType === "EXPENDITURE"
+                expenditure.expenditureType === "EXPENDITURE"
                   ? "hover:bg-green-200 -py-2 bg-green-50 cursor-pointer transition-all duration-300"
                   : "hover:bg-blue-200 bg-blue-50 cursor-pointer transition-all duration-300"
               }
@@ -144,37 +200,35 @@ const TableData = ({ children }) => (
               <TableData>
                 <div className="ml-0">
                   <div className="text-sm text-gray-900">
-                    {transaction.transactionDate}
+                    {expenditure.expenditureDate}
                   </div>
                 </div>
               </TableData>
               <TableData>
                 <div className="ml-0">
                   <div className="text-sm text-gray-900">
-                    {transaction.transactionDescription}
+                    {expenditure.expenditureDescription}
                   </div>
                 </div>
               </TableData>
               <TableData>
                 <div className="ml-0">
                   <div className="text-sm text-gray-900">
-                    {transaction.transactionType}
+                    {expenditure.expenditureType}
                   </div>
                 </div>
               </TableData>
               <TableData>
                 <div className="ml-0">
-              {
-                transaction.transactionType === "EXPENDITURE"
-                  ?
-                  <div className="text-sm font-semibold text-blue-900">
-                    {transaction.transactionAmount}
-                  </div>
-                :
-                  <div className="text-sm font-semibold text-green-900">
-                    {transaction.transactionAmount}
-                  </div>
-              }
+                  {expenditure.expenditureType === "EXPENDITURE" ? (
+                    <div className="text-sm font-semibold text-blue-900">
+                      {expenditure.expenditureAmount}
+                    </div>
+                  ) : (
+                    <div className="text-sm font-semibold text-green-900">
+                      {expenditure.expenditureAmount}
+                    </div>
+                  )}
                 </div>
               </TableData>
             </tr>
@@ -186,26 +240,42 @@ const TableData = ({ children }) => (
 
   let classInput =
     "rounded-lg bg-gray-700 focus:bg-gray-600 focus:text-gray-200 text-gray-300 focus:outline-none";
-  function renderTransactions() {
+  function renderExpenditures() {
     return (
       <>
-        {transactions && (
+        {expenditures && (
           <div>
             <div className="flex justify-center items-center p-2 gap-8">
-              <div className="w-full md:w-1/3">
+          {!expenditureType || expenditureType === "EXPENDITURES" && (
+              <div className="w-full md:w-1/2">
                 <Label
                   valid={validator}
-                  label="Transaction Type"
-                  item={transactionType}
+                  label="Expenditure Date"
+                  item={expenditureDate}
+                />
+                <input
+                  type="date"
+                  value={expenditureDate}
+                  onChange={(e) => {
+                    setExpenditureDate(e.target.value.toUpperCase());
+                  }}
+                  className={classInput}
+                />
+              </div>
+          )}
+              <div className="w-full md:w-1/2">
+                <Label
+                  valid={validator}
+                  label="Expenditure Type"
+                  item={expenditureType}
                 />
                 <select
                   onChange={(e) => {
-                    setTransactionType(e.target.value.toUpperCase());
-                    e.target.value.toUpperCase();
+                    setExpenditureType(e.target.value.toUpperCase());
                   }}
                   className={classInput}
                 >
-                  {transactionTypeSelector.map((item) => (
+                  {expenditureTypeSelector.map((item) => (
                     <option
                       key={item.name}
                       className={classInput}
@@ -216,78 +286,93 @@ const TableData = ({ children }) => (
                   ))}
                 </select>
               </div>
-              <div className="w-full md:w-1/3">
+          {expenditureType === "EXPENDITURES" ? null : (
+              <div className="w-full md:w-1/2">
                 <Label
                   valid={validator}
-                  label="Transaction Amount"
-                  item={transactionAmount}
+                  label="Expenditure Desc"
+                  item={expenditureDescription}
                 />
-                <input
-                  type="number"
-                  placeholder="Transaction Amount ..."
-                  value={transactionAmount}
+                <select
                   onChange={(e) => {
-                    setTransactionAmount(e.target.value);
-                  }}
-                  className={classInput}
-                />
-              </div>
-              <div className="w-full md:w-1/3">
-                <Label
-                  valid={validator}
-                  label="Transaction Date"
-                  item={transactionDate}
-                />
-                <input
-                  type="date"
-                  value={transactionDate}
-                  onChange={(e) => {
-                    setTransactionDate(e.target.value.toUpperCase())
+                    setExpenditureDescription(e.target.value.toUpperCase());
                     setShow(true);
                   }}
                   className={classInput}
+                >
+                  {expenditureType === "OVERHEAD" && overheadSelector.map((item) => (
+                    <option
+                      key={item.id}
+                      className={classInput}
+                      value={item.name}
+                    >
+                      {item.name}
+                    </option>
+                  ))}
+                  {expenditureType === "OPERATIONAL" && operationalSelector.map((item) => (
+                    <option
+                      key={item.id}
+                      className={classInput}
+                      value={item.name}
+                    >
+                      {item.name}
+                    </option>
+                  ))}
+                  {expenditureType === "OTHER" && otherSelector.map((item) => (
+                    <option
+                      key={item.id}
+                      className={classInput}
+                      value={item.name}
+                    >
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+          )}
+            </div>
+            {show && (
+              <div>
+                <div className="flex justify-center items-center mt-3">
+              <div className="w-full md:w-1/2">
+                <Label
+                  valid={validator}
+                  label="Expenditure Amount"
+                  item={expenditureAmount}
+                />
+                <input
+                  type="number"
+                  placeholder="Expenditure Amount ..."
+                  value={expenditureAmount}
+                  onChange={(e) => {
+                    setExpenditureAmount(e.target.value);
+                  }}
+                  className={classInput}
                 />
               </div>
-            </div>
-          {show && (
-            <div>
-              <div className="flex justify-center items-center mt-3">
-                <div className="w-full md:w-1/2">
-                  <Label
-                    valid={validator}
-                    label="Transaction Description"
-                    item={transactionDescription}
-                  />
-                  <textarea
-                    value={transactionDescription}
-                    onChange={(e) => setTransactionDescription(e.target.value)}
-                    className="rounded-lg bg-gray-700 focus:bg-gray-600 focus:text-gray-200 text-gray-300 focus:outline-none"
-                  />
-                </div>
-                <div className="w-full md:w-1/2">
-                  <button
-                    data-modal-toggle="defaultModal"
-                    onClick={() => {
-                      handleSubmit();
-                      setValidator(true);
-                      setShow(false);
-                    }}
-                    type="button"
-                    className="hover:text-white text-black font-bold bg-green-300 m-2 hover:bg-green-600 pl-3 pr-3 p-2 rounded-lg transition-all ease-in-out duration-500"
-                  >
-                    {processing ? "Processing ..." : "Add Transaction"}
-                  </button>
+                  <div className="w-full md:w-1/2">
+                    <button
+                      data-modal-toggle="defaultModal"
+                      onClick={() => {
+                        handleSubmit();
+                        setValidator(true);
+                        setShow(false);
+                      }}
+                      type="button"
+                      className="hover:text-white text-black font-bold bg-green-300 m-2 hover:bg-green-600 pl-3 pr-3 p-2 rounded-lg transition-all ease-in-out duration-500"
+                    >
+                      {processing ? "Processing ..." : "Add Expenditure"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-            {renderTransactionsTable()}
+            )}
+            {renderExpendituresTable()}
           </div>
         )}
       </>
     );
   }
-  console.log(show)
 
   function renderBudget() {
     return (
@@ -319,10 +404,10 @@ const TableData = ({ children }) => (
         open={open}
         onCloseAll={closeAll}
         onClose={
-          !transactions && !budget && !miscellaneous
+          !expenditures && !budget && !miscellaneous
             ? close
             : () => {
-                setTransactions(false);
+                setExpenditures(false);
                 setBudget(false);
                 setMiscellaneous(false);
                 setTitle("Expenses App");
@@ -332,23 +417,23 @@ const TableData = ({ children }) => (
         type="expenses"
       >
         <div className="flex-auto m-3 justify-center items-center gap-6 md:w-1/2 lg:w-full w-full">
-          {!transactions && !budget && !miscellaneous && (
+          {!expenditures && !budget && !miscellaneous && (
             <>
               <button
                 data-modal-toggle="defaultModal"
                 onClick={() => {
                   closeApp;
                   closeExpe;
-                  setTitle("Transactions Mini App");
-                  setTransactions(true);
+                  setTitle("Expenditures Mini App");
+                  setExpenditures(true);
                   setBudget(false);
                   setMiscellaneous(false);
-                  fetchTransactionDetails();
+                  fetchExpenditureDetails();
                 }}
                 type="button"
                 className="hover:text-white text-black font-bold bg-blue-300 m-2 hover:bg-blue-600 p-3 rounded-lg transition-all ease-in-out duration-500"
               >
-                Transactions
+                Expenditures
               </button>
               <button
                 data-modal-toggle="defaultModal"
@@ -356,10 +441,10 @@ const TableData = ({ children }) => (
                   closeApp;
                   openExpe;
                   setTitle("Budget Mini App");
-                  setTransactions(false);
+                  setExpenditures(false);
                   setBudget(true);
                   setMiscellaneous(false);
-                  fetchTransactionDetails();
+                  fetchExpenditureDetails();
                 }}
                 type="button"
                 className="hover:text-white text-black bg-violet-400 font-bold m-2 hover:bg-violet-600 p-3 rounded-lg transition-all ease-in-out duration-500"
@@ -372,10 +457,10 @@ const TableData = ({ children }) => (
                   closeApp;
                   openExpe;
                   setTitle("Muiscellaneous Mini App");
-                  setTransactions(false);
+                  setExpenditures(false);
                   setBudget(false);
                   setMiscellaneous(true);
-                  fetchTransactionDetails();
+                  fetchExpenditureDetails();
                 }}
                 type="button"
                 className="hover:text-white text-black bg-green-300 m-2 font-bold hover:bg-green-600 p-3 rounded-lg transition-all ease-in-out duration-500"
@@ -385,7 +470,7 @@ const TableData = ({ children }) => (
             </>
           )}
         </div>
-        {renderTransactions()}
+        {renderExpenditures()}
         {renderBudget()}
         {renderMiscellaneous()}
       </ModalAlert>
@@ -393,26 +478,26 @@ const TableData = ({ children }) => (
         open={openSubmit}
         onCloseAll={closeAll}
         onClose={
-          !transactions && !budget && !miscellaneous
+          !expenditures && !budget && !miscellaneous
             ? close
             : () => {
-                setTransactions(true);
+                setExpenditures(true);
                 setBudget(false);
                 setMiscellaneous(false);
                 setOpenSubmit(false);
-              fetchTransactionDetails();
-                setTitle("Transactions Mini App");
+                fetchExpenditureDetails();
+                setTitle("Expenditures Mini App");
               }
         }
-        title="Transaction State"
-        message="Recent Transactions"
+        title="Expenditure State"
+        message="Recent Expenditures"
         type="expenses"
       >
         <div className="flex items-center w-full">
           <div className="bg-green-300 opacity-80 relative rounded-full p-2">
             <BsCheck2Circle className="w-10 font-bold text-black h-10" />
           </div>
-          <div className="text-md p-3">Transaction Submitted Successfully!</div>
+          <div className="text-md p-3">Expenditure Submitted Successfully!</div>
         </div>
       </ModalAlert>
     </>
