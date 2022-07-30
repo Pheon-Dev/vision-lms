@@ -45,10 +45,14 @@ const ExpensesAppModal = ({
   const overheadSelector = [
     {
       id: 0,
-      name: "Rent",
+      name: null,
     },
     {
       id: 1,
+      name: "Rent",
+    },
+    {
+      id: 2,
       name: "Internet",
     },
   ];
@@ -56,34 +60,38 @@ const ExpensesAppModal = ({
   const operationalSelector = [
     {
       id: 0,
-      name: "Salaries",
+      name: null,
     },
     {
       id: 1,
-      name: "Electricity",
+      name: "Salaries",
     },
     {
       id: 2,
-      name: "Drinking Water",
+      name: "Electricity",
     },
     {
       id: 3,
-      name: "Kitchen & Cleaning",
+      name: "Drinking Water",
     },
     {
       id: 4,
-      name: "Transport",
+      name: "Kitchen & Cleaning",
     },
     {
       id: 5,
-      name: "Stationery, Printing & Photocopying",
+      name: "Transport",
     },
     {
       id: 6,
-      name: "Telephone & Airtime",
+      name: "Stationery, Printing & Photocopying",
     },
     {
       id: 7,
+      name: "Telephone & Airtime",
+    },
+    {
+      id: 8,
       name: "Bank & Safaricom Charges",
     },
   ];
@@ -91,6 +99,10 @@ const ExpensesAppModal = ({
   const otherSelector = [
     {
       id: 0,
+      name: null,
+    },
+    {
+      id: 1,
       name: "Miscellaneous",
     },
   ];
@@ -98,7 +110,7 @@ const ExpensesAppModal = ({
   const expenditureTypeSelector = [
     {
       id: 0,
-      name: "Expenditures",
+      name: null,
     },
     {
       id: 1,
@@ -239,30 +251,13 @@ const ExpensesAppModal = ({
   }
 
   let classInput =
-    "rounded-lg bg-gray-700 focus:bg-gray-600 focus:text-gray-200 text-gray-300 focus:outline-none";
+    "rounded-lg w-full bg-gray-700 focus:bg-gray-600 focus:text-gray-200 text-gray-300 focus:outline-none";
   function renderExpenditures() {
     return (
       <>
         {expenditures && (
           <div>
             <div className="flex justify-center items-center p-2 gap-8">
-          {!expenditureType || expenditureType === "EXPENDITURES" && (
-              <div className="w-full md:w-1/2">
-                <Label
-                  valid={validator}
-                  label="Expenditure Date"
-                  item={expenditureDate}
-                />
-                <input
-                  type="date"
-                  value={expenditureDate}
-                  onChange={(e) => {
-                    setExpenditureDate(e.target.value.toUpperCase());
-                  }}
-                  className={classInput}
-                />
-              </div>
-          )}
               <div className="w-full md:w-1/2">
                 <Label
                   valid={validator}
@@ -286,71 +281,89 @@ const ExpensesAppModal = ({
                   ))}
                 </select>
               </div>
-          {expenditureType === "EXPENDITURES" ? null : (
-              <div className="w-full md:w-1/2">
-                <Label
-                  valid={validator}
-                  label="Expenditure Desc"
-                  item={expenditureDescription}
-                />
-                <select
-                  onChange={(e) => {
-                    setExpenditureDescription(e.target.value.toUpperCase());
-                    setShow(true);
-                  }}
-                  className={classInput}
-                >
-                  {expenditureType === "OVERHEAD" && overheadSelector.map((item) => (
-                    <option
-                      key={item.id}
-                      className={classInput}
-                      value={item.name}
-                    >
-                      {item.name}
-                    </option>
-                  ))}
-                  {expenditureType === "OPERATIONAL" && operationalSelector.map((item) => (
-                    <option
-                      key={item.id}
-                      className={classInput}
-                      value={item.name}
-                    >
-                      {item.name}
-                    </option>
-                  ))}
-                  {expenditureType === "OTHER" && otherSelector.map((item) => (
-                    <option
-                      key={item.id}
-                      className={classInput}
-                      value={item.name}
-                    >
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-          )}
+                <div className="w-full md:w-1/2 m-5">
+                  <Label
+                    valid={validator}
+                    label="Expenditure Desc"
+                    item={expenditureDescription}
+                  />
+                  <select
+                    onChange={(e) => {
+                      setExpenditureDescription(e.target.value.toUpperCase());
+                      setShow(true);
+                    }}
+                    className={classInput}
+                  >
+                    {expenditureType === "OVERHEAD" &&
+                      overheadSelector.map((item) => (
+                        <option
+                          key={item.id}
+                          className={classInput}
+                          value={item.name}
+                        >
+                          {item.name}
+                        </option>
+                      ))}
+                    {expenditureType === "OPERATIONAL" &&
+                      operationalSelector.map((item) => (
+                        <option
+                          key={item.id}
+                          className={classInput}
+                          value={item.name}
+                        >
+                          {item.name}
+                        </option>
+                      ))}
+                    {expenditureType === "OTHER" &&
+                      otherSelector.map((item) => (
+                        <option
+                          key={item.id}
+                          className={classInput}
+                          value={item.name}
+                        >
+                          {item.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
             </div>
             {show && (
               <div>
-                <div className="flex justify-center items-center mt-3">
-              <div className="w-full md:w-1/2">
-                <Label
-                  valid={validator}
-                  label="Expenditure Amount"
-                  item={expenditureAmount}
-                />
-                <input
-                  type="number"
-                  placeholder="Expenditure Amount ..."
-                  value={expenditureAmount}
-                  onChange={(e) => {
-                    setExpenditureAmount(e.target.value);
-                  }}
-                  className={classInput}
-                />
-              </div>
+                <div className="flex justify-center gap-6 items-center mt-3">
                   <div className="w-full md:w-1/2">
+                    <Label
+                      valid={validator}
+                      label="Expenditure Amount"
+                      item={expenditureAmount}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Expenditure Amount ..."
+                      value={expenditureAmount}
+                      onChange={(e) => {
+                        setExpenditureAmount(e.target.value);
+                      }}
+                      className={classInput}
+                    />
+                  </div>
+              {!expenditureDate && !expenditureType || !expenditureDescription || !expenditureAmount ? (
+                  <div className="w-full md:w-1/2">
+                    <Label
+                      valid={validator}
+                      label="Expenditure Date"
+                      item={expenditureDate}
+                    />
+                    <input
+                      type="date"
+                      value={expenditureDate}
+                      onChange={(e) => {
+                        setExpenditureDate(e.target.value.toUpperCase());
+                      }}
+                      className={classInput}
+                    />
+                  </div>
+                ):
+                  <div className="w-full md:w-1/2 mt-5">
                     <button
                       data-modal-toggle="defaultModal"
                       onClick={() => {
@@ -359,11 +372,12 @@ const ExpensesAppModal = ({
                         setShow(false);
                       }}
                       type="button"
-                      className="hover:text-white text-black font-bold bg-green-300 m-2 hover:bg-green-600 pl-3 pr-3 p-2 rounded-lg transition-all ease-in-out duration-500"
+                      className="hover:text-white w-full text-black font-bold bg-green-300 m-2 hover:bg-green-600 pl-3 pr-3 p-2 rounded-lg transition-all ease-in-out duration-500"
                     >
                       {processing ? "Processing ..." : "Add Expenditure"}
                     </button>
                   </div>
+              }
                 </div>
               </div>
             )}
