@@ -7,6 +7,12 @@ import {
 } from 'react-icons/bs';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
+const apps = [
+  {
+    name: 'Expenses',
+    url: '/apps/expenses',
+  },
+];
 const members = [
   {
     name: 'New Member',
@@ -90,6 +96,7 @@ export default function ChannelBar() {
         <Dropdown data={groups} title="Groups" />
         <Dropdown data={products} title="Products" />
         <Dropdown data={loans} title="Loans" />
+        <Dropdown data={apps} title="Apps" />
         <Dropdown data={reports} title="Reports" />
       </div>
     </div>
