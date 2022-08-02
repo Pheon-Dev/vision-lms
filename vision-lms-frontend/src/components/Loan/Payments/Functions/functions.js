@@ -59,6 +59,7 @@ function renderDateDistribution(cycle, sub_prev, sub_date, work_int) {
 }
 
 export function renderPayments(
+  sundays,
   interest,
   tenure,
   installment,
@@ -93,6 +94,7 @@ export function renderPayments(
   prev_face_os_bal
 ) {
   const data = [
+    { name: "sundays", value: sundays },
     { name: "interest", value: interest },
     { name: "tenure", value: tenure },
     { name: "installment", value: installment },
@@ -129,8 +131,8 @@ export function renderPayments(
   console.group("Render Payments");
   const result = [];
   let res_next = next
-    ? renderResNext(next, cycle, count)[0]
-    : renderResNext("", "", "");
+    ? renderResNext(next, cycle, count, sundays)[0]
+    : renderResNext("", "", "", "");
   let state = {
     previous: status,
     present: payment,
@@ -795,7 +797,7 @@ export function renderCurrentInstallmentDate(installment_date) {
   return result.toString();
 }
 
-function renderResNext(first, cycle, count) {
+function renderResNext(first, cycle, count, sundays) {
   function renderNext(next_installment) {
     let day = next_installment.split("-")[0];
     let month = next_installment.split("-")[1];

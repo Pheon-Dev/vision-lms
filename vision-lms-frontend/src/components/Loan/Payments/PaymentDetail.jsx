@@ -151,6 +151,7 @@ export default function PaymentDetail() {
     setResPayments(
       customerDetails[0]?.outstandingPenalty === "false"
         ? renderPayments(
+            Number(customerDetails[0]?.sundays),
             Number(customerDetails[0]?.interestAmount),
             Number(customerDetails[0]?.loanTenure),
             Number(customerDetails[0]?.installmentAmount),
@@ -185,6 +186,7 @@ export default function PaymentDetail() {
             Number(customerDetails[0]?.principalAmount)
           )
         : renderPayments(
+            Number(customerDetails[0]?.sundays),
             Number(customerDetails[0]?.interestAmount),
             Number(customerDetails[0]?.loanTenure),
             Number(customerDetails[0]?.installmentAmount),
