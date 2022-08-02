@@ -404,10 +404,8 @@ export function renderPayments(
         if (amount > prev_face_os_bal) face_os_balance -= prev_principal_paid;
         return;
       }
-
       return;
     }
-
     return;
   }
 
@@ -860,6 +858,7 @@ function renderDateNumber(date_value) {
 }
 
 export function renderNextInstallmentDate(
+  sundays,
   first,
   previous,
   next,
@@ -868,10 +867,10 @@ export function renderNextInstallmentDate(
   payment_day,
   paymentDay,
   payment_status,
-  sundays,
   current
 ) {
   const params = [
+    { name: "sundays", value: sundays },
     { name: "first", value: first },
     { name: "previ", value: previous },
     { name: "cycle", value: cycle },

@@ -331,6 +331,7 @@ export default function PaymentDetail() {
   let next_installment_date = customerDetails
     ? customerDetails[0]?.outstandingPenalty === "false"
       ? renderNextInstallmentDate(
+          customerDetails[0]?.sundays,
           first_installment_date,
           first_installment_date,
           first_installment_date,
@@ -342,6 +343,7 @@ export default function PaymentDetail() {
           renderCurrentInstallmentDate(currentInstallmentDate)
         )
       : renderNextInstallmentDate(
+          customerDetails[0]?.sundays,
           first_installment_date,
           previous_installment_date,
           customerDetails[0]?.recentPayments[
@@ -375,6 +377,7 @@ export default function PaymentDetail() {
               renderFirstInstallmentDate(first_installment_date),
               renderCurrentInstallmentDate(currentInstallmentDate),
               renderNextInstallmentDate(
+          customerDetails[0]?.sundays,
                 renderFirstInstallmentDate(first_installment_date),
                 renderFirstInstallmentDate(first_installment_date),
                 renderFirstInstallmentDate(first_installment_date),
@@ -392,6 +395,7 @@ export default function PaymentDetail() {
                 customerDetails[0]?.recentPayments?.length - 1
               ]?.installmentDate,
               renderNextInstallmentDate(
+          customerDetails[0]?.sundays,
                 renderFirstInstallmentDate(first_installment_date),
                 previous_installment_date,
                 customerDetails[0]?.recentPayments[
