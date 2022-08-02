@@ -377,7 +377,7 @@ export default function PaymentDetail() {
               renderFirstInstallmentDate(first_installment_date),
               renderCurrentInstallmentDate(currentInstallmentDate),
               renderNextInstallmentDate(
-          customerDetails[0]?.sundays,
+                customerDetails[0]?.sundays,
                 renderFirstInstallmentDate(first_installment_date),
                 renderFirstInstallmentDate(first_installment_date),
                 renderFirstInstallmentDate(first_installment_date),
@@ -395,7 +395,7 @@ export default function PaymentDetail() {
                 customerDetails[0]?.recentPayments?.length - 1
               ]?.installmentDate,
               renderNextInstallmentDate(
-          customerDetails[0]?.sundays,
+                customerDetails[0]?.sundays,
                 renderFirstInstallmentDate(first_installment_date),
                 previous_installment_date,
                 customerDetails[0]?.recentPayments[
@@ -492,7 +492,9 @@ export default function PaymentDetail() {
               Number(customerDetails[0]?.interestAmount) -
               (Number(total_amount_paid) + Number(amountPaid))
           ).toString()
-        : cleared === "true" ? '0' : face_os_balance
+        : cleared === "true"
+        ? "0"
+        : face_os_balance
     );
     setNextInstallmentDate(next_installment_date);
     setAwardedPenalty(awarded_penalty ? "true" : "false");
@@ -735,9 +737,9 @@ export default function PaymentDetail() {
         onClick={() => {
           setToggleClear(!toggleClear);
           setCleared(!toggleClear ? "true" : "false");
-          setFaceOutstandingBalance(!toggleClear ? '0' : face_os_balance);
-          setAmountPaid(!toggleClear ? '0' : amountPaid);
-          setMpesaReferenceCode(!toggleClear ? 'NA' : mpesaReferenceCode);
+          setFaceOutstandingBalance(!toggleClear ? "0" : face_os_balance);
+          setAmountPaid(!toggleClear ? "0" : amountPaid);
+          setMpesaReferenceCode(!toggleClear ? "NA" : mpesaReferenceCode);
           setReadyGo(!toggleClear ? true : false);
         }}
       >
@@ -997,7 +999,8 @@ export default function PaymentDetail() {
     );
   }
 
-  const classUl = "bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm"
+  const classUl =
+    "bg-gray-50 border border-gray-300 w-full md:w-2/3 mr-auto ml-auto text-gray-600 hover:text-gray-700 hover:shadow py-2 px-3 mt-3 divide-y rounded-lg shadow-sm";
 
   function renderCustomerDetails() {
     return (
