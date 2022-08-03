@@ -76,6 +76,21 @@ export default function CreateMember() {
     return () => (subscription = false);
   }, []);
 
+  const marital = [
+    {
+      name: "Marital Status ...",
+      abbr: "MS",
+    },
+    {
+      name: "Married",
+      abbr: "M",
+    },
+    {
+      name: "Single",
+      abbr: "S",
+    },
+  ];
+
   const rentedOrOwned = [
     {
       name: "Rented/Owned ...",
@@ -87,6 +102,29 @@ export default function CreateMember() {
     },
     {
       name: "Owned",
+      abbr: "O",
+    },
+  ];
+
+  const religionSelector = [
+    {
+      name: "Religion ...",
+      abbr: "R",
+    },
+    {
+      name: "Christian",
+      abbr: "C",
+    },
+    {
+      name: "Muslim",
+      abbr: "M",
+    },
+    {
+      name: "Hindu",
+      abbr: "H",
+    },
+    {
+      name: "Other",
       abbr: "O",
     },
   ];
@@ -459,7 +497,6 @@ export default function CreateMember() {
             <select
               onChange={(e) => {
                 setGender(e.target.value.toUpperCase());
-                e.target.value.toUpperCase();
               }}
               className={classInput}
             >
@@ -480,14 +517,30 @@ export default function CreateMember() {
           </div>
           <div className="w-full md:w-1/3 px-3">
             <Label valid={validator} label="Religion" item={religion} />
-            <input
+            <select
+              onChange={(e) => {
+                setReligion(e.target.value.toUpperCase());
+              }}
               className={classInput}
-              id="religion"
-              type="text"
-              placeholder="Religion ..."
-              value={religion}
-              onChange={(e) => setReligion(e.target.value.toUpperCase())}
-            />
+            >
+              {religionSelector.map((item) => (
+                <option
+                  key={item.name}
+                  className={classInput}
+                  value={item.name}
+                >
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            {/* <input */}
+            {/*   className={classInput} */}
+            {/*   id="religion" */}
+            {/*   type="text" */}
+            {/*   placeholder="Religion ..." */}
+            {/*   value={religion} */}
+            {/*   onChange={(e) => setReligion(e.target.value.toUpperCase())} */}
+            {/* /> */}
           </div>
         </div>
         <div className="flex flex-wrap -mx-3 mb-6">
@@ -497,14 +550,32 @@ export default function CreateMember() {
               label="Marital Status"
               item={maritalStatus}
             />
-            <input
+            <select
+              onChange={(e) => {
+                setMaritalStatus(e.target.value.toUpperCase());
+                setNameSpouse("");
+                setSpouseNumber("");
+              }}
               className={classInput}
-              id="maritalStatus"
-              type="text"
-              placeholder="Marital Status ..."
-              value={maritalStatus}
-              onChange={(e) => setMaritalStatus(e.target.value.toUpperCase())}
-            />
+            >
+              {marital.map((item) => (
+                <option
+                  key={item.name}
+                  className={classInput}
+                  value={item.name}
+                >
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            {/* <input */}
+            {/*   className={classInput} */}
+            {/*   id="maritalStatus" */}
+            {/*   type="text" */}
+            {/*   placeholder="Marital Status ..." */}
+            {/*   value={maritalStatus} */}
+            {/*   onChange={(e) => setMaritalStatus(e.target.value.toUpperCase())} */}
+            {/* /> */}
           </div>
           <div className="w-full md:w-1/3 px-3">
             <Label valid={validator} label="Name of Spouse" item={nameSpouse} />
@@ -514,7 +585,7 @@ export default function CreateMember() {
               type="text"
               placeholder="Name of Spouse ..."
               value={nameSpouse}
-              onChange={(e) => setNameSpouse(e.target.value.toUpperCase())}
+              onChange={(e) => setNameSpouse(maritalStatus === "SINGLE" ? "N/A" : e.target.value.toUpperCase())}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
@@ -529,7 +600,7 @@ export default function CreateMember() {
               type="tel"
               placeholder="Spouse Tel. ..."
               value={spouseNumber}
-              onChange={(e) => setSpouseNumber(e.target.value.toUpperCase())}
+              onChange={(e) => setSpouseNumber(maritalStatus === "SINGLE" ? "N/A" : e.target.value.toUpperCase())}
             />
           </div>
         </div>
