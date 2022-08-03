@@ -436,6 +436,7 @@ export function renderPayments(
     working_pen = 0;
     diff -= 1;
     state.previous === "before" && (diff = 1);
+    cycle === "days" && state.previous === "previous" && (diff = 1);
     working_int = check_interest * diff;
     working_pri = check_principal * diff;
     if (amount > prev_face_os_bal)
@@ -898,7 +899,7 @@ export function renderNextInstallmentDate(
       : date.setDate(date.getDate() + 30);
     let result =
       (Number(date.getDate()) > 9 ? "" : "0") +
-      (date.getDay() === 0 ? Number(date.getDate()) + 1 : date.getDate()) +
+      (date.getDay() === 0 ? Number(date.getDate()) + (sundays > 0 ? 1 : 0) : date.getDate()) +
       (Number(date.getMonth() + 0) > 9 ? "-" : "-0") +
       Number(date.getMonth() + 0) +
       "-" +

@@ -9,7 +9,7 @@ import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
 const apps = [
   {
-    name: 'Expenses',
+    name: 'Profit & Loss',
     url: '/apps/expenses',
   },
 ];
