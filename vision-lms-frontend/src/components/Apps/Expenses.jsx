@@ -15,8 +15,9 @@ import {
 const Expenses = () => {
   const [recentExpenditures, setRecentExpenditures] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  let [count, setCount] = useState(1000);
   const [itemsPerPage] = useState(8);
+  let [count, setCount] = useState(1000);
+  let [period, setPeriod] = useState("year");
 
   const fetchExpenditureDetails = () => {
     const query = `*[_type == "expenditures"]`;
@@ -40,6 +41,26 @@ const Expenses = () => {
     indexOfLastItem
   );
 
+  const data = [];
+
+  recentExpenditures.length > 0 &&
+    recentExpenditures?.map((e) => {
+      const date = new Date(recentExpenditures[0]?.expenditureDate);
+      let month = date.getMonth()
+      let week = date.getDay()
+      let year = date.getFullYear()
+      console.log(month, week, year)
+
+      let duration = period === "week" ? "06" : period === "month" ? "07" : "08"
+
+      e.expenditureDate.split("-")[1] === duration
+        ? null
+        : data.push({
+            amount: e.expenditureAmount,
+            date: e.expenditureDate,
+          });
+    });
+
   const renderBarChart = (
     <div>
       <div className="flex justify-end p-2 gap-3">
@@ -57,9 +78,33 @@ const Expenses = () => {
             count < 1000 ? setCount((count -= 100)) : setCount((count -= 1000))
           }
         />
+        <div
+          className="border-black p-1 border font-bold cursor-pointer"
+          onClick={() => {
+            setPeriod("week");
+          }}
+        >
+          W
+        </div>
+        <div
+          className="border-black p-1 border font-bold cursor-pointer"
+          onClick={() => {
+            setPeriod("month");
+          }}
+        >
+          M
+        </div>
+        <div
+          className="border-black p-1 border font-bold cursor-pointer"
+          onClick={() => {
+            setPeriod("year");
+          }}
+        >
+          Y
+        </div>
       </div>
-      <BarChart width={1000} height={500} data={recentExpenditures}>
-        <XAxis dataKey="expenditureDate" stroke="#8884d8" />
+      <BarChart width={1000} height={500} data={data}>
+        <XAxis dataKey="date" stroke="#8884d8" />
         <YAxis
           // dataKey="expenditureAmount"
           // stroke="gray"
@@ -79,11 +124,11 @@ const Expenses = () => {
           }}
         />
         <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-        <Bar dataKey="expenditureAmount" fill="#8884d8" barSize={60} />
+        <Bar dataKey="amount" fill="#8884d8" barSize={60} />
       </BarChart>
     </div>
   );
-  console.log(count);
+
   const TableData = ({ children }) => (
     <td className="px-6 py-2 whitespace-nowrap">
       <div className="text-sm font-semibold text-gray-900">{children}</div>
