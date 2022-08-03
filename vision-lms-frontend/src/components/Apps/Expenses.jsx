@@ -49,7 +49,7 @@ const Expenses = () => {
       let month = date.getMonth()
       let week = date.getDay()
       let year = date.getFullYear()
-      console.log(month, week, year)
+      // console.log(month, week, year)
 
       let duration = period === "week" ? "06" : period === "month" ? "07" : "08"
 
