@@ -89,6 +89,10 @@ export default function CreateMember() {
       name: "Single",
       abbr: "S",
     },
+    {
+      name: "Widowed",
+      abbr: "W",
+    },
   ];
 
   const rentedOrOwned = [
@@ -387,7 +391,7 @@ export default function CreateMember() {
               type="text"
               placeholder="Branch Name ..."
               value={branchName}
-              onChange={(e) => setBranchName(e.target.value.toUpperCase())}
+              onChange={() => setBranchName("Eldoret")}
               className={classInput}
             />
           </div>
@@ -684,7 +688,7 @@ export default function CreateMember() {
             <select
               onChange={(e) => {
                 setRentedOwned(e.target.value.toUpperCase());
-                e.target.value;
+                rentedOwned === "OWNED" && setLandCareAgent("N/A");
               }}
               className={classInput}
             >
@@ -699,7 +703,7 @@ export default function CreateMember() {
               ))}
             </select>
           </div>
-          <div className="w-full md:w-2/3 px-3">
+          <div className={`w-full md:w-2/3 px-3 ${rentedOwned === "OWNED" ? "hidden" : ""}`}>
             <Label
               valid={validator}
               label="Landlord/Caretaker/Agent Name"
@@ -711,6 +715,7 @@ export default function CreateMember() {
               type="text"
               placeholder="Landlord/Caretaker/Agent Name ..."
               value={landCareAgent}
+              onClick={() => setLandCareAgent("")}
               onChange={(e) => setLandCareAgent(e.target.value.toUpperCase())}
             />
           </div>
@@ -729,12 +734,14 @@ export default function CreateMember() {
               type="text"
               placeholder="Occupation/Employer ..."
               value={occupationEmployer}
-              onChange={(e) =>
-                setOccupationEmployer(e.target.value.toUpperCase())
+              onChange={(e) => {
+                setOccupationEmployer(e.target.value.toUpperCase());
+                occupationEmployer === "BUSINESS" && setEmployerNumber("N/A")
+              }
               }
             />
           </div>
-          <div className="w-full md:w-1/2 px-3">
+          <div className={`w-full md:w-1/3 px-3 ${occupationEmployer === "BUSINESS" ? "hidden" : ""}`}>
             <Label
               valid={validator}
               label="Employer Contacts (Tel. No.)"
