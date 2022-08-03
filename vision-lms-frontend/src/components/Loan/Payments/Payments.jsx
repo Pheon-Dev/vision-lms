@@ -11,7 +11,7 @@ export default function Payments() {
   const [itemsPerPage] = useState(12);
 
   const fetchPayments = async () => {
-    const query = '*[_type == "maintenance"] | order(_updatedAt desc)';
+    const query = '*[_type == "maintenance" && disbursed == "true"] | order(_updatedAt desc)';
 
     await client.fetch(query).then((data) => {
       setPaymentsList(data);

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BsCheck2Circle } from "react-icons/bs";
 import { ModalAlert } from "../Modals";
-import { List } from "../Components";
+import { List, Label } from "../Components";
 
 import { client } from "../../client";
 
 export default function Approve() {
   const { loanId } = useParams();
 
+  const [validator, setValidator] = useState(false);
   const [loanOfficerName, setLoanOfficerName] = useState("");
   const [loanOfficerPhoneNumber, setLoanOfficerPhoneNumber] = useState("");
   const [loanDetails, setLoanDetails] = useState("");
@@ -27,6 +28,17 @@ export default function Approve() {
     }
     return () => (subscription = false);
   };
+
+  const officers = [
+    {
+      name: "Officer Names ...",
+      phone: "0723178976"
+    },
+    {
+      name: "Officer Phone ...",
+      phone: "0723178976"
+    }
+  ]
 
   useEffect(() => {
     fetchLoanDetails();
@@ -77,6 +89,8 @@ export default function Approve() {
           setOpen(true);
           console.log(update);
         });
+    } else {
+      setValidator(true);
     }
   };
 
@@ -88,36 +102,59 @@ export default function Approve() {
     return (
       <>
         <div className="w-full flex justify-center mr-auto ml-auto px-3 mb-6 md:mb-0">
-          <label className="block uppercase tracking-wide text-gray-700 text-xl font-bold mb-2">
-            Loan Officer Details
-          </label>
+      <Label label="Loan Officer Details" item={loanOfficerName} valid={validator} />
         </div>
         <div className="flex flex-wrap ml-auto mr-auto mt-8 -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
               Loan Officer Names
             </label>
-            <input
+            <select
+              onChange={(e) => {
+                setLoanOfficerName(e.target.value.toUpperCase());
+              }}
               className={classInput}
-              type="text"
-              placeholder="Full Names ..."
-              value={loanOfficerName}
-              onChange={(e) => setLoanOfficerName(e.target.value.toUpperCase())}
-            />
+            >
+              {officers.map((item) => (
+                <option
+                  key={item.name}
+                  className={classInput}
+                  value={item.name}
+                >
+                  {item.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label className="block tracking-wide text-xs mb-2 uppercase text-gray-700 font-bold text-md">
               Loan Officer Phone
             </label>
-            <input
+            {/* <input */}
+            {/*   className={classInput} */}
+            {/*   type="text" */}
+            {/*   placeholder="Phone Number ..." */}
+            {/*   value={loanOfficerPhoneNumber} */}
+            {/*   onChange={(e) => */}
+            {/*     setLoanOfficerPhoneNumber(e.target.value.toUpperCase()) */}
+            {/*   } */}
+            {/* /> */}
+            <select
+              onChange={(e) => {
+                setLoanOfficerPhoneNumber(e.target.value.toUpperCase());
+              }}
               className={classInput}
-              type="text"
-              placeholder="Phone Number ..."
-              value={loanOfficerPhoneNumber}
-              onChange={(e) =>
-                setLoanOfficerPhoneNumber(e.target.value.toUpperCase())
-              }
-            />
+            >
+              {officers.map((item) => (
+                <option
+                  key={item.name}
+                  className={classInput}
+                  value={item.phone}
+                >
+                  {item.phone}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </>
