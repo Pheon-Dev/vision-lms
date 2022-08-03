@@ -391,15 +391,13 @@ export default function CreateMember() {
               type="text"
               placeholder="Branch Name ..."
               value={branchName}
-              onChange={() => setBranchName("Eldoret")}
+              onChange={() => setBranchName("ELDORET")}
               className={classInput}
             />
           </div>
           <div className="w-full md:w-1/3 px-3">
             <Label
-              valid={validator}
               label="Member Number"
-              item={memberNumber}
             />
             {code && (
               <span className={classInput}>
@@ -516,7 +514,7 @@ export default function CreateMember() {
             </select>
           </div>
           <div className="w-full md:w-1/3 px-3">
-            <Label valid={validator} label="Age" item={age} />
+            <Label label="Age" />
             {res_age && <span className={classInput}>{`${res_age}`}</span>}
           </div>
           <div className="w-full md:w-1/3 px-3">
@@ -753,6 +751,7 @@ export default function CreateMember() {
               type="tel"
               placeholder="Employer Contacts ..."
               value={employerNumber}
+              onClick={() => setEmployerNumber("")}
               onChange={(e) => setEmployerNumber(e.target.value.toUpperCase())}
             />
           </div>
