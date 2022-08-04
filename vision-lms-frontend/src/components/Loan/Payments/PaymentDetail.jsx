@@ -481,6 +481,7 @@ export default function PaymentDetail() {
     setPaymentCount(payment_count);
     setFaceOutstandingArrears(face_os_arrears);
     setFacePaidArrears(face_pd_arrears);
+    setMpesaReferenceCode("MP3S4R3F3R");
     setFaceOutstandingPenalty(face_os_penalty);
     setFacePaidPenalty(face_pd_penalty);
     setFaceOutstandingInterest(face_os_interest);
@@ -570,7 +571,6 @@ export default function PaymentDetail() {
   const addPayment = () => {
     if (
       amountPaid &&
-      mpesaReferenceCode &&
       arrears &&
       counter &&
       paymentCount &&
@@ -666,7 +666,7 @@ export default function PaymentDetail() {
           setAmountPaid("");
           setWaivedPenalty("");
           setCounter(0);
-          setMpesaReferenceCode("");
+          setMpesaReferenceCode("IF8NIHEF98");
           setReadyGo(false);
           setOutstandingBalance("");
           setOutstandingPenalty("");
@@ -718,7 +718,7 @@ export default function PaymentDetail() {
     "O/S Principal",
     "Principal Paid",
     "O/S Balance",
-    "M-PESA",
+    "Overpay",
   ];
 
   const TableData = ({ children }) => (
@@ -741,7 +741,7 @@ export default function PaymentDetail() {
           setCleared(!toggleClear ? "true" : "false");
           setFaceOutstandingBalance(!toggleClear ? "0" : face_os_balance);
           setAmountPaid(!toggleClear ? "0" : amountPaid);
-          setMpesaReferenceCode(!toggleClear ? "NA" : mpesaReferenceCode);
+          setMpesaReferenceCode(!toggleClear ? "NA" : "7JHN976JHG");
           setReadyGo(!toggleClear ? true : false);
         }}
       >
@@ -1093,7 +1093,7 @@ export default function PaymentDetail() {
                   <TableData>{payment?.faceOutstandingPrincipal}</TableData>
                   <TableData>{payment?.facePaidPrincipal}</TableData>
                   <TableData>{payment?.faceOutstandingBalance}</TableData>
-                  <TableData>{payment?.mpesaReferenceCode}</TableData>
+                  <TableData>{payment?.principalPaid}</TableData>
                 </tr>
               ))
             : null}
@@ -1295,7 +1295,19 @@ export default function PaymentDetail() {
                   : "0"}
               </TableData>
               <TableData>
-                {readyGo ? renderAddButton() : principal_paid}
+                {customerDetails
+                  ? customerDetails[0]?.outstandingPenalty === "false"
+                    ? amountPaid
+                      ? principal_paid
+                      : "0"
+                    : amountPaid
+                    ? principal_paid
+                    : Number(
+                        customerDetails[0]?.recentPayments[
+                          customerDetails[0]?.recentPayments?.length - 1
+                        ]?.principalPaid
+                      )
+                  : "0"}
               </TableData>
             </tr>
           }
@@ -1433,19 +1445,18 @@ export default function PaymentDetail() {
               {Number(waivedPenalty) > 0 ? (
                 <TableData>
                   {amountPaid
-                    ? mpesaReferenceCode
-                      ? mpesaReferenceCode
+                      ? principal_paid
                       : `+ ${
                           customerDetails[0]?.recentPayments[
                             customerDetails[0]?.recentPayments?.length - 1
                           ]?.principalPaid
                         }`
-                    : renderAddButton()}
+                  }
                 </TableData>
               ) : (
                 <TableData>
                   {customerDetails[0]?.outstandingPenalty === "false"
-                    ? mpesaReferenceCode
+                    ? principal_paid
                     : `+ ${
                         customerDetails[0]?.recentPayments[
                           customerDetails[0]?.recentPayments?.length - 1
@@ -1603,24 +1614,23 @@ export default function PaymentDetail() {
                   : null
                 : null}
               <div className={classContained}>
-                <Label
-                  valid={val}
-                  label={`M-PESA Code`}
-                  item={mpesaReferenceCode}
-                />
-                <input
-                  className={classInput}
-                  type="string"
-                  placeholder="M-PESA Code ..."
-                  maxLength={10}
-                  value={mpesaReferenceCode}
-                  onChange={(e) => {
-                    setMpesaReferenceCode(e.target.value.toUpperCase());
-                    setTimeout(() => {
-                      setReadyGo(true);
-                    }, 5000);
-                  }}
-                />
+              <div className="flex justify-center mt-5">
+              <div className="mt-5"/>
+                {renderAddButton()}
+                {/* <input */}
+                {/*   className={classInput} */}
+                {/*   type="string" */}
+                {/*   placeholder="M-PESA Code ..." */}
+                {/*   maxLength={10} */}
+                {/*   value={mpesaReferenceCode} */}
+                {/*   onChange={(e) => { */}
+                {/*     setMpesaReferenceCode(e.target.value.toUpperCase()); */}
+                {/*     setTimeout(() => { */}
+                {/*       setReadyGo(true); */}
+                {/*     }, 5000); */}
+                {/*   }} */}
+                {/* /> */}
+              </div>
               </div>
             </div>
           </div>
@@ -1636,7 +1646,7 @@ export default function PaymentDetail() {
           onClick={() => {
             setProductType(customerDetails[0]?.productType);
             setAmountPaid("");
-            setMpesaReferenceCode("");
+            setMpesaReferenceCode("IUG584H579");
             setReadyGo(false);
             setCurrentInstallmentDate("");
             fetchCustomerDetails();
@@ -1644,7 +1654,7 @@ export default function PaymentDetail() {
           onMouseEnter={() => {
             setProductType(customerDetails[0]?.productType);
             setAmountPaid("");
-            setMpesaReferenceCode("");
+            setMpesaReferenceCode("IUG584H579");
             setReadyGo(false);
             setCurrentInstallmentDate("");
             fetchCustomerDetails();
@@ -1666,7 +1676,7 @@ export default function PaymentDetail() {
     return (
       <>
         <span
-          className="bg-green-600 text-white p-2 cursor-pointer rounded-lg"
+          className="bg-green-600 flex justify-center font-bold mt-2 w-1/2 text-white p-2 cursor-pointer rounded-lg"
           onClick={() => {
             setPayment();
             addPayment();

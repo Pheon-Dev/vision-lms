@@ -156,7 +156,7 @@ export function renderPayments(
   let third = res_next?.res_next_third;
   let fourth = res_next?.res_next_fourth;
 
-  second = second?.split("-")[0] === "32" ? "01" + "-" + ((Number(second?.split("-")[1]) + 1) > 9 ? (Number(second?.split("-")[1]) + 1) : "0" + (Number(second?.split("-")[1]) + 1)).toString() + "-" + second?.split("-")[2] : second;
+  // second = second?.split("-")[0] === "32" ? "01" + "-" + ((Number(second?.split("-")[1]) + 1) > 9 ? (Number(second?.split("-")[1]) + 1) : "0" + (Number(second?.split("-")[1]) + 1)).toString() + "-" + second?.split("-")[2] : second;
 
   let current_arrears = 0;
   let outstanding_balance = 0;
@@ -813,7 +813,7 @@ function renderResNext(first, cycle, count, sundays) {
     const date = new Date(year, month, day);
 
     cycle === "days"
-      ? date.setDate(date.getDate() + 1)
+      ? date.setDate(date.getDay() === 0 ? (sundays > 0 ? date.getDate() + 2 : date.getDate() + 1) : date.getDate() + 1)
       : cycle === "weeks"
       ? date.setDate(date.getDate() + 7)
       : date.setDate(date.getDate() + 30);
@@ -821,7 +821,7 @@ function renderResNext(first, cycle, count, sundays) {
     // : date.setDate(date.getDate() + (Number(count) <= 1 ? 1 : 30));
     let result =
       (Number(date.getDate()) > 9 ? "" : "0") +
-      (date.getDay() === 0 ? Number(date.getDate()) + 1 : date.getDate()) +
+      (date.getDate()) +
       (Number(date.getMonth() + 0) > 9 ? "-" : "-0") +
       Number(date.getMonth() + 0) +
       "-" +
@@ -900,13 +900,13 @@ export function renderNextInstallmentDate(
 
     // TODO: Check if Skipping Sundays
     cycle === "days"
-      ? date.setDate(date.getDate() + 1)
+      ? date.setDate(date.getDay() === 0 ? (sundays > 0 ? date.getDate() + 2 : date.getDate() + 1) : date.getDate() + 1)
       : cycle === "weeks"
       ? date.setDate(date.getDate() + 7)
       : date.setDate(date.getDate() + 30);
     let result =
       (Number(date.getDate()) > 9 ? "" : "0") +
-      (date.getDay() === 0 ? Number(date.getDate()) + (sundays > 0 ? 1 : 0) : date.getDate()) +
+      (date.getDate()) +
       (Number(date.getMonth() + 0) > 9 ? "-" : "-0") +
       Number(date.getMonth() + 0) +
       "-" +
