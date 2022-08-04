@@ -156,6 +156,8 @@ export function renderPayments(
   let third = res_next?.res_next_third;
   let fourth = res_next?.res_next_fourth;
 
+  second = second?.split("-")[0] === "32" ? "01" + "-" + ((Number(second?.split("-")[1]) + 1) > 9 ? (Number(second?.split("-")[1]) + 1) : "0" + (Number(second?.split("-")[1]) + 1)).toString() + "-" + second?.split("-")[2] : second;
+
   let current_arrears = 0;
   let outstanding_balance = 0;
   let outstanding_penalty = 0;
@@ -480,6 +482,11 @@ export function renderPayments(
     working_bal = prev_face_os_bal;
   }
 
+  console.log(current)
+  console.log(next)
+  console.log(first)
+  console.log(second)
+  console.log(third)
   if (renderDays(current, next) > 0) renderBeforeFirst();
   if (renderDays(current, next) === 0) renderDuringFirst();
   if (renderDays(current, next) < 0 && renderDays(current, second) > 0)

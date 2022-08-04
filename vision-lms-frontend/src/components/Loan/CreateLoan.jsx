@@ -168,8 +168,73 @@ export default function CreateLoan() {
   }
 
   function renderPayOffCalculator() {
-    if (payoff === "true") return console.log("true")
-    if (payoff === "false") return console.log("false")
+    let member =
+      payoffMember[0]?.recentPayments[
+        payoffMember[0]?.recentPayments.length - 1
+      ];
+    if (payoff === "true") {
+      client
+        .patch(payoffMember[0]?._id)
+        .set({
+          cleared: cleared,
+          arrears: "false",
+        })
+        .insert("after", "recentPayments[-1]", [
+          {
+            amountPaid: member?.amountPaid,
+            mpesaReferenceCode: "NIUGHI976E",
+            arrears: "0",
+            counter: "0",
+            arrearsPaid: member?.arrearsPaid,
+            paymentCount: "0",
+            paymentDay: "0",
+            outstandingInterest: "0",
+            outstandingPrincipal: "0",
+            outstandingBalance: "0",
+            outstandingPenalty: "0",
+            principalPaid: member?.principalPaid,
+            interestPaid: member?.interestPaid,
+            penaltyPaid: member?.penaltyPaid,
+            penalty: "0",
+            awardedPenalty: "0",
+            installmentDate: member?.installmentDate,
+            faceInstallmentDate: member?.faceInstallmentDate,
+            faceOutstandingArrears: "0",
+            facePaidArrears: member?.facePaidArrears,
+            faceOutstandingPenalty: "0",
+            facePaidPenalty: member?.facePaidPenalty,
+            faceOutstandingInterest: "0",
+            facePaidInterest: member?.facePaidInterest,
+            faceOutstandingPrincipal: "0",
+            facePaidPrincipal: member?.facePaidPrincipal,
+            faceOutstandingBalance: "0",
+            nextInstallmentDate: member?.nextInstallmentDate,
+            _key: uuidv4(),
+          },
+        ]);
+      return consloe.log(j)
+    }
+    if (payoff === "false") return console.log("false");
+  }
+
+  console.log(payoffMember)
+  function renderPayoff() {
+    return (
+      <>
+        <div className="ml-auto mr-auto mb-3">
+          <div className="flex justify-center items-center px-4 py-4">
+            <div className="mt-3">
+              <span className="font-bold text-red-400 text-xl mr-2">
+      {payoffMember.length > 0 && (
+      payoffMember[0]?.recentPayments[
+        payoffMember[0]?.recentPayments.length - 1
+      ]?.faceOutstandingBalance)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   function renderPayoffButton() {
@@ -184,7 +249,6 @@ export default function CreateLoan() {
           setPayoff(!togglePayoff ? "true" : "false");
         }}
       >
-        {renderPayOffCalculator()}
         <div
           className={
             `${
@@ -227,7 +291,14 @@ export default function CreateLoan() {
   function renderDailyInterestAmount(rate, principal, tenure) {
     tenure = Number(tenure);
     let multiplier = 30 / 4;
-    tenure = tenure === 7 ? multiplier : tenure === 14 ? multiplier * 2 : tenure === 21 ? multiplier * 3 : tenure;
+    tenure =
+      tenure === 7
+        ? multiplier
+        : tenure === 14
+        ? multiplier * 2
+        : tenure === 21
+        ? multiplier * 3
+        : tenure;
     return roundOff(((rate * principal) / 3000) * tenure);
   }
 
@@ -1258,11 +1329,11 @@ export default function CreateLoan() {
                     content={renderSundayButton()}
                   />
                 ) : null}
-                      <List
-                        title="Loan Payoff :"
-                        note={payoff === "true" ? "TRUE" : "FALSE"}
-                        content={renderPayoffButton()}
-                      />
+                <List
+                  title="Loan Payoff :"
+                  note={payoff === "true" ? "TRUE" : "FALSE"}
+                  content={renderPayoffButton()}
+                />
                 <List
                   title="Loan A/C Number"
                   note=""
@@ -1399,21 +1470,6 @@ export default function CreateLoan() {
     );
   }
 
-  function renderPayoff() {
-    return (
-      <>
-        <div className="ml-auto mr-auto mb-3">
-          <div className="flex justify-center items-center px-4 py-4">
-            <div className="mt-3">
-              <span className="font-bold text-red-400 text-xl mr-2">
-                Payoff Details coming soon!
-              </span>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   function renderButtons() {
     return (
@@ -1435,6 +1491,7 @@ export default function CreateLoan() {
             onClick={() => {
               handleLoanSubmit();
               setValidator(true);
+        renderPayOffCalculator();
             }}
             onMouseEnter={handleLoanSave}
             className="flex bg-green-500 items-center w-1/4 ml-auto mr-auto hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
