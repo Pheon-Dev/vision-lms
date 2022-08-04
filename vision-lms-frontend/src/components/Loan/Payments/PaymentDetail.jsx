@@ -1679,7 +1679,7 @@ export default function PaymentDetail() {
           className="bg-green-600 flex justify-center font-bold mt-2 w-1/2 text-white p-2 cursor-pointer rounded-lg"
           onClick={() => {
             setPayment();
-            addPayment();
+           !addingPayment && addPayment();
             setTimeout(() => {
               fetchCustomerDetails();
             }, 5000);
