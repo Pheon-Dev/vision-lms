@@ -24,6 +24,7 @@ export default function CreateLoan() {
   const [togglePayoff, setTogglePayoff] = useState(false);
   const [plusSundays, setPlusSundays] = useState("false");
   const [payoff, setPayoff] = useState("false");
+  const [payoffMember, setPayoffMember] = useState("false");
 
   const [memberId, setMemberId] = useState("");
   const [memberIdNumber, setMemberIdNumber] = useState("");
@@ -82,6 +83,7 @@ export default function CreateLoan() {
     const membersListQuery = '*[_type == "member" && maintained == "false"]';
     const memberQuery = `*[_type == "member" && memberNumber match '${id}' || surName match '${sname}' || otherNames match '${oname}']`;
     const productListQuery = '*[_type == "newProduct"]';
+    const payOffQuery = `*[_type == "maintenance" && memberNames match '${names}']`;
     const guarantorQuery = `*[_type == "member" && memberNumber match '${gid}' || surName match '${gsname}' || otherNames match '${goname}']`;
     // const productTypeQuery = productDetailQuery(productType);
     const productTypeQuery = `*[_type == "newProduct" && productName == "${productType}"]`;
@@ -89,6 +91,10 @@ export default function CreateLoan() {
     const g_query = `*[_type == "member" && memberNumber match '${searchGuarantorTerm}*' || surName match '${searchGuarantorTerm}*' || otherNames match '${searchGuarantorTerm}*' || mobileNumber match '${searchGuarantorTerm}*' || idPass match '${searchGuarantorTerm}*']`;
 
     if (subscription) {
+      client.fetch(payOffQuery).then((data) => {
+        setPayoffMember(data);
+      });
+
       client.fetch(membersListQuery).then((data) => {
         setMembersList(data);
       });
@@ -130,6 +136,7 @@ export default function CreateLoan() {
     gsname,
     searchTerm,
     searchGuarantorTerm,
+    payoff,
   ]);
 
   const handleChange = (event) => {
@@ -160,6 +167,11 @@ export default function CreateLoan() {
     return result;
   }
 
+  function renderPayOffCalculator() {
+    if (payoff === "true") return console.log("true")
+    if (payoff === "false") return console.log("false")
+  }
+
   function renderPayoffButton() {
     return (
       //   Switch Container
@@ -172,7 +184,7 @@ export default function CreateLoan() {
           setPayoff(!togglePayoff ? "true" : "false");
         }}
       >
-        {/* Switch */}
+        {renderPayOffCalculator()}
         <div
           className={
             `${
@@ -1246,15 +1258,11 @@ export default function CreateLoan() {
                     content={renderSundayButton()}
                   />
                 ) : null}
-                {memberDetail[0]?.maintained !== "true" ? (
-                  <>
                       <List
                         title="Loan Payoff :"
                         note={payoff === "true" ? "TRUE" : "FALSE"}
                         content={renderPayoffButton()}
                       />
-                  </>
-                ) : null}
                 <List
                   title="Loan A/C Number"
                   note=""
