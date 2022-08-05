@@ -211,13 +211,13 @@ export default function CreateLoan() {
             nextInstallmentDate: member?.nextInstallmentDate,
             _key: uuidv4(),
           },
-        ]);
-      return consloe.log(j);
+        ]).commit().then(() => {console.log("Done")});
+      return console.log("Done");
     }
     if (payoff === "false") return console.log("false");
   }
 
-  console.log(payoffMember);
+  // console.log(payoffMember);
   function renderPayoff() {
     return (
       <>
