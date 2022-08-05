@@ -227,9 +227,9 @@ export function renderPayments(
       ? diff
       : Number((Number(diff) / 7).toString().split(".")[0]);
   diff += 1;
-  console.log("Prev :", previous);
-  console.log("Curr :", current);
-  console.log("Ovpd :", prev_principal_paid);
+  // console.log("Prev :", previous);
+  // console.log("Curr :", current);
+  // console.log("Ovpd :", prev_principal_paid);
 
   function renderDefault(
     balance_due,
@@ -243,7 +243,7 @@ export function renderPayments(
     working_amt = amount;
 
     face_os_arrears =
-      prev_face_os_arr + prev_face_os_int + prev_face_os_pri - amount;
+      prev_face_os_int + prev_face_os_pri - amount;
     face_os_arrears = face_os_arrears > 0 ? face_os_arrears : 0;
     face_pd_arrears =
       amount > prev_face_os_int + prev_face_os_pri
@@ -482,11 +482,6 @@ export function renderPayments(
     working_bal = prev_face_os_bal;
   }
 
-  console.log(current)
-  console.log(next)
-  console.log(first)
-  console.log(second)
-  console.log(third)
   if (renderDays(current, next) > 0) renderBeforeFirst();
   if (renderDays(current, next) === 0) renderDuringFirst();
   if (renderDays(current, next) < 0 && renderDays(current, second) > 0)
@@ -510,8 +505,8 @@ export function renderPayments(
   waiver > 0 && (face_pd_arrears = 0);
   waiver > 0 && (principal_paid = 0);
 
-  console.log("Ovpy :", principal_paid);
-  console.log("Diff :", diff);
+  // console.log("Ovpy :", principal_paid);
+  // console.log("Diff :", diff);
   console.group("State");
   console.table(state);
   console.groupEnd();

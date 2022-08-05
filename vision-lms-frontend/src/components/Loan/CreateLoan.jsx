@@ -83,7 +83,7 @@ export default function CreateLoan() {
     const membersListQuery = '*[_type == "member" && maintained == "false"]';
     const memberQuery = `*[_type == "member" && memberNumber match '${id}' || surName match '${sname}' || otherNames match '${oname}']`;
     const productListQuery = '*[_type == "newProduct"]';
-    const payOffQuery = `*[_type == "maintenance" && memberNames match '${names}']`;
+    const payOffQuery = `*[_type == "maintenance" && memberNames match '${names}' && arrears match "0"]`;
     const guarantorQuery = `*[_type == "member" && memberNumber match '${gid}' || surName match '${gsname}' || otherNames match '${goname}']`;
     // const productTypeQuery = productDetailQuery(productType);
     const productTypeQuery = `*[_type == "newProduct" && productName == "${productType}"]`;
@@ -176,8 +176,8 @@ export default function CreateLoan() {
       client
         .patch(payoffMember[0]?._id)
         .set({
-          cleared: cleared,
           arrears: "false",
+          outstandingPenalty: "0",
         })
         .insert("after", "recentPayments[-1]", [
           {
@@ -212,23 +212,70 @@ export default function CreateLoan() {
             _key: uuidv4(),
           },
         ]);
-      return consloe.log(j)
+      return consloe.log(j);
     }
     if (payoff === "false") return console.log("false");
   }
 
-  console.log(payoffMember)
+  console.log(payoffMember);
   function renderPayoff() {
     return (
       <>
         <div className="ml-auto mr-auto mb-3">
           <div className="flex justify-center items-center px-4 py-4">
+            <div className=" mt-3">
+              <span className="font-bold text-red-400 text-xl mr-2">
+                Outstanding Balance +{/* Outstanding Penalty + */}
+                Outstanding Interest =
+              </span>
+              <span className="font-bold text-red-400 text-xl mr-2">
+                Payoff Amount
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-center items-center px-4 py-4">
             <div className="mt-3">
               <span className="font-bold text-red-400 text-xl mr-2">
-      {payoffMember.length > 0 && (
-      payoffMember[0]?.recentPayments[
-        payoffMember[0]?.recentPayments.length - 1
-      ]?.faceOutstandingBalance)}
+                {payoffMember.length > 0 &&
+                  Number(
+                    payoffMember[0]?.recentPayments[
+                      payoffMember[0]?.recentPayments.length - 1
+                    ]?.faceOutstandingBalance
+                  )}
+                +{/* {payoffMember.length > 0 && */}
+                {/*   Number( */}
+                {/*     payoffMember[0]?.recentPayments[ */}
+                {/*       payoffMember[0]?.recentPayments.length - 1 */}
+                {/*     ]?.faceOutstandingPenalty */}
+                {/*   )} */}
+                {/* + */}
+                {payoffMember.length > 0 &&
+                  Number(payoffMember[0]?.interestAmount) -
+                    Number(
+                      payoffMember[0]?.recentPayments[
+                        payoffMember[0]?.recentPayments.length - 1
+                      ].facePaidInterest
+                    )}
+                =
+              </span>
+              <span className="font-bold text-red-400 text-xl mr-2">
+                {payoffMember.length > 0 &&
+                  Number(
+                    payoffMember[0]?.recentPayments[
+                      payoffMember[0]?.recentPayments.length - 1
+                    ]?.faceOutstandingBalance
+                  ) +
+                    // Number(
+                    //   payoffMember[0]?.recentPayments[
+                    //     payoffMember[0]?.recentPayments.length - 1
+                    //   ]?.faceOutstandingPenalty
+                    // ) +
+                    (Number(payoffMember[0]?.interestAmount) -
+                      Number(
+                        payoffMember[0]?.recentPayments[
+                          payoffMember[0]?.recentPayments.length - 1
+                        ].facePaidInterest
+                      ))}
               </span>
             </div>
           </div>
@@ -1470,7 +1517,6 @@ export default function CreateLoan() {
     );
   }
 
-
   function renderButtons() {
     return (
       <>
@@ -1491,7 +1537,7 @@ export default function CreateLoan() {
             onClick={() => {
               handleLoanSubmit();
               setValidator(true);
-        renderPayOffCalculator();
+              renderPayOffCalculator();
             }}
             onMouseEnter={handleLoanSave}
             className="flex bg-green-500 items-center w-1/4 ml-auto mr-auto hover:bg-green-700 m-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
