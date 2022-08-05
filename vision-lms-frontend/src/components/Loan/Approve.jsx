@@ -29,14 +29,24 @@ export default function Approve() {
     return () => (subscription = false);
   };
 
-  const officers = [
+  const officersName = [
     {
       name: "Officer Names ...",
-      phone: "0723178976"
+      abbr: "ON"
     },
     {
+      name: "HILLARY BETT",
+      abbr: "HB"
+    },
+  ]
+  const officersPhone = [
+    {
       name: "Officer Phone ...",
-      phone: "0723178976"
+      abbr: "OP"
+    },
+    {
+      name: "0723178976",
+      abbr: "07"
     }
   ]
 
@@ -115,7 +125,7 @@ export default function Approve() {
               }}
               className={classInput}
             >
-              {officers.map((item) => (
+              {officersName.map((item) => (
                 <option
                   key={item.name}
                   className={classInput}
@@ -145,13 +155,13 @@ export default function Approve() {
               }}
               className={classInput}
             >
-              {officers.map((item) => (
+              {officersPhone.map((item) => (
                 <option
                   key={item.name}
                   className={classInput}
-                  value={item.phone}
+                  value={item.name}
                 >
-                  {item.phone}
+                  {item.name}
                 </option>
               ))}
             </select>

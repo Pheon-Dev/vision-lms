@@ -200,6 +200,7 @@ export default function CreateMember() {
   const preSaveMember = () => {
     setMaintained("false");
     setGroup("false");
+                occupationEmployer === "BUSINESS" && setEmployerNumber("N/A")
     setAge(res_age);
     setMemberNumber(
       `DC-${
