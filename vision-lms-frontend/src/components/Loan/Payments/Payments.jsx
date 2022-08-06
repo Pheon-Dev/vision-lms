@@ -10,6 +10,16 @@ export default function Payments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
 
+  const fetchPayBill = async () => { 
+  const mpesa = await fetch(
+    "https://destiny-credit.vercel.app/api/mpesa",
+    { method: "GET" }
+  );
+
+  const data = await mpesa.json();
+  console.log(data)
+}
+fetchPayBill()
   const fetchPayments = async () => {
     const query = '*[_type == "maintenance" && disbursed == "true"] | order(_updatedAt desc)';
 
