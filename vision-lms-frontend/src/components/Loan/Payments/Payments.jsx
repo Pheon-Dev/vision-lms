@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { client } from "../../../client";
 import { ListLayout, Spinner, Status, TableData } from "../../Components";
+const LOGTAIL_API_TOKEN = import.meta.env.VITE_LOGTAIL_API_TOKEN;
 
 export default function Payments() {
   const [subscription, setSubscription] = useState(true);
@@ -11,12 +13,31 @@ export default function Payments() {
   const [itemsPerPage] = useState(12);
 
   const fetchPayBill = async () => { 
-  const mpesa = await fetch(
-    "https://destiny-credit.vercel.app/api/mpesa",
-    { method: "GET" }
-  );
+  // const mpesa = await fetch(
+  //   "https://logtail.com/api/v1/query",
+  //   { method: "GET", headers: { "Authorization": `Bearer ${LOGTAIL_API_TOKEN}` } }
+  // );
 
-  const data = await mpesa.json();
+      const token = LOGTAIL_API_TOKEN;
+      const url = "https://logtail.com/api/v1/query";
+
+        const params = {
+        "order": "newest_first"
+      }
+      const headers = {
+        // "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.get({
+        method: "GET",
+        url,
+        params,
+        headers,
+      });
+
+      // res.status(200).json(response.data);
+  const data = await response.data.json();
   console.log(data)
 }
 fetchPayBill()
